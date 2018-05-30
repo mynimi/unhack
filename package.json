@@ -1,0 +1,14 @@
+{
+  "name": "unhack",
+  "version": "0.1.0",
+  "description": "a jekyll GUI App",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "author": "Myriam Frisano",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^2.0.2"
+  }
+}
