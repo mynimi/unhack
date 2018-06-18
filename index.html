@@ -8,22 +8,14 @@
 </head>
 
 <body>
-    <!-- All of the Node.js APIs are available in this renderer process. -->
-    <!-- We are using Node.js <script>document.write(process.versions.node)</script>,
-    Chromium <script>document.write(process.versions.chrome)</script>,
-    and Electron <script>document.write(process.versions.electron)</script>. -->
+    <div class="nav">Navigation here</div>
+    <div class="content"></div>
+    
+<script>
+    // You can also require other files to run in this process
+    require('./assets/js/index.js')
+</script>
 
-    <button id="select-directory">Directory</button>
-    <textarea id="selectedItem"></textarea>
-    <label for="project-name">Project Name</label>
-    <input type="text" id="project-name">
-    <button id="create-site">Create New Site</button>
-    <p>Output:</p>
-    <div id="output"></div>
-    <script>
-        // You can also require other files to run in this process
-        require('./assets/js/index.js')
-    </script>
 </body>
 
 </html>
