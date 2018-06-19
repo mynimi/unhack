@@ -124,7 +124,8 @@ pre{
     display: none;
 }
 
-.btn{
+.btn,
+button{
     @extend a;
     background: $link-color;
     color: black-or-white($link-color);
@@ -134,7 +135,11 @@ pre{
     position: relative;
     margin: 5px;
     display: inline-block;
+    appearance: none;
 
+    &.small{
+        padding: 3px 9px;
+    }
     &:hover{
         background: $link-hover-color;
         color: black-or-white($link-hover-color);

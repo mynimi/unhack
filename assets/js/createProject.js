@@ -16,6 +16,7 @@ const createProjectPath = functions.htmlPath('createProject')
 
 fs.readFile(createProjectPath, (err, data) => {
     pageContent.innerHTML = data
+    functions.inputStyle()
 })
 
 // Variables
@@ -29,7 +30,9 @@ pageContent.addEventListener('click', function (e) {
 })
 
 ipcRenderer.on('selectedItem', function (event, path) {
-    document.getElementById('selectedItem').innerHTML = `You selected: ${path}`
+    let htmlOutput = document.querySelector('#output')
+
+    document.getElementById('selectedItem').value = `You selected: ${path}`
     projectPath = path.toString();
 
     // unixPath = `/mnt/${upath.normalize(path.toString()).replace('C:', 'c')}`
@@ -65,9 +68,7 @@ ipcRenderer.on('selectedItem', function (event, path) {
 pageContent.addEventListener('click', function (e) {
     if (e.target && e.target.id == 'create-site') {
         const siteName = document.getElementById('project-name').value
-        const htmlOutput = document.getElementById('output')
-
-        alert(siteName)
+        let htmlOutput = document.querySelector('#output')
 
         htmlOutput.innerHTML = "" // clear previous Output
 

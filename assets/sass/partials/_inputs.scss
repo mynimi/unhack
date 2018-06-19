@@ -9,6 +9,9 @@ input:not([type="submit"]):not([type="button"]):not([type="checkbox"]):not([type
     padding: 10px;
     transition: .3s all ease;
 
+    &.directory{
+        @include flexbox(row, nowrap, flex-start, center);
+    }
     &.focus{
         border-color: $input-focus-color;
         label{
@@ -24,6 +27,12 @@ input:not([type="submit"]):not([type="button"]):not([type="checkbox"]):not([type
         border: 0;
         color: $main-color;
         font-family: $main-font;
+
+        &:focus,
+        &:active{
+            border: 0px solid transparent;
+            outline: 0;
+        }
     }
 
     textarea{

@@ -1,7 +1,14 @@
-<button id="select-directory">Directory</button>
-<textarea id="selectedItem"></textarea>
-<label for="project-name">Project Name</label>
-<input type="text" id="project-name">
-<button id="create-site">Create New Site</button>
+<div class="content">
+    <div class="wrap directory">
+        <button class="small" id="select-directory">Directory</button>
+        <label for="selectedItem">Project Parent Directory</label>
+        <input type="text" id="selectedItem" name="selectedItem" class="file">
+    </div>
+    <div class="wrap">
+        <label for="project-name">Project Name</label>
+        <input type="text" id="project-name" name="project-name">
+    </div>
+    <button id="create-site">Create New Site</button>
+</div>
 <p>Output:</p>
-<div id="output"></div>
+<textarea id="output"></textarea>

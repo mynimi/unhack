@@ -1,4 +1,4 @@
-html, body, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, .btn, abbr, acronym, address, big, cite, code, kbd, pre, del, dfn, em, img, ins, kbd, q, s, samp, small, strike, strong, tt, var, b, u, i, center, dl, dt, dd, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, canvas, details, embed, figure, figcaption, footer, header, hgroup, menu, nav, output, ruby, section, summary, time, mark, audio, video { margin: 0; padding: 0; border: 0; font-size: 100%; font: inherit; vertical-align: baseline; }
+html, body, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, .btn, button, abbr, acronym, address, big, cite, code, kbd, pre, del, dfn, em, img, ins, kbd, q, s, samp, small, strike, strong, tt, var, b, u, i, center, dl, dt, dd, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, canvas, details, embed, figure, figcaption, footer, header, hgroup, menu, nav, output, ruby, section, summary, time, mark, audio, video { margin: 0; padding: 0; border: 0; font-size: 100%; font: inherit; vertical-align: baseline; }
 
 article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, section { display: block; }
 
@@ -32,9 +32,9 @@ h5 { font-size: 1.08em; }
 
 h6 { font-size: 1em; }
 
-a, .btn { -webkit-transition: .3s all; -o-transition: .3s all; transition: .3s all; text-decoration: none; color: #447F7E; }
+a, .btn, button { -webkit-transition: .3s all; -o-transition: .3s all; transition: .3s all; text-decoration: none; color: #447F7E; }
 
-a:hover, .btn:hover { cursor: pointer; color: #6B7F7F; }
+a:hover, .btn:hover, button:hover { cursor: pointer; color: #6B7F7F; }
 
 img { max-width: 100%; height: auto; }
 
@@ -46,17 +46,19 @@ p + p { margin-top: 5px; }
 
 .hidden { display: none; }
 
-.btn { background: #447F7E; color: white; font-weight: bold; padding: 7px 18px; border-radius: 2px; position: relative; margin: 5px; display: inline-block; }
+.btn, button { background: #447F7E; color: white; font-weight: bold; padding: 7px 18px; border-radius: 2px; position: relative; margin: 5px; display: inline-block; -webkit-appearance: none; -moz-appearance: none; appearance: none; }
 
-.btn:hover { background: #6B7F7F; color: white; }
+.btn.small, button.small { padding: 3px 9px; }
+
+.btn:hover, button:hover { background: #6B7F7F; color: white; }
 
 p + h1, p + h2, p + h3, p + h4 { margin-top: 20px; }
 
 header { display: -webkit-box; display: -ms-flexbox; display: flex; -webkit-box-orient: horizontal; -webkit-box-direction: normal; -ms-flex-direction: row; flex-direction: row; -ms-flex-wrap: wrap; flex-wrap: wrap; -webkit-box-pack: justify; -ms-flex-pack: justify; justify-content: space-between; -webkit-box-align: center; -ms-flex-align: center; align-items: center; background: #aaaaaa; color: black; width: 100%; padding: 5px 10px; -webkit-box-sizing: border-box; box-sizing: border-box; position: fixed; left: 0; top: 0; z-index: 97; }
 
-header a, header .btn { padding: 0 5px; color: rgba(0, 0, 0, 0.7); -webkit-transition: .3s all ease; -o-transition: .3s all ease; transition: .3s all ease; }
+header a, header .btn, header button { padding: 0 5px; color: rgba(0, 0, 0, 0.7); -webkit-transition: .3s all ease; -o-transition: .3s all ease; transition: .3s all ease; }
 
-header a:hover, header .btn:hover { color: black; }
+header a:hover, header .btn:hover, header button:hover { color: black; }
 
 .Index, .Dashboard { display: -webkit-box; display: -ms-flexbox; display: flex; -webkit-box-orient: vertical; -webkit-box-direction: normal; -ms-flex-direction: column; flex-direction: column; -ms-flex-wrap: wrap; flex-wrap: wrap; -webkit-box-pack: justify; -ms-flex-pack: justify; justify-content: space-between; -webkit-box-align: center; -ms-flex-align: center; align-items: center; height: 100vh; }
 
@@ -140,11 +142,15 @@ input:not([type="submit"]):not([type="button"]):not([type="checkbox"]):not([type
 
 .wrap { position: relative; border: 1px solid #6B7F7F; margin: 15px 0; padding: 10px; -webkit-transition: .3s all ease; -o-transition: .3s all ease; transition: .3s all ease; }
 
+.wrap.directory { display: -webkit-box; display: -ms-flexbox; display: flex; -webkit-box-orient: horizontal; -webkit-box-direction: normal; -ms-flex-direction: row; flex-direction: row; -ms-flex-wrap: nowrap; flex-wrap: nowrap; -webkit-box-pack: start; -ms-flex-pack: start; justify-content: flex-start; -webkit-box-align: center; -ms-flex-align: center; align-items: center; }
+
 .wrap.focus { border-color: #447F7E; }
 
 .wrap.focus label { color: #447F7E !important; }
 
 .wrap input, .wrap textarea { background: transparent; font-size: 19px; padding: 0; border: 0; color: #000; font-family: "Roboto", "Calibri", "Arial", sans-serif; }
+
+.wrap input:focus, .wrap input:active, .wrap textarea:focus, .wrap textarea:active { border: 0px solid transparent; outline: 0; }
 
 .wrap textarea { width: 100%; height: 100%; }
 
@@ -184,11 +190,11 @@ input:not([type="submit"]):not([type="button"]):not([type="checkbox"]):not([type
 
 .sidenav { width: 200px; background: #dddddd; color: black; position: fixed; top: 0px; left: 0; height: 100%; padding: 10px; -webkit-box-sizing: border-box; box-sizing: border-box; }
 
-.sidenav a, .sidenav .btn, .sidenav span { color: black; display: block; padding: 5px; margin: 5px 0; border-bottom: 1px solid rgba(0, 0, 0, 0.1); }
+.sidenav a, .sidenav .btn, .sidenav button, .sidenav span { color: black; display: block; padding: 5px; margin: 5px 0; border-bottom: 1px solid rgba(0, 0, 0, 0.1); }
 
-.sidenav a:hover, .sidenav .btn:hover, .sidenav span:hover { opacity: .7; }
+.sidenav a:hover, .sidenav .btn:hover, .sidenav button:hover, .sidenav span:hover { opacity: .7; }
 
-.sidenav a.active, .sidenav .active.btn, .sidenav span.active { color: red; }
+.sidenav a.active, .sidenav .active.btn, .sidenav button.active, .sidenav span.active { color: red; }
 
 .has-sidenav { margin-left: 200px; }
 
@@ -310,7 +316,7 @@ table thead:after { content: ''; width: calc(100% + 10px); height: 100%; backgro
 
 .navbar { width: 80%; display: -webkit-box; display: -ms-flexbox; display: flex; -webkit-box-orient: horizontal; -webkit-box-direction: normal; -ms-flex-direction: row; flex-direction: row; -ms-flex-wrap: wrap; flex-wrap: wrap; -webkit-box-pack: start; -ms-flex-pack: start; justify-content: flex-start; -webkit-box-align: center; -ms-flex-align: center; align-items: center; font-size: 1.2em; margin: 10px auto; font-weight: bold; text-transform: uppercase; }
 
-.navbar .parent, .navbar a, .navbar .btn { display: block; position: relative; margin: 0 10px; cursor: pointer; }
+.navbar .parent, .navbar a, .navbar .btn, .navbar button { display: block; position: relative; margin: 0 10px; cursor: pointer; }
 
 .navbar .children { display: block; position: absolute; top: 100%; left: 0; width: auto; border-left: 3px solid black; }
 
