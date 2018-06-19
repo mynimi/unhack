@@ -8,18 +8,18 @@ const {
     remote
 } = require('electron');
 
-const pageContent = document.querySelector('.content')
+const pageContent = document.querySelector('.container')
 
-var functions = require("./functions.js");
+const functions = require("./functions.js");
 
-var createProjectPath = functions.htmlPath('createProject')
+const createProjectPath = functions.htmlPath('createProject')
 
 fs.readFile(createProjectPath, (err, data) => {
     pageContent.innerHTML = data
 })
 
 // Variables
-var projectPath;
+let projectPath;
 
 // Event Delegation because Elemtns are dynamic
 pageContent.addEventListener('click', function (e) {
@@ -110,7 +110,7 @@ pageContent.addEventListener('click', function (e) {
 
             });
 
-            var siteCreated = functions.htmlPath('dashboard')
+            const siteCreated = functions.htmlPath('dashboard')
 
             fs.readFile(siteCreated, (err, data) => {
                 pageContent.innerHTML = data

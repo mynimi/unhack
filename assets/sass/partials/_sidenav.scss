@@ -1,0 +1,35 @@
+.sidenav{
+    width: $sidenav-width;
+    background: $sidenav-background;
+    color: black-or-white($sidenav-background);
+    position: fixed;
+    top: 0px;
+    left: 0;
+    height: 100%;
+    padding: 10px;
+    box-sizing: border-box;
+
+    a,
+    span{
+        color: black-or-white($sidenav-background);
+        display: block;
+        padding: 5px;
+        margin: 5px 0;
+        border-bottom: 1px solid rgba(black-or-white($sidenav-background), .1);
+
+        &:hover{
+            opacity: .7;
+        }
+
+        &.active{
+            color: red;
+        }
+    }
+}
+
+.has-sidenav{
+    margin-left: $sidenav-width;
+    .container{
+
+    }
+}

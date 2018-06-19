@@ -25,27 +25,6 @@ $paragraph-gap: yes;
 // if set to yes, settings for a container class will be added
 $container-settings: yes;
 
-// if set to yes, some more minimal defaults for tags will be restored (as in: cite, input, textarea etc.)
-$extended-defaults: yes;
-
-// if set to yes blockquotes will be styled with a border on the left, padding and margin
-$include-blockquote-style: yes;
-
-// if set to yes tables will be styled according to settings
-$include-table-style: yes;
-
-// if set to yes, defintion lists will be styled
-$include-definition-list-style: yes;
-
-// if set to yes, WordPress default classes will be added
-$inlcude-WordPress-kit: no;
-
-// color variables (use colors as values)
-//----------------------------------------
-
-$main-color: $black;
-$link-color: $teal;
-$link-hover-color: $blood;
 
 // String Variables (use strings as values | for Font Variables: Don't forget to include the fonts)
 //------------------------------------------
@@ -74,32 +53,83 @@ $root-font-size: 19px;
 // do not add a unit here
 $basic-line-height: 1.6;
 
-// yes/no-dependant
-//------------------
-// if the dependant variable is set to no,
-// the variables can be ignored
-
-// depends on: $background-color-setting
-$background-color: $white;
-
-// depends on: $paragraph-gap
 $paragraph-gap-size: 5px;
 
-// depends on: $container-settings
 $container-class-name: 'container';
 $container-background-color: transparent;
-$container-max-width: 1200px; // use px here
+$container-max-width: 1900px; // use px here
 $container-width: 80%; // use % here
 
-// depends on: $include-blockquote-style
-$blockquote-border: 1px solid rgba(black, 0.3);
+$cards-per-row: 4;
+$card-breakpoint-1: 1110px;
+$card-breakpoint-2: 730px;
+$card-breakpoint-3: 600px;
 
-// depends on: $include-table-style
-$table-border: 1px solid rgba(black, 0.1);
-$even-rows-bg: rgba(black, 0.02);
+// Paddings
+//----------
+$header-padding: 5px 10px;
 
-// depends on: $include-definition-list-style
-$definition-list-border: 1px solid rgba(black, 0.1);
+// color variables (use colors as values)
+//----------------------------------------
+$main-color: $black;
+$link-color: $accent;
+$link-hover-color: $accent-alt;
+$background-color: $lightgray;
+$header-background: $mediumgray;
+$header-color: black-or-white($header-background);
+$header-link-color: rgba($header-color, .7);
+$header-link-hover: $header-color;
+$sidenav-background: $gray;
+$table-row-bg: darken($white, 5%);
 
-// PROJECT SETTINGS
-//------------------
+$dragdroparea-border: 2px dashed darken($white, 30%);
+
+$info-blue: #3a6495;
+
+$tab-area-active-bg: $lightgray;
+$tab-inactive-bg: $gray;
+$tab-hover-bg: $mediumgray;
+
+$popup-backdrop: rgba($black, .1);
+
+$input-label-color: $accent-alt;
+$input-border: 1px solid $accent-alt;
+$input-focus-color: $accent;
+
+$card-shadow: 0px 3px 6px 0px rgba(black, .1);
+$table-shadow: 0px 2px 4px 0px rgba(black, .1);
+$card-background: $white;
+
+$sidenav-width: 200px;
+
+
+@if($palette == dark){
+    $main-color: $whiteish;
+    $link-color: $accent;
+    $link-hover-color: $accent-alt;
+    $background-color: $black;
+    $header-background: darken(#333, 15%);
+    $header-color: black-or-white($header-background);
+    $header-link-color: rgba($header-color, .7);
+    $header-link-hover: $header-color;
+    $sidenav-background: invert($gray);
+    $table-row-bg: invert(darken($white, 5%));
+
+    $dragdroparea-border: 2px dashed darken($white, 30%);
+
+    $info-blue: #3a6495;
+
+    $tab-area-active-bg: darken(#333, 10%);
+    $tab-inactive-bg: darken(#333, 15%);
+    $tab-hover-bg: invert($mediumgray);
+
+    $popup-backdrop: rgba($black, .1);
+
+    $input-label-color: invert($accent-alt);
+    $input-border: 1px solid invert($accent-alt);
+    $input-focus-color: invert($accent);
+
+    $card-shadow: 0px 3px 6px 0px rgba(black, .1);
+    $table-shadow: 0px 2px 4px 0px rgba(black, .1);
+    $card-background: darken(#333, 6%);
+}

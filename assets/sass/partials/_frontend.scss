@@ -1,0 +1,134 @@
+.frontend{
+    margin-top: 0;
+    div{
+        box-sizing: border-box;
+    }
+    .header{
+        width: 100%;
+        height: 55vh;
+        position: relative;
+        background-size: cover;
+        background-position: center;
+        background-color: rgba(black, .1);
+
+        .site-title{
+            position: absolute;
+            bottom: 0;
+            left: 10%;
+            font-size: 3em;
+            text-transform: uppercase;
+
+            h1{
+                line-height: .7em;
+                margin: 0;
+                padding: 0;
+            }
+        }
+    }
+    .main-wrapper{
+        @include flexbox(row, wrap, space-between, flex-start);
+        margin: 30px auto;
+
+        > .content{
+            width: calc(100% - 33%);
+            padding: 0;
+        }
+    }
+    .sidebar{
+        width: 30%;
+        .widget{
+            width: 100%;
+            padding: 10px;
+            margin: 0;
+            margin-bottom: 10px;
+            display: block;
+            border-radius: 0;
+            background: white;
+            text-align: center;
+
+            .title{
+                text-transform: uppercase;
+            }
+
+        }
+    }
+    &.full{
+        .sidebar{
+            display: none;
+        }
+        .main-wrapper > .content{
+            width: 100%;
+        }
+    }
+    &.left{
+        .main-wrapper{
+            flex-direction: row-reverse !important;
+        }
+    }
+    &.right{
+        .main-wrapper{
+            flex-direction: row;
+        }
+    }
+
+    article{
+        @include flexbox(row, wrap, space-between, flex-start);
+        margin: 20px 0;
+        position: relative;
+        background: white;
+
+        &:nth-of-type(even){
+            flex-direction: row-reverse;
+        }
+        .date{
+            position: absolute;
+            bottom: 3px;
+            right: 3px;
+        }
+        img{
+            width: 30%;
+        }
+        .content{
+            width: 70%;
+        }
+        .post-title{
+            text-transform: uppercase;
+            padding: 0 10px;
+            margin-top: 20px;
+            h2{
+                font-size: 3.5em;
+            }
+        }
+        .post-tags{
+            padding: 10px;
+            font-size: .7em;
+        }
+        .post-content{
+            padding: 10px;
+        }
+    }
+}
+.navbar{
+    width: 80%;
+    @include flexbox(row, wrap, flex-start, center);
+    font-size: 1.2em;
+    margin: 10px auto;
+    font-weight: bold;
+    text-transform: uppercase;
+
+    .parent,
+    a{
+        display: block;
+        position: relative;
+        margin: 0 10px;
+        cursor: pointer;
+    }
+    .children{
+        display: block;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        width: auto;
+        border-left: 3px solid black;
+    }
+}

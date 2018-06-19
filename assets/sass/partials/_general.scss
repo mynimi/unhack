@@ -1,18 +1,122 @@
-blockquote{
-    font-size: 1.2em;
-    width: 95%;
-    margin: 20px auto;
-    text-align: center;
-    font-family: 'Vollkorn', 'Times New Roman', serif;
-    font-style: italic;
+html{
+    font: {
+        family: $main-font;
+        size: $root-font-size;
+        weight: $main-font-weight;
+    }
+}
 
-    cite{
-        font-style: normal;
-        font-size: .8em;
-        opacity: .8;
-        text-align: right;
-        width: 100%;
-        display: block;
+body{
+    @extend html;
+    line-height: $basic-line-height;
+
+    @if $background-color-setting == yes{
+        background-color: $background-color;
+    }
+    color: $main-color;
+    margin-top: 45px;
+}
+
+// Headings
+h1, h2, h3, h4, h5, h6{
+    line-height: 1;
+    padding: 10px 0px;
+
+    @if $headings-text-transform != none{
+        text-transform: $headings-text-transform;
+    }
+
+    @if $headings-font != $main-font{
+        font-family: $headings-font;
+    }
+
+    @if $headings-font-weight != $main-font-weight{
+        font-weight: $headings-font-weight;
+    }
+}
+
+h1{
+    font-size: 2.35em;
+}
+
+h2{
+    font-size: 1.6em;
+}
+
+h3{
+    font-size: 1.45em;
+}
+
+h4{
+    font-size: 1.25em;
+}
+
+h5{
+    font-size: 1.08em;
+}
+
+h6{
+    font-size: 1em;
+}
+
+// Links
+a{
+    @if $link-transition == yes {
+        transition: .3s all;
+    }
+
+    @if $link-line-default == no{
+        text-decoration: none;
+    }
+    @else{
+        text-decoration: underline;
+    }
+
+    color: $link-color;
+
+    &:hover{
+        cursor: pointer;
+        color: $link-hover-color;
+
+        @if $link-line-default == yes and $link-line-hover == no{
+            text-decoration: none;
+        }
+        @if $link-line-default == no and $link-line-hover == yes{
+            text-decoration: underline;
+        }
+    }
+}
+
+// Defaults
+
+img{
+    max-width: 100%;
+    height: auto;
+}
+
+code{
+    font-family: 'Source Code Pro', 'Courier New', monospace;
+}
+
+kbd,
+pre{
+    @extend code;
+}
+
+@if $paragraph-gap == yes{
+    p + p{
+        margin-top: $paragraph-gap-size;
+    }
+}
+
+// Container
+@if $container-settings == yes{
+    .#{$container-class-name}{
+        max-width: $container-max-width;
+        width: $container-width;
+        background: $container-background-color;
+        @include center();
+        padding: 30px 0;
     }
 }
 
@@ -22,12 +126,19 @@ blockquote{
 
 .btn{
     @extend a;
-    border: 2px solid currentColor;
-    padding: 3px 5px;
-    border-radius: 3px;
+    background: $link-color;
+    color: black-or-white($link-color);
+    font-weight: bold;
+    padding: 7px 18px;
+    border-radius: 2px;
     position: relative;
-    top: 12px;
-    line-height: 2;
+    margin: 5px;
+    display: inline-block;
+
+    &:hover{
+        background: $link-hover-color;
+        color: black-or-white($link-hover-color);
+    }
 }
 
 p + {
@@ -37,4 +148,93 @@ p + {
     h4{
         margin-top: 20px;
     }
+}
+
+
+header{
+    @include flexbox(row, wrap, space-between, center);
+    background: $header-background;
+    color: $header-color;
+    width: 100%;
+    padding: $header-padding;
+    box-sizing: border-box;
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: 97;
+
+    a{
+        padding: 0 5px;
+        color: $header-link-color;
+        transition: .3s all ease;
+        &:hover{
+            color: $header-link-hover;
+        }
+    }
+}
+
+.Index,
+.Dashboard{
+    @include flexbox(column, wrap, space-between, center);
+    height: 100vh;
+    .container{
+        flex-grow: 1;
+        @include flexbox(column, wrap, center, center);
+    }
+    .middle{
+        width: 100%;
+    }
+}
+
+.Index{
+    .topnav{
+        .live,
+        .site{
+            display: none;
+        }
+    }
+}
+.droparea{
+    width: 100%;
+    min-height: 60vh;
+    border: $dragdroparea-border;
+    position: relative;
+    padding: 20px;
+    box-sizing: border-box;
+
+    .Index &{
+        margin: 30px;
+        div{
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+        }
+    }
+}
+
+h1, h2{
+    width: 100%;
+}
+.content{
+    width: 100%;
+}
+
+.info{
+    background: rgba($info-blue, .1);
+    padding: 5px;
+    border: 1px solid rgba($info-blue, .5);
+    margin: 10px 0;
+    .svg-inline--fa{
+        margin-right: 5px;
+    }
+}
+
+.tag{
+    background: $card-background;
+    color: black-or-white($card-background);
+    padding: 2px 5px;
+    margin: 5px;
+    border-radius: 3px;
 }

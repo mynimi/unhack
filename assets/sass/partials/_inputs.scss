@@ -1,0 +1,72 @@
+input:not([type="submit"]):not([type="button"]):not([type="checkbox"]):not([type="radio"]){
+    width: 100%;
+}
+
+.wrap{
+    position: relative;
+    border: $input-border;
+    margin: 15px 0;
+    padding: 10px;
+    transition: .3s all ease;
+
+    &.focus{
+        border-color: $input-focus-color;
+        label{
+            color: $input-focus-color !important;
+        }
+    }
+
+    input,
+    textarea{
+        background: transparent;
+        font-size: $root-font-size;
+        padding: 0;
+        border: 0;
+        color: $main-color;
+        font-family: $main-font;
+    }
+
+    textarea{
+        width: 100%;
+        height: 100%;
+    }
+
+    input[type="color"],
+    input[type="file"]{
+        margin: 5px 0;
+    }
+    label{
+        position: absolute;
+        top: auto;
+        left: 10px;
+        transition: .3s all ease;
+        color: $main-color;
+
+        &.up{
+            background: $background-color;
+
+            .card &,
+            .popup & {
+                background: $card-background;
+            }
+            .tab &{
+                background: $tab-area-active-bg;
+            }
+            font-size: .8em;
+            top: 0;
+            transform: translateY(-50%);
+            color: $input-label-color;
+        }
+
+    }
+}
+
+.label{
+    color: $input-label-color;
+    font-size: .8em;
+}
+
+.input{
+    margin: 15px 0;
+    padding: 10px;
+}

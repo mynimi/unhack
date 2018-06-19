@@ -1,10 +1,15 @@
 // TOOLBOX COLORS
 //---------------------------------------------------------------------
-$white: #FDFDFD;
-$black: #202020;
-$darkgray: #333;
-$blood: #730F17;
-$teal: #54706A;
 
-// PROJECT COLORS
-//---------------------------------------------------------------------
+$white: #fff;
+$black: #000;
+
+$whiteish: #FDFDFD;
+$blackish: #202020;
+
+$lightgray: #F6F6F6;
+$gray: darken($lightgray, 10%);
+$mediumgray: darken($lightgray, 30%);
+
+$accent-alt: #6B7F7F;
+$accent: #447F7E;
