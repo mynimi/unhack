@@ -10,8 +10,8 @@ const {
     remote
 } = require('electron');
 
-const pageContent = document.querySelector('.container')
-const popupContent = document.querySelector('.popup .content-loader') 
+let pageContent = document.querySelector('.container')
+let popupContent = document.querySelector('.popup .content-loader') 
 const functions = require("./functions.js");
 
 const createProjectPath = functions.htmlPath('createProject')

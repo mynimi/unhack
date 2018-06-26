@@ -11,10 +11,10 @@ module.exports.htmlPath = function htmlPath(filename) {
 module.exports.openPopup = function openPopup() {
     const body = document.querySelector('body')
     body.classList.add('popup-open')
-    const behindPopup = document.createElement("div")
+    let behindPopup = document.createElement("div")
     behindPopup.id = 'behind-popup'
     body.appendChild(behindPopup)
-    const popup = document.querySelector('.popup')
+    let popup = document.querySelector('.popup')
     popup.style.display = 'block'
 }
 

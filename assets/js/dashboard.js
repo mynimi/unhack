@@ -13,6 +13,22 @@ const {
 const pageContent = document.querySelector('.container')
 const popupContent = document.querySelector('.popup .content-loader')
 const functions = require("./functions.js")
-let jekyllFiles = functions.getPathsInDir(store.get('currentProjectPath').toString())
+const jekyllFiles = functions.getPathsInDir(store.get('currentProjectPath').toString())
 
 console.log(jekyllFiles);
+
+const publicationSettingsPath = functions.htmlPath('publicationSettings')
+
+pageContent.addEventListener('click', function(e){
+    if (e.target && e.target.id == 'publication-settings') {
+        alert('clicked')
+
+        fs.readFile(publicationSettingsPath, (err, data) => {
+            popupContent.innerHTML = data
+            functions.inputStyle()
+            if(err)
+                console.log(err)
+        })
+        functions.openPopup()
+    }
+})

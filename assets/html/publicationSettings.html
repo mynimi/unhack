@@ -1,0 +1,49 @@
+<h1>Publication Settings</h1>
+<div class="content">
+    <p>Publishing Method</p>
+    <div class="tabholder">
+        <input type="radio" name="publish-platform" value="ftp" id="ftp">
+        <label for="ftp" class="tab-toggle">FTP</label>
+        <input type="radio" name="publish-platform" value="github" id="github">
+        <label for="github" class="tab-toggle">GitHub</label>
+
+        <div class="tab ftp">
+            <div class="wrap">
+                <label for="ftp-host">FTP Host</label>
+                <input type="text" name="ftp-host" id="ftp-host">
+            </div>
+            <div class="wrap">
+                <label for="ftp-username">FTP Username</label>
+                <input type="text" name="ftp-username" id="ftp-username">
+            </div>
+            <div class="wrap">
+                <label for="ftp-password">FTP Password</label>
+                <input type="password" name="ftp-password" id="ftp-password">
+            </div>
+            <div class="wrap">
+                <label for="ftp-port">FTP Port</label>
+                <input type="number" name="ftp-port" id="ftp-port">
+            </div>
+            <div class="wrap">
+                <label for="ftp-directory">FTP Directory</label>
+                <input type="text" name="ftp-directory" id="ftp-directory">
+            </div>
+        </div>
+        <div class="tab github">
+            <div class="wrap">
+                <label for="github-username">GitHub Username</label>
+                <input type="text" name="github-username" id="github-username">
+            </div>
+            <div class="wrap">
+                <label for="github-password">GitHub Password</label>
+                <input type="password" name="github-password" id="github-password">
+            </div>
+            <div class="wrap">
+                <label for="github-project-url">GitHub Project URL</label>
+                <input type="url" name="github-project-url" id="github-project-url">
+            </div>
+        </div>
+
+    </div>
+
+</div>
