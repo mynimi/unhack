@@ -31,7 +31,7 @@ function createWindow() {
         mainWindow.maximize()
     }
 
-    mainWindow.setTitle(`unHack | ${store.get('projectName')} ${store.get('currentProjectPath')}`);
+    mainWindow.setTitle(`unHack | ${store.get('projectName')} ${store.get('currentProjectPath') ? store.get('currentProjectPath') : ''}`);
 
     // and load the index.html of the app.
     mainWindow.loadFile('index.html')
@@ -100,7 +100,9 @@ app.on('ready', () => {
                                     console.log(c.name)
                                     console.log('new project path is ' + store.get('currentProjectPath'))
 
-                                    mainWindow.setTitle(`unHack | ${store.get('projectName')} ${store.get('currentProjectPath')}`)
+                                    mainWindow.setTitle(`unHack | ${store.get('projectName')} ${store.get('currentProjectPath') ? store.get('currentProjectPath') : ''}`)
+
+                                    mainWindow.webContents.send('project-opened')
 
                                 } else {
                                     dialog.showErrorBox('Not an Unhack Project', 'The Directory you selected does not seem to be an Unhack Project.')
@@ -207,10 +209,12 @@ app.on('ready', () => {
     ipcMain.on('create-new-done', function(events){
         dialog.showMessageBox(mainWindow, {
             type: 'info',
-            title: 'New Project Created',
-            message: 'Your new Project was successfully created and has been opened'
+            title: 'Project Opened',
+            message: 'Your Project has been opened'
         })
-        mainWindow.setTitle(`unHack | ${store.get('projectName')} ${store.get('currentProjectPath')}`)
+        mainWindow.setTitle(`unHack | ${store.get('projectName')} ${store.get('currentProjectPath') ? store.get('currentProjectPath') : ''}`)
+
+        
     })
     ipcMain.on('open-directory-dialog', function (event) {
         dialog.showOpenDialog(mainWindow, {

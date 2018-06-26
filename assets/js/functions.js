@@ -18,6 +18,15 @@ module.exports.openPopup = function openPopup() {
     popup.style.display = 'block'
 }
 
+module.exports.closePopup = function closePopup() {
+    const popup = document.querySelector('.popup');
+    const body = document.querySelector('body');
+    const backdrop = document.querySelector('#behind-popup');
+    popup.style.display = 'none'
+    body.classList.remove('popup-open')
+    backdrop.remove()
+}
+
 // List all Files in Given Directory
 module.exports.getPathsInDir = function getPathsInDir(dir, filelist = []) {
     fs.readdirSync(dir).forEach(file => {

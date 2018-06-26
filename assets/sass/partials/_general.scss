@@ -215,16 +215,16 @@ header{
     position: relative;
     padding: 20px;
     box-sizing: border-box;
+    div {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        text-align: center;
+    }
 
-    .Index &{
-        margin: 30px;
-        div{
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            text-align: center;
-        }
+    &.dragging{
+        background: rgba($link-color, .3);
     }
 }
 

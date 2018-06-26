@@ -15,6 +15,9 @@ let popupContent = document.querySelector('.popup .content-loader')
 const functions = require("./functions.js");
 
 const createProjectPath = functions.htmlPath('createProject')
+const openProjectPath = functions.htmlPath('openProject')
+
+const dashboard = functions.htmlPath('dashboard')
 
 ipcRenderer.on('create-project', function(){
     fs.readFile(createProjectPath, (err, data) => {
@@ -24,13 +27,75 @@ ipcRenderer.on('create-project', function(){
     functions.openPopup()
 });
 
-if(!store.get('currentProjectPath')){
-    fs.readFile(createProjectPath, (err, data) => {
+ipcRenderer.on('project-opened', function(){
+    fs.readFile(dashboard, (err, data) => {
         pageContent.innerHTML = data
-        functions.inputStyle()
+    })
+})
+
+if(!store.get('currentProjectPath')){
+    fs.readFile(openProjectPath, (err, data) => {
+        pageContent.innerHTML = data
+        let projectToOpen
+
+        document.ondragover = document.ondrop = (ev) => {
+            ev.preventDefault()
+        }
+        const dropArea = document.querySelector('.droparea')
+        dropArea.ondrop = (ev) => {
+            projectToOpen = ev.dataTransfer.files[0].path
+            ev.preventDefault()
+            dropArea.classList.remove('dragging')
+
+            if (projectToOpen) {
+                const configPath = path.join(projectToOpen.toString(), 'unhack.config');
+
+                console.log(configPath)
+
+                if (fs.existsSync(configPath)) {
+                    store.set('currentProjectPath', projectToOpen)
+
+                    const config = fs.readFileSync(configPath)
+                    const c = JSON.parse(config)
+
+                    store.set('projectName', c.name)
+                    console.log(c.name)
+                    console.log('new project path is ' + store.get('currentProjectPath'))
+                    fs.readFile(dashboard, (err, data) => {
+                        pageContent.innerHTML = data
+                        if (err) {
+                            console.log(err);
+                        }
+                    })
+                    ipcRenderer.send('create-new-done')
+                    document.querySelector('body').classList.add('has-sidenav')
+                    document.querySelector('.sidenav').classList.remove('hidden')
+
+                } else {
+                    dialog.showErrorBox('Not an Unhack Project', 'The Directory you selected does not seem to be an Unhack Project.')
+                }
+                console.log(projectToOpen)
+            }
+            
+        }
+        dropArea.ondragenter = (ev) => {
+            dropArea.classList.add('dragging')
+        }
+        dropArea.ondragleave = (ev) => {
+            dropArea.classList.remove('dragging')
+        }
+
+        pageContent.addEventListener('click', function (e) {
+            if (e.target && e.target.id == 'start-create-new-project') {
+                fs.readFile(createProjectPath, (err, data) => {
+                    popupContent.innerHTML = data
+                    functions.inputStyle()
+                })
+                functions.openPopup()
+            }
+        })
     })
 } else {
-    const dashboard = functions.htmlPath('dashboard')
     fs.readFile(dashboard, (err, data) => {
         pageContent.innerHTML = data
     })
@@ -40,7 +105,7 @@ if(!store.get('currentProjectPath')){
 let projectParentPath;
 
 // Event Delegation because Elements are dynamic
-pageContent.addEventListener('click', function (e) {
+popupContent.addEventListener('click', function (e) {
     if (e.target && e.target.id == 'select-directory') {
         ipcRenderer.send('open-directory-dialog')
     }
@@ -77,7 +142,7 @@ ipcRenderer.on('selectedItem', function (event, path) {
     });
 })
 
-pageContent.addEventListener('click', function (e) {
+popupContent.addEventListener('click', function (e) {
     if (e.target && e.target.id == 'create-site') {
         const siteName = document.getElementById('project-name').value
         let htmlOutput = document.querySelector('#output')
@@ -132,7 +197,11 @@ pageContent.addEventListener('click', function (e) {
                 }
             })
 
+            functions.closePopup()
+
             ipcRenderer.send('create-new-done')
+            document.querySelector('body').classList.add('has-sidenav')
+            document.querySelector('.sidenav').classList.remove('hidden')
         })
     }
 })
