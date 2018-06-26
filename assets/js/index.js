@@ -1,4 +1,5 @@
 require ('./functions')
-require('./appNav.js')
+require ('./general')
+require('./appNav')
 require('./createProject')
 require('./siteconfig')

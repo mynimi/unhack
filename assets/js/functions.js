@@ -2,10 +2,12 @@
 
 const path = require('path');
 
+// build HTML Path for given file
 module.exports.htmlPath = function htmlPath(filename) {
     return path.join(__dirname, '..', 'html', filename+'.html');
 }
 
+// Styling Input functionality, has to be exported due to being reloaded on dynamically created elements
 module.exports.inputStyle = function inputStyle(){
     let inputs = document.querySelectorAll('.wrap input, .wrap textarea')
 

@@ -1,8 +1,10 @@
 const fs = require('fs');
 const path = require('path');
-const upath = require('upath');
 const shell = require('shelljs')
 const child_process = require('child_process');
+const prefs = require('./prefs')
+let store = prefs.store
+
 const {
     ipcRenderer,
     remote
@@ -12,17 +14,25 @@ const pageContent = document.querySelector('.container')
 
 const functions = require("./functions.js");
 
-const createProjectPath = functions.htmlPath('createProject')
+if(!store.get('currentProjectPath')){
+    const createProjectPath = functions.htmlPath('createProject')
 
-fs.readFile(createProjectPath, (err, data) => {
-    pageContent.innerHTML = data
-    functions.inputStyle()
-})
+    fs.readFile(createProjectPath, (err, data) => {
+        pageContent.innerHTML = data
+        functions.inputStyle()
+    })
+} else {
+    const dashboard = functions.htmlPath('dashboard')
+
+    fs.readFile(dashboard, (err, data) => {
+        pageContent.innerHTML = data
+    })
+}
 
 // Variables
-let projectPath;
+let projectParentPath;
 
-// Event Delegation because Elemtns are dynamic
+// Event Delegation because Elements are dynamic
 pageContent.addEventListener('click', function (e) {
     if (e.target && e.target.id == 'select-directory') {
         ipcRenderer.send('open-directory-dialog')
@@ -33,17 +43,13 @@ ipcRenderer.on('selectedItem', function (event, path) {
     let htmlOutput = document.querySelector('#output')
 
     document.getElementById('selectedItem').value = `You selected: ${path}`
-    projectPath = path.toString();
-
-    // unixPath = `/mnt/${upath.normalize(path.toString()).replace('C:', 'c')}`
-    // console.log(`unixpath ${unixPath}`)
+    projectParentPath = path.toString();
 
     htmlOutput.innerHTML = "" // clear previous Output
 
-    // TODO: figure out Mac/Linux Version
     const child = child_process.spawn('pwd && ls && jekyll -v', {
         shell: 'cmd',
-        cwd: projectPath
+        cwd: projectParentPath
     })
 
     child.stdout.pipe(process.stdout);
@@ -62,7 +68,6 @@ ipcRenderer.on('selectedItem', function (event, path) {
         console.log('closing code: ' + code);
         htmlOutput.insertAdjacentHTML('beforeend', 'closing code: ' + code); //Here you can get the exit code of the script
     });
-
 })
 
 pageContent.addEventListener('click', function (e) {
@@ -72,10 +77,9 @@ pageContent.addEventListener('click', function (e) {
 
         htmlOutput.innerHTML = "" // clear previous Output
 
-        // TODO: figure out Mac/Linux Version
         const child = child_process.spawn(`jekyll new ${siteName}`, {
             shell: 'cmd',
-            cwd: projectPath
+            cwd: projectParentPath
         })
 
         child.stdout.pipe(process.stdout);
@@ -96,20 +100,10 @@ pageContent.addEventListener('click', function (e) {
         });
 
         child.on('exit', function () {
-            const unhackConfig = {
-                name: siteName,
-                path: projectPath
-            }
-            const fileName = 'unhack.config';
-            const configPath = path.join(projectPath, siteName, fileName)
+            // write PAth to config
+            const projectPath = path.join(projectParentPath, siteName)
 
-            console.log(configPath)
-
-            fs.writeFile(configPath, JSON.stringify(unhackConfig, null, 2), (err) => {
-                if (err) throw err;
-                console.log('The file has been saved!');
-
-            });
+            store.set('currentProjectPath', projectPath);
 
             const siteCreated = functions.htmlPath('dashboard')
 

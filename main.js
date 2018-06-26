@@ -1,16 +1,18 @@
 // Modules to control application life and create native browser window
 const {app, BrowserWindow, ipcMain, dialog} = require('electron')
-const settings = require('electron-settings');
+const prefs = require('./assets/js/prefs')
+let store = prefs.store
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow
 
 function createWindow () {
+
   // Create the browser window.
   mainWindow = new BrowserWindow({
-    width: 1000, 
-    height: 700,
+    width: store.get('windowBounds.width') ,
+    height: store.get('windowbounds.height'),
     center: true
   })
 
@@ -55,17 +57,18 @@ app.on('activate', function () {
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.
 app.on('ready', () => {
+  console.log('current Path' + store.get('currentProjectPath'));
 
-  settings.set('appereance', {
-    advacedMode: false,
-    uiSkin: 'light'
-  });
+    mainWindow.on('resize', () => {
+      // The event doesn't pass us the window size, so we call the `getBounds` method which returns an object with
+      // the height, width, and x and y coordinates.
+      let { width, height } = mainWindow.getBounds();
+      // Now that we have them, save them using the `set` method.
 
-  // settings.get('name.first');
-  // => "Cosmo"
+      store.set('windowBounds.width', width)
+      store.set('windowBounds.height', height)
+    });
 
-  // settings.has('name.middle');
-  // => false
 
   ipcMain.on('open-directory-dialog', function (event) {
     dialog.showOpenDialog(mainWindow,{

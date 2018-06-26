@@ -124,6 +124,15 @@ pre{
     display: none;
 }
 
+.advanced-view{
+    display: none;
+
+    .advanced-view-on & {
+        display: block;
+    }
+
+}
+
 .btn,
 button{
     @extend a;
