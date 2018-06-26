@@ -1,5 +1,11 @@
 // Modules to control application life and create native browser window
-const {app, BrowserWindow, ipcMain, dialog, Menu} = require('electron')
+const {
+    app,
+    BrowserWindow,
+    ipcMain,
+    dialog,
+    Menu
+} = require('electron')
 const fs = require('fs');
 const path = require('path');
 
@@ -8,31 +14,38 @@ const functions = require("./assets/js/functions.js");
 
 let store = prefs.store
 
+
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow
 
-function createWindow () {
-  // Create the browser window.
-  mainWindow = new BrowserWindow({
-    width: store.get('windowBounds.width'),
-    height: store.get('windowBounds.height'),
-    center: true
-  })
+function createWindow() {
+    // Create the browser window.
+    mainWindow = new BrowserWindow({
+        width: store.get('windowBounds.width'),
+        height: store.get('windowBounds.height'),
+        center: true
+    })
 
-  // and load the index.html of the app.
-  mainWindow.loadFile('index.html')
+    if (store.get('windowMaximized')) {
+        mainWindow.maximize()
+    }
 
-  // Open the DevTools.
-  mainWindow.webContents.openDevTools()
+    mainWindow.setTitle(`unHack | ${store.get('projectName')} ${store.get('currentProjectPath')}`);
 
-  // Emitted when the window is closed.
-  mainWindow.on('closed', function () {
-    // Dereference the window object, usually you would store windows
-    // in an array if your app supports multi windows, this is the time
-    // when you should delete the corresponding element.
-    mainWindow = null
-  })
+    // and load the index.html of the app.
+    mainWindow.loadFile('index.html')
+
+    // Open the DevTools.
+    mainWindow.webContents.openDevTools()
+
+    // Emitted when the window is closed.
+    mainWindow.on('closed', function () {
+        // Dereference the window object, usually you would store windows
+        // in an array if your app supports multi windows, this is the time
+        // when you should delete the corresponding element.
+        mainWindow = null
+    })
 }
 
 // This method will be called when Electron has finished
@@ -43,97 +56,170 @@ app.on('ready', createWindow)
 
 // Quit when all windows are closed.
 app.on('window-all-closed', function () {
-  // On OS X it is common for applications and their menu bar
-  // to stay active until the user quits explicitly with Cmd + Q
-  if (process.platform !== 'darwin') {
-    app.quit()
-  }
+    // On OS X it is common for applications and their menu bar
+    // to stay active until the user quits explicitly with Cmd + Q
+    if (process.platform !== 'darwin') {
+        app.quit()
+    }
 })
 
 app.on('activate', function () {
-  // On OS X it's common to re-create a window in the app when the
-  // dock icon is clicked and there are no other windows open.
-  if (mainWindow === null) {
-    createWindow()
-  }
+    // On OS X it's common to re-create a window in the app when the
+    // dock icon is clicked and there are no other windows open.
+    if (mainWindow === null) {
+        createWindow()
+    }
 })
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.
 app.on('ready', () => {
-  const template = [
-    {
-      label: 'Project',
-      submenu: [
+    const template = [
         {
-          label: 'Open Existing Project',
-        },
-        {
-          label: 'Create New Project',
-          click: function(){
-            mainWindow.webContents.send('create-project');
-          }
-        }
-      ]
-    },
-    {
-      label: 'demo',
-      submenu: [
-        {
-          label: 'submenu1',
-          click: function(){
-            console.log('clicked submenu1')
-          }
-        },
-        {
-          type: 'separator'
-        },
-        {
-          label: 'submenu2'
-        }
-      ]
-    },
-    {
-      label: 'Edit',
-      submenu: [
-        { role: 'undo' },
-        { role: 'redo' },
-        { role: 'cut' },
-        { role: 'copy' },
-        { role: 'paste' },
-        { role: 'pasteandmatchstyle' },
-        { role: 'delete' },
-        { role: 'selectall' },
-      ]
-    },
-    {
-      label: 'Help',
-    }
-  ]
-  const menu = Menu.buildFromTemplate(template)
-  Menu.setApplicationMenu(menu)
+            label: 'File',
+            submenu: [{
+                    label: 'Open Existing Project',
+                    click(){
+                        dialog.showOpenDialog(mainWindow, {
+                            title: 'Open unhack Project',
+                            properties: ['openDirectory'],
+                            buttonLabel: 'Open'
+                        }, function (files) {
+                            if (files) {
+                                const configPath = path.join(files.toString(), 'unhack.config');
 
-  console.log('current Path' + store.get('currentProjectPath'));
+                                console.log(configPath)
+
+                                if (fs.existsSync(configPath)) {
+                                    store.set('currentProjectPath', files)
+
+                                    const config = fs.readFileSync(configPath)
+                                    const c = JSON.parse(config)
+
+                                    store.set('projectName', c.name)
+                                    console.log(c.name)
+                                    console.log('new project path is ' + store.get('currentProjectPath'))
+
+                                    mainWindow.setTitle(`unHack | ${store.get('projectName')} ${store.get('currentProjectPath')}`)
+
+                                } else {
+                                    dialog.showErrorBox('Not an Unhack Project', 'The Directory you selected does not seem to be an Unhack Project.')
+                                }
+                                console.log(files)
+                            } 
+                        })
+                    }, 
+                    accelerator: 'CmdOrCtrl+O'
+                },
+                {
+                    label: 'Create New Project',
+                    click: function () {
+                        mainWindow.webContents.send('create-project');
+                    },
+                    accelerator: 'CmdOrCtrl+N'
+                }
+            ]
+        },
+        {
+            label: 'Actions',
+            submenu: [
+                { label: ''}
+            ]
+        },
+        {
+            label: 'View',
+            submenu: [
+                { role: 'resetzoom' }, 
+                { role: 'zoomin' }, 
+                { role: 'zoomout' }, 
+                { type: 'separator' }, 
+                { role: 'togglefullscreen' }
+            ]
+        },
+        {
+            role: 'Help',
+            submenu: [
+                { label: 'Documentation' },
+                { label: 'About' },
+                { type: 'separator' },
+                { label: 'unHack Website'},
+            ]
+        },
+        {
+            label: 'Dev',
+            submenu: [
+                {
+                    label: 'Reset App',
+                    click(){
+                        // Clear All Setings
+                        store.clear()
+                        dialog.showMessageBox(mainWindow, {
+                            type: 'info',
+                            title: 'Settings Cleared',
+                            message: 'All User Settings have been reset to Default'
+                        })
+                    }
+                },
+                {
+                    label: `Turn Advanced View ${store.get('advancedView') ? 'Off' : 'On'}`,
+                    type: 'checkbox',
+                    click(){
+                        if(store.get('advancedView')){
+                            store.set('advancedView', false)
+                        } else{
+                            store.set('advancedView', true)
+                        }
+                        const menu = Menu.buildFromTemplate(template)
+                        Menu.setApplicationMenu(menu)
+                    }
+                },
+                { role: 'toggledevtools' },
+            ]
+        }
+    ]
+    const menu = Menu.buildFromTemplate(template)
+    Menu.setApplicationMenu(menu)
+
+    console.log('current Path' + store.get('currentProjectPath'));
 
     mainWindow.on('resize', () => {
-      // The event doesn't pass us the window size, so we call the `getBounds` method which returns an object with
-      // the height, width, and x and y coordinates.
-      let { width, height } = mainWindow.getBounds();
-      // Now that we have them, save them using the `set` method.
+        // The event doesn't pass us the window size, so we call the `getBounds` method which returns an object with
+        // the height, width, and x and y coordinates.
+        let {
+            width,
+            height
+        } = mainWindow.getBounds();
+        // Now that we have them, save them using the `set` method.
 
-      store.set('windowBounds.height', height)
-      store.set('windowBounds.width', width)
+        store.set('windowBounds.height', height)
+        store.set('windowBounds.width', width)
     });
 
-
-  ipcMain.on('open-directory-dialog', function (event) {
-    dialog.showOpenDialog(mainWindow,{
-        title: 'Choose Parent Directory of your Project',
-        properties: ['openDirectory'],
-        buttonLabel: 'Choose'
-    }, function (files) {
-        if (files) event.sender.send('selectedItem', files)
+    mainWindow.on('maximize', () => {
+        store.set('windowMaximized', true);
     })
-  })
+    
+    mainWindow.on('unmaximize', () => {
+        store.set('windowMaximized', false);
+    })
+
+
+    ipcMain.on('create-new-done', function(events){
+        dialog.showMessageBox(mainWindow, {
+            type: 'info',
+            title: 'New Project Created',
+            message: 'Your new Project was successfully created and has been opened'
+        })
+        mainWindow.setTitle(`unHack | ${store.get('projectName')} ${store.get('currentProjectPath')}`)
+    })
+    ipcMain.on('open-directory-dialog', function (event) {
+        dialog.showOpenDialog(mainWindow, {
+            title: 'Choose Parent Directory of your Project',
+            properties: ['openDirectory'],
+            buttonLabel: 'Choose'
+        }, function (files) {
+            if (files) event.sender.send('selectedItem', files)
+        })
+    })
 
 });

@@ -7,7 +7,8 @@ const store = new Store({
             height: 700
         },
         uiSkin: 'light',
-        advancedView: true
+        advancedView: true,
+        projectName: 'Create Site'
     }
 });
 

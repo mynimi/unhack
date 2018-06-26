@@ -17,7 +17,6 @@ const functions = require("./functions.js");
 const createProjectPath = functions.htmlPath('createProject')
 
 ipcRenderer.on('create-project', function(){
-    alert('Create New Project Loading!');
     fs.readFile(createProjectPath, (err, data) => {
         popupContent.innerHTML = data
         functions.inputStyle()
@@ -32,7 +31,6 @@ if(!store.get('currentProjectPath')){
     })
 } else {
     const dashboard = functions.htmlPath('dashboard')
-
     fs.readFile(dashboard, (err, data) => {
         pageContent.innerHTML = data
     })
@@ -113,6 +111,7 @@ pageContent.addEventListener('click', function (e) {
             const projectPath = path.join(projectParentPath, siteName)
 
             store.set('currentProjectPath', projectPath);
+            store.set('projectName', siteName);
 
             // Create a Config File
             const unhackConfig = {
@@ -128,11 +127,12 @@ pageContent.addEventListener('click', function (e) {
 
             fs.readFile(siteCreated, (err, data) => {
                 pageContent.innerHTML = data
-                document.querySelector('.alert-info').innerHTML = 'Site successfully created'
                 if (err) {
                     console.log(err);
                 }
             })
+
+            ipcRenderer.send('create-new-done')
         })
     }
 })
