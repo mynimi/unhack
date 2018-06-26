@@ -7,6 +7,16 @@ module.exports.htmlPath = function htmlPath(filename) {
     return path.join(__dirname, '..', 'html', filename+'.html');
 }
 
+module.exports.openPopup = function openPopup() {
+    const body = document.querySelector('body')
+    body.classList.add('popup-open')
+    const behindPopup = document.createElement("div")
+    behindPopup.id = 'behind-popup'
+    body.appendChild(behindPopup)
+    const popup = document.querySelector('.popup')
+    popup.style.display = 'block'
+}
+
 // Styling Input functionality, has to be exported due to being reloaded on dynamically created elements
 module.exports.inputStyle = function inputStyle(){
     let inputs = document.querySelectorAll('.wrap input, .wrap textarea')

@@ -1,6 +1,11 @@
 // Modules to control application life and create native browser window
-const {app, BrowserWindow, ipcMain, dialog} = require('electron')
+const {app, BrowserWindow, ipcMain, dialog, Menu} = require('electron')
+const fs = require('fs');
+const path = require('path');
+
 const prefs = require('./assets/js/prefs')
+const functions = require("./assets/js/functions.js");
+
 let store = prefs.store
 
 // Keep a global reference of the window object, if you don't, the window will
@@ -8,11 +13,10 @@ let store = prefs.store
 let mainWindow
 
 function createWindow () {
-
   // Create the browser window.
   mainWindow = new BrowserWindow({
-    width: store.get('windowBounds.width') ,
-    height: store.get('windowbounds.height'),
+    width: store.get('windowBounds.width'),
+    height: store.get('windowBounds.height'),
     center: true
   })
 
@@ -57,6 +61,58 @@ app.on('activate', function () {
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.
 app.on('ready', () => {
+  const template = [
+    {
+      label: 'Project',
+      submenu: [
+        {
+          label: 'Open Existing Project',
+        },
+        {
+          label: 'Create New Project',
+          click: function(){
+            mainWindow.webContents.send('create-project');
+          }
+        }
+      ]
+    },
+    {
+      label: 'demo',
+      submenu: [
+        {
+          label: 'submenu1',
+          click: function(){
+            console.log('clicked submenu1')
+          }
+        },
+        {
+          type: 'separator'
+        },
+        {
+          label: 'submenu2'
+        }
+      ]
+    },
+    {
+      label: 'Edit',
+      submenu: [
+        { role: 'undo' },
+        { role: 'redo' },
+        { role: 'cut' },
+        { role: 'copy' },
+        { role: 'paste' },
+        { role: 'pasteandmatchstyle' },
+        { role: 'delete' },
+        { role: 'selectall' },
+      ]
+    },
+    {
+      label: 'Help',
+    }
+  ]
+  const menu = Menu.buildFromTemplate(template)
+  Menu.setApplicationMenu(menu)
+
   console.log('current Path' + store.get('currentProjectPath'));
 
     mainWindow.on('resize', () => {
@@ -65,8 +121,8 @@ app.on('ready', () => {
       let { width, height } = mainWindow.getBounds();
       // Now that we have them, save them using the `set` method.
 
-      store.set('windowBounds.width', width)
       store.set('windowBounds.height', height)
+      store.set('windowBounds.width', width)
     });
 
 

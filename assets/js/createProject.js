@@ -11,12 +11,21 @@ const {
 } = require('electron');
 
 const pageContent = document.querySelector('.container')
-
+const popupContent = document.querySelector('.popup .content-loader') 
 const functions = require("./functions.js");
 
-if(!store.get('currentProjectPath')){
-    const createProjectPath = functions.htmlPath('createProject')
+const createProjectPath = functions.htmlPath('createProject')
 
+ipcRenderer.on('create-project', function(){
+    alert('Create New Project Loading!');
+    fs.readFile(createProjectPath, (err, data) => {
+        popupContent.innerHTML = data
+        functions.inputStyle()
+    })
+    functions.openPopup()
+});
+
+if(!store.get('currentProjectPath')){
     fs.readFile(createProjectPath, (err, data) => {
         pageContent.innerHTML = data
         functions.inputStyle()
@@ -104,6 +113,16 @@ pageContent.addEventListener('click', function (e) {
             const projectPath = path.join(projectParentPath, siteName)
 
             store.set('currentProjectPath', projectPath);
+
+            // Create a Config File
+            const unhackConfig = {
+                name: siteName,
+            }
+            const fileName = 'unhack.config';
+            const configPath = path.join(projectPath, fileName)
+            fs.writeFile(configPath, JSON.stringify(unhackConfig, null, 2), (err) => {
+                if (err) throw err;
+            });
 
             const siteCreated = functions.htmlPath('dashboard')
 
