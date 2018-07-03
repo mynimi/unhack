@@ -54,6 +54,7 @@ if(!store.get('currentProjectPath')){
 
                 if (fs.existsSync(configPath)) {
                     store.set('currentProjectPath', projectToOpen)
+                    store.set('configFilePath', configPath)
 
                     const config = fs.readFileSync(configPath)
                     const c = JSON.parse(config)
@@ -184,6 +185,9 @@ popupContent.addEventListener('click', function (e) {
             }
             const fileName = 'unhack.config';
             const configPath = path.join(projectPath, fileName)
+
+            store.set('configFilePath', configPath)
+
             fs.writeFile(configPath, JSON.stringify(unhackConfig, null, 2), (err) => {
                 if (err) throw err;
             });

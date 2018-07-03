@@ -93,6 +93,8 @@ app.on('ready', () => {
                                 if (fs.existsSync(configPath)) {
                                     store.set('currentProjectPath', files)
 
+                                    store.set('configFilePath', configPath)
+                                    
                                     const config = fs.readFileSync(configPath)
                                     const c = JSON.parse(config)
 
@@ -125,7 +127,14 @@ app.on('ready', () => {
         {
             label: 'Actions',
             submenu: [
-                { label: ''}
+                {
+                    label: 'Edit Publication Settings',
+                    click: function () {
+                        mainWindow.webContents.send('open-publication-settings');
+                    }
+                },
+                { label: 'Upload Site' },
+                { label: 'Preview Site' }
             ]
         },
         {

@@ -1,10 +1,34 @@
 "use strict"
 const fs = require('fs')
 const path = require('path')
+const prefs = require('./prefs')
+let store = prefs.store
+
 
 // build HTML Path for given file
 module.exports.htmlPath = function htmlPath(filename) {
     return path.join(__dirname, '..', 'html', filename+'.html');
+}
+
+module.exports.addToConfig = function addToConfig(addConfig){
+    const configPath = store.get('configFilePath')
+    if (configPath) {
+        console.log(configPath)
+        fs.readFile(configPath.toString(), (err, data) => {
+            if (err) throw err
+            let oldConfig = JSON.parse(data)
+            let newConfig = { ...oldConfig, ...addConfig}
+            console.log(oldConfig)
+            console.log(addConfig)
+            console.log(newConfig)
+
+            fs.writeFile(configPath.toString(), JSON.stringify(newConfig, null, 2), (err) => {
+                if (err) throw err
+            })
+        })
+    } else {
+        console.log('no config File Path')
+    }
 }
 
 // open Popup function
