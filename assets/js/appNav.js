@@ -32,11 +32,10 @@ sideNavigation.addEventListener('click', function(e){
     if(htmlFile != ""){
         if (others)
             others.classList.remove("active")
-        el.classList.add("active")
         let contentPath = functions.htmlPath(htmlFile)
         fs.readFile(contentPath, (err, data) => {
             pageContent.innerHTML = data
+            el.classList.add("active")
         })
     }
 })
-
