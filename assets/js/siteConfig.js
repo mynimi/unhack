@@ -17,6 +17,11 @@ const configPath = store.get('currentProjectPath')
 const siteConfigPath = path.join(configPath, '_config.yml')
 
 document.querySelector('.nav-config').addEventListener('click', function(e){
+    let others = document.querySelector('.sidenav span.active')
+    let el = e.target
+    others.classList.remove("active")
+    el.classList.add("active")
+
     generateSiteConfig()
 })
 

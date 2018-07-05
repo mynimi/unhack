@@ -133,8 +133,7 @@ pre{
 
 }
 
-.btn,
-button{
+.btn{
     @extend a;
     background: $link-color;
     color: black-or-white($link-color);

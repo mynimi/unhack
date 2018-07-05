@@ -23,6 +23,7 @@
     "shelljs": "^0.8.2"
   },
   "dependencies": {
-    "electron-store": "^2.0.0"
+    "electron-store": "^2.0.0",
+    "tui-editor": "^1.2.3"
   }
 }

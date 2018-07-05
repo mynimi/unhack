@@ -48,3 +48,33 @@ body.navigation{
         }
     }
 }
+
+
+// TUI Editor
+.CodeMirror{
+    font-family: monospace !important;
+}
+
+.tui-editor-defaultUI .te-switch-button{
+    margin: 0;
+}
+
+.te-ww-container .tui-editor-contents:first-child{
+    padding: 10px;
+}
+
+.te-editor,
+.tui-editor-contents {
+    font: {
+        family: $main-font;
+        size: $root-font-size;
+        weight: $main-font-weight;
+    }
+    line-height: $basic-line-height;
+}
+
+.tui-editor-defaultUI-toolbar button:hover,
+.tui-editor-defaultUI-toolbar button:active,
+.tui-editor-defaultUI-toolbar button.active{
+    color: $main-color;
+}

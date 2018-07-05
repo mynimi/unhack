@@ -31,6 +31,52 @@ module.exports.addToConfig = function addToConfig(addConfig){
     }
 }
 
+module.exports.deleteFile = function deleteFile(filePath) {
+    fs.unlink(filePath, (err) => {
+        if (err) throw err;
+        console.log(`${filePath} was deleted`)
+    })
+}
+
+module.exports.slugify = function slugify(string) {
+    const a = 'àáäâãåèéëêìíïîòóöôùúüûñçßÿœæŕśńṕẃǵǹḿǘẍźḧ·/_,:;'
+    const b = 'aaaaaaeeeeiiiioooouuuuncsyoarsnpwgnmuxzh------'
+    const p = new RegExp(a.split('').join('|'), 'g')
+
+    return string.toString().toLowerCase()
+        .replace(/\s+/g, '-') // Replace spaces with -
+        .replace(p, c => b.charAt(a.indexOf(c))) // Replace special characters
+        .replace(/&/g, '-and-') // Replace & with 'and'
+        .replace(/[^\w\-]+/g, '') // Remove all non-word characters
+        .replace(/\-\-+/g, '-') // Replace multiple - with single -
+        .replace(/^-+/, '') // Trim - from start of text
+        .replace(/-+$/, '') // Trim - from end of text
+}
+
+module.exports.copyFile = function copyFile(source, target, cb) {
+    var cbCalled = false;
+
+    var rd = fs.createReadStream(source);
+    rd.on("error", function (err) {
+        done(err);
+    });
+    var wr = fs.createWriteStream(target);
+    wr.on("error", function (err) {
+        done(err);
+    });
+    wr.on("close", function (ex) {
+        done();
+    });
+    rd.pipe(wr);
+
+    function done(err) {
+        if (!cbCalled) {
+            cb(err);
+            cbCalled = true;
+        }
+    }
+}
+
 // open Popup function
 module.exports.openPopup = function openPopup() {
     const body = document.querySelector('body')
