@@ -48,7 +48,7 @@ if(!store.get('currentProjectPath')){
             dropArea.classList.remove('dragging')
 
             if (projectToOpen) {
-                const configPath = path.join(projectToOpen.toString(), 'unhack.config');
+                const configPath = path.join(projectToOpen.toString(), 'unhack.json');
 
                 console.log(configPath)
 
@@ -183,7 +183,7 @@ popupContent.addEventListener('click', function (e) {
             const unhackConfig = {
                 name: siteName,
             }
-            const fileName = 'unhack.config';
+            const fileName = 'unhack.json';
             const configPath = path.join(projectPath, fileName)
 
             store.set('configFilePath', configPath)

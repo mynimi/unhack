@@ -21,25 +21,23 @@ let config = {}
 let fS = {}
 
 let pageContent = document.querySelector('.container')
-const postsPath = path.join(store.get('currentProjectPath'), '_posts')
-const draftsPath = path.join(store.get('currentProjectPath'), '_drafts')
+const pagesPath = path.join(store.get('currentProjectPath'))
 
-document.querySelector('.nav-posts').addEventListener('click', function (e) {
+document.querySelector('.nav-pages').addEventListener('click', function (e) {
     let others = document.querySelector('.sidenav span.active')
     let el = e.target
     others.classList.remove("active")
     el.classList.add("active")
-    generatePostsList()
+    generatePagesList()
 })
 
-function generatePostsList(){
-    let postPathList = functions.getPathsInDir(postsPath.toString())
-    let draftPathList = functions.getPathsInDir(draftsPath.toString())
-    let allPosts = [...draftPathList, ...postPathList]
+function generatePagesList(){
+    let allPages = functions.getPages(pagesPath)
+    console.log(allPages)
 
     let output = `<div class="middle">
-                    <h1>Posts</h1>
-                    <button class="btn" id="create-new-post">Create New Post</button>
+                    <h1>Pages</h1>
+                    <button class="btn" id="create-new-page">Create New Page</button>
                     <div class="cardholder">
                         <div class="card">
                             <div class="card-content">
@@ -48,25 +46,21 @@ function generatePostsList(){
                                         <tr>
                                             <th>Filename</th>
                                             <th>Title</th>
-                                            <th>Date</th>
-                                            <th>Categories</th>
                                             <th>Status</th>
                                             <th>Actions</th>
                                         </tr>
                                     </thead>
                                     <tbody>`
-    // iterate through all posts
-    allPosts.forEach(function(p){
+    // iterate through all pages
+    allPages.forEach(function(p){
         let content = fs.readFileSync(p.toString(), 'utf8')
         let bla = content.split('---')
         let yml = bla[1]
         let data = yaml.load(yml)
         console.log(data)
-        let d = new Date(data.date)
-        const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
         let status;
-        if(p.includes('_drafts')){
+        if (data.published == false) {
             status = 'Draft'
         } else{
             status = 'Published'
@@ -74,13 +68,11 @@ function generatePostsList(){
         output +=   `<tr>
                         <td>${path.basename(p.toString())}</td>
                         <td>${data.title}</td>
-                        <td>${months[d.getMonth()]} ${d.getDay()}, ${d.getFullYear()}</td>
-                        <td>${data.categories}</td>
                         <td>${status}</td>
                         <td>
-                            <button class="btn edit-post" data-postPath="${p}">Edit</button>
-                            <button class="btn duplicate-post" data-postPath="${p}">Duplicate</button>
-                            <button class="btn delete-post" data-postPath="${p}">Delete</button>
+                            <button class="btn edit-page" data-pagePath="${p}">Edit</button>
+                            <button class="btn duplicate-page" data-pagePath="${p}">Duplicate</button>
+                            <button class="btn delete-page" data-pagePath="${p}">Delete</button>
                         </td>
                     </tr>`
     })
@@ -92,41 +84,41 @@ function generatePostsList(){
 }
 
 pageContent.addEventListener('click', function (e) {
-    if (e.target && e.target.classList.contains('duplicate-post')) {
+    if (e.target && e.target.classList.contains('duplicate-page')) {
         let el = e.target
-        let oP = el.dataset.postpath
+        let oP = el.dataset.pagepath
         let insert = "_copy";
         let position = oP.lastIndexOf('.');
         let nP = oP.substr(0, position) + insert + oP.substr(position);
-        functions.copyFile(oP, nP, function(){generatePostsList()})
+        functions.copyFile(oP, nP, function(){generatePagesList()})
         alert('copied')
     }
 
-    if (e.target && e.target.classList.contains('delete-post')) {
+    if (e.target && e.target.classList.contains('delete-page')) {
         let el = e.target
-        let oP = el.dataset.postpath
+        let oP = el.dataset.pagepath
         if(confirm(`Are you sure you want to delete ${oP}?`)){
             fs.unlink(oP, (err) => {
                 if (err) throw err;
-                generatePostsList()
+                generatePagesList()
                 alert(`${oP} was deleted`)
             });
         }
     }
 
-    if (e.target && e.target.classList.contains('edit-post')) {
+    if (e.target && e.target.classList.contains('edit-page')) {
         let el = e.target
-        let oP = el.dataset.postpath
-        postEditor(oP)
+        let oP = el.dataset.pagepath
+        pageEditor(oP)
     }
 
-    if (e.target && e.target.id == 'create-new-post') {
+    if (e.target && e.target.id == 'create-new-page') {
         let el = e.target
-        postCreator()
+        pageCreator()
     }
 })
 
-function postEditor(filePath){
+function pageEditor(filePath){
     let content = fs.readFileSync(filePath.toString(), 'utf8')
     let bla = content.split('---')
     let yml = bla[1]
@@ -139,23 +131,23 @@ function postEditor(filePath){
         let config = JSON.parse(data)
         fS = config.frontMatterSettings
 
-        html += `<div class="middle postContents">
-                    <h1>Edit Post</h1>
+        html += `<div class="middle pageContents">
+                    <h1>Edit Page</h1>
                     <div class="cards-alt">
                         <div class="main">
                             <div class="card">
                                 <div class="card-content">`
         if (!fS) {
             html += `<div class="wrap">
-                        <label for="title">Title</label>
-                        <input type="text" name="title" id="title">
-                    </div>`
+                <label for="title">Title</label>
+                <input type="text" name="title" id="title">
+            </div>`
         } else {
-            for (let sets in fS){
-            if (fS.hasOwnProperty(sets)) {
+            for (let sets in fS) {
+                if (fS.hasOwnProperty(sets)) {
                     if (fS[sets].area == 'main') {
                         console.log(`${sets} belongs in main area`)
-                        html += functions.generateMeta('post', fS, sets, p[sets])
+                        html += functions.generateMeta('page', fS, sets, p[sets])
                     }
                 }
             }
@@ -188,7 +180,7 @@ function postEditor(filePath){
             for (let sets in fS) {
                 if (fS.hasOwnProperty(sets)) {
                     if (fS[sets].area != 'main') {
-                        html += functions.generateMeta('post', fS, sets, p[sets])
+                        html += functions.generateMeta('page', fS, sets, p[sets])
                     }
                 }
             }
@@ -200,10 +192,10 @@ function postEditor(filePath){
                 </div>
             </div>
             <button class="btn">Preview</button>
-            <button class="btn" id="save-post-edit">Save Post</button>
-            <button class="btn" id="save-post-draft-edit">Save Draft</button>
-            <button class="btn" id="delete-post-edit">Delete Post</button>
-            <button class="btn" id="cancel-post-edit">Cancel</button>
+            <button class="btn" id="save-page-edit">Save Page</button>
+            <button class="btn" id="save-page-draft-edit">Save Draft</button>
+            <button class="btn" id="delete-page-edit">Delete Page</button>
+            <button class="btn" id="cancel-page-edit">Cancel</button>
         </div>`
         pageContent.innerHTML = html
         editor = new Editor({
@@ -217,28 +209,28 @@ function postEditor(filePath){
     })
 
     pageContent.addEventListener('click', function (e) {
-        if (e.target && e.target.id == 'cancel-post-edit') {
+        if (e.target && e.target.id == 'cancel-page-edit') {
             let el = e.target
             if(confirm('Are you sure you want to cancel? All changes will be lost?')){
-                generatePostsList();
+                generatePagesList();
             }
         }
-        if (e.target && e.target.id == 'save-post-draft-edit') {
+        if (e.target && e.target.id == 'save-page-draft-edit') {
             let el = e.target
-            savePostDraft(filePath, editor)
+            savePageDraft(filePath, editor)
         }
-        if (e.target && e.target.id == 'save-post-edit') {
+        if (e.target && e.target.id == 'save-page-edit') {
             let el = e.target
-            savePost(filePath, editor)
+            savePage(filePath, editor)
         }
 
-        if (e.target && e.target.id == 'delete-post-edit') {
+        if (e.target && e.target.id == 'delete-page-edit') {
             let el = e.target
             alert('delete')
             if (confirm(`Are you sure you want to delete ${filePath}?`)) {
                 fs.unlink(filePath, (err) => {
                     if (err) throw err;
-                    generatePostsList()
+                    generatePagesList()
                     alert(`${filePath} was deleted`)
                 });
             }
@@ -247,21 +239,21 @@ function postEditor(filePath){
     })
 }
 
-function postCreator(){
+function pageCreator() {
     let html = ''
     fS = {}
     fs.readFile(configPath.toString(), (err, data) => {
         if (err) throw err
         let config = JSON.parse(data)
         fS = config.frontMatterSettings
-        
-        html += `<div class="middle postContents">
-                    <h1>Create Post</h1>
+
+        html += `<div class="middle pageContents">
+                    <h1>Create Page</h1>
                     <div class="cards-alt">
                         <div class="main">
                             <div class="card">
                                 <div class="card-content">`
-        if(!fS){
+        if (!fS) {
             html += `<div class="wrap">
                         <label for="title">Title</label>
                         <input type="text" name="title" id="title">
@@ -271,7 +263,7 @@ function postCreator(){
                 if (fS.hasOwnProperty(sets)) {
                     if (fS[sets].area == 'main') {
                         console.log(`${sets} belongs in main area`)
-                        html += functions.generateMeta('post', fS, sets)
+                        html += functions.generateMeta('page', fS, sets)
                     }
                 }
             }
@@ -290,15 +282,11 @@ function postCreator(){
                         <div class="card-content">`
         if (!fS) {
             html += `<p><i class="fas fa-exclamation-circle"></i> It seems like you don't have any Front Matter Configuration set up. You're Data Editing Experience can be better. <a href="#">learn more on how to configure.</a></p>`
-            html += `<div class="wrap">
-                        <label for="date">Date</label>
-                        <input type="date" name="date" id="date">
-                    </div>`
         } else {
             for (let sets in fS) {
                 if (fS.hasOwnProperty(sets)) {
                     if (fS[sets].area != 'main') {
-                        html += functions.generateMeta('post', fS, sets)
+                        html += functions.generateMeta('page', fS, sets)
                     }
                 }
             }
@@ -310,9 +298,9 @@ function postCreator(){
                 </div>
             </div>
             <button class="btn">Preview</button>
-            <button class="btn" id="save-post-edit">Save Post</button>
-            <button class="btn" id="save-post-draft-edit">Save Draft</button>
-            <button class="btn" id="cancel-post-edit">Cancel</button>
+            <button class="btn" id="save-page-edit">Save Page</button>
+            <button class="btn" id="save-page-draft-edit">Save Draft</button>
+            <button class="btn" id="cancel-page-edit">Cancel</button>
         </div>`
         pageContent.innerHTML = html
         editor = new Editor({
@@ -325,38 +313,36 @@ function postCreator(){
     })
 
     pageContent.addEventListener('click', function (e) {
-        if (e.target && e.target.id == 'cancel-post-edit') {
+        if (e.target && e.target.id == 'cancel-page-edit') {
             let el = e.target
             if (confirm('Are you sure you want to cancel? All changes will be lost?')) {
-                generatePostsList();
+                generatePagesList();
             }
         }
-        if (e.target && e.target.id == 'save-post-draft-edit') {
+        if (e.target && e.target.id == 'save-page-draft-edit') {
             let el = e.target
-            savePostDraft(false, editor)
+            savePageDraft(false, editor)
         }
-        if (e.target && e.target.id == 'save-post-edit') {
+        if (e.target && e.target.id == 'save-page-edit') {
             let el = e.target
-            savePost(false, editor)
+            savePage(false, editor)
         }
     })
 }
 
 function createFileContent(draft, editor){
-    let newPostPath
     let config = {}
     let title = document.querySelector('#title').value
-    let date = document.querySelector('#date').value
-    let d = date.substr(0, 10)
+    let newpagePath = path.join(pagesPath, `${functions.slugify(title)}.md`)
 
     if(draft){
-        newPostPath = path.join(draftsPath, `${functions.slugify(title)}.md`)
+        config.published = false
     } else {
-        newPostPath = path.join(postsPath, `${d}-${functions.slugify(title)}.md`)
+        config.published = true
     }
 
     if(!fS) {
-        datas = document.querySelectorAll('.postContents .wrap > input')
+        datas = document.querySelectorAll('.pageContents .wrap > input')
         datas.forEach(function (item) {
             let key = item.id
             let val = item.value
@@ -365,7 +351,7 @@ function createFileContent(draft, editor){
     } else {
         for (let sets in fS) {
             if (fS.hasOwnProperty(sets)) {
-                functions.retrieveMeta('post', fS, sets, config)
+                functions.retrieveMeta('page', fS, sets, config)
             }
         }
     }
@@ -377,21 +363,21 @@ function createFileContent(draft, editor){
 
     console.log(output)
 
-    fs.writeFile(newPostPath, output, 'utf8', function (err) {
+    fs.writeFile(newpagePath, output, 'utf8', function (err) {
         if (err) return console.log(err);
     });
 }
 
-function savePost(filePath, editor) {
+function savePage(filePath, editor) {
     // delete old file
     if(filePath){
         functions.deleteFile(filePath)
     }    
     createFileContent(false, editor)
-    alert('Post Saved')
+    alert('Page Saved')
 }
 
-function savePostDraft(filePath, editor) {
+function savePageDraft(filePath, editor) {
     // delete old file
     if (filePath) {
         functions.deleteFile(filePath)

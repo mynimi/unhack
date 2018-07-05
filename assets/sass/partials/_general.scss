@@ -154,6 +154,17 @@ pre{
     }
 }
 
+.small{
+    font-size: 70%;
+
+    &.note{
+        opacity: .7;
+    }
+
+    &.help{
+        color: $accent-alt
+    }
+}
 p + {
     h1,
     h2,

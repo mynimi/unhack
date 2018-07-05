@@ -56,6 +56,12 @@ p + p { margin-top: 5px; }
 
 .btn:hover { background: #6B7F7F; color: white; }
 
+.small { font-size: 70%; }
+
+.small.note { opacity: .7; }
+
+.small.help { color: #6B7F7F; }
+
 p + h1, p + h2, p + h3, p + h4 { margin-top: 20px; }
 
 header { display: -webkit-box; display: -ms-flexbox; display: flex; -webkit-box-orient: horizontal; -webkit-box-direction: normal; -ms-flex-direction: row; flex-direction: row; -ms-flex-wrap: wrap; flex-wrap: wrap; -webkit-box-pack: justify; -ms-flex-pack: justify; justify-content: space-between; -webkit-box-align: center; -ms-flex-align: center; align-items: center; background: #aaaaaa; color: black; width: 100%; padding: 5px 10px; -webkit-box-sizing: border-box; box-sizing: border-box; position: fixed; left: 0; top: 0; z-index: 97; }

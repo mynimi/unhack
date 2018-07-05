@@ -86,7 +86,7 @@ app.on('ready', () => {
                             buttonLabel: 'Open'
                         }, function (files) {
                             if (files) {
-                                const configPath = path.join(files.toString(), 'unhack.config');
+                                const configPath = path.join(files.toString(), 'unhack.json');
 
                                 console.log(configPath)
 
@@ -140,6 +140,12 @@ app.on('ready', () => {
         {
             label: 'View',
             submenu: [
+                { label: 'Toggle Dark Mode',
+                    click: function(){
+                        mainWindow.webContents.send('toggle-dark-mode')
+                    }
+                },
+                { type: 'separator' },
                 { role: 'resetzoom' }, 
                 { role: 'zoomin' }, 
                 { role: 'zoomout' }, 

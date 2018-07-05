@@ -9,6 +9,109 @@ let store = prefs.store
 module.exports.htmlPath = function htmlPath(filename) {
     return path.join(__dirname, '..', 'html', filename+'.html');
 }
+module.exports.retrieveMeta = function retrieveMeta(template,parent, child, config){
+    let prop = parent[child]
+
+    if (prop.display == 'global' || prop.display == template) {
+        if (!prop.type) {
+            prop.type = 'text'
+        }
+
+        if (prop.type == 'text' || prop.type == 'date' || prop.type == 'number') {
+            config[child] = document.querySelector(`input[name="${child}"]`).value        
+        }
+        if (prop.type == "radio" || prop.type == 'checkbox') {
+            let options = prop.options
+            config[child] = document.querySelector(`input[name="${options}"]:checked`).value
+        }
+        if (prop.type == 'textarea') {
+            config[child] = document.querySelector(`textarea[name="${child}"]`).value
+        }
+        if (prop.type == 'image') {
+            // return image src
+        }
+    }        
+    return config;
+}
+
+module.exports.generateMeta = function generateMeta(template,parent, child, initialVal){
+    let prop = parent[child]
+    let output = ''
+    let help
+
+    if(prop.help){
+        help = `<p class="small help"><i class="fas fa-info-circle"></i> ${prop.help}</p>`
+    } else {
+        help = ''
+    }
+    if(prop.display == 'global' || prop.display == template){
+        if (!initialVal) {
+            if (prop.defaults){
+                initialVal = prop.defaults[template]
+            } else if(prop.type == 'date'){
+                initialVal = new Date().toDateInputValue()
+            } else{
+                initialVal = ''
+            }        
+        }
+
+        if (!prop.type) {
+            prop.type = 'text'
+        }
+
+        if (prop.type == 'text' || prop.type == 'date' || prop.type == 'number') {
+            output =
+                `<div class="wrap">
+                        <label for="${child}">${child.toProperCase()}</label>
+                        <input type="${prop.type}" name="${child}" id="${child}" value="${initialVal}" ${(prop.maxlength) ? `maxlength="${prop.maxlength}"` : ''}>
+                        ${help}
+                    </div>`
+        }
+        if (prop.type == "radio" || prop.type == 'checkbox') {
+            output =
+                `<div class="${prop.type} input">
+                    <div class="label">${child.toProperCase()}</div>`
+            let options = prop.options
+            for (let o in options){
+                if(options.hasOwnProperty(o)){
+                    output += `<input id="${options[o]}" name="${options}" value="${options[o]}" type="${prop.type}" ${(options[o] == initialVal) ? 'checked' : ''} ${(prop.maxlength) ? `maxlength="${prop.maxlength}"` : ''}>`
+                    output += `<label for="${options[o]}">${options[o].toString().toProperCase()}</label>`
+                    output += '<br>'
+                }
+            }
+            if(!options.indexOf(initialVal) > -1){
+                output += `<p class="small note">The current Value does not seem to be an available option, choose one of the available options, or fix settings</p>`
+            }
+            output += `${help}</div>`
+        }
+        if (prop.type == 'textarea') {
+            output =
+                `<div class="wrap">
+                <label for="${child}">${child.toProperCase()}</label>
+                <textarea name="${child}" id="${child}" ${(prop.maxlength) ? `maxlength="${prop.maxlength}"` : ''}>${initialVal}</textarea>
+                ${help}
+            </div>`
+        }
+        if (prop.type == 'image') {
+            output = `image ${help}`
+        }
+
+    }
+        return output
+
+}
+
+String.prototype.toProperCase = function () {
+    return this.replace('_', ' ').replace('-', ' ').replace(/\w\S*/g, function (txt) {
+        return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+    });
+};
+
+Date.prototype.toDateInputValue = (function () {
+    var local = new Date(this);
+    local.setMinutes(this.getMinutes() - this.getTimezoneOffset());
+    return local.toJSON().slice(0, 10);
+});
 
 module.exports.addToConfig = function addToConfig(addConfig){
     const configPath = store.get('configFilePath')
@@ -96,6 +199,24 @@ module.exports.closePopup = function closePopup() {
     body.classList.remove('popup-open')
     backdrop.remove()
 }
+
+module.exports.getPages = function getPages(dir, filelist = []) {
+    fs.readdirSync(dir).forEach(file => {
+        console.log(path.extname(file))
+        if(path.extname(file) == '.html' || path.extname(file) == '.markdown' || path.extname(file) == '.md'){
+            console.log(file)
+            const dirFile = path.join(dir, file);
+            try {
+                filelist = getPages(dirFile, filelist);
+            } catch (err) {
+                if (err.code === 'ENOTDIR' || err.code === 'EBUSY') filelist = [...filelist, dirFile];
+                else throw err;
+            }
+        }
+    });
+    return filelist;
+}
+
 
 // List all Files in Given Directory
 module.exports.getPathsInDir = function getPathsInDir(dir, filelist = []) {

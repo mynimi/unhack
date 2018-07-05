@@ -1,0 +1,14 @@
+[] Hash Passwords in Settings
+[] jekyll Theme
+[] Publish via FTP
+[] Publish via GitHub
+[] Image Library
+[] Choose Image
+[] Open Localhost
+
+[] Navigation Builder
+[] Sidebar Builder
+[] Theme Options
+
+[] Help Website
+[] Multilanguage Support

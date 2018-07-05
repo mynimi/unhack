@@ -2,6 +2,12 @@ const functions = require("./functions.js")
 const prefs = require('./prefs')
 let store = prefs.store
 
+const {
+    ipcRenderer,
+    remote
+} = require('electron');
+
+
 if (store.get('advancedView')) {
     document.querySelector('body').classList.add('advanced-view-on')
 } else {
@@ -25,3 +31,19 @@ document.onkeydown = function (evt) {
     }
 };
 
+ipcRenderer.on('toggle-dark-mode', function () {
+    setUIStyle();
+})
+
+function setUIStyle(){
+    let currentSkin = store.get('uiSkin')
+    let sS = document.querySelector('#main-style')
+
+    if(currentSkin == "light"){
+        sS.href = "assets/css/dark.css"
+        store.set('uiSkin', 'dark')
+    } else {
+        sS.href = "assets/css/main.css"
+        store.set('uiSkin', 'light')
+    }
+}
