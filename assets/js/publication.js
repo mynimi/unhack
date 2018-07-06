@@ -54,7 +54,7 @@ function openPublicationSettings(){
                 document.querySelector('input[name="github-password"]').value = gitHubS.gitHubPassword
                 document.querySelector('input[name="github-project-url"]').value = gitHubS.gitHubProjectUrl
 
-                console.log(pS)
+                // console.log(pS)
 
                 functions.inputStyle()
             })

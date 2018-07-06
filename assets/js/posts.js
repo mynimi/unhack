@@ -21,8 +21,14 @@ let config = {}
 let fS = {}
 
 let pageContent = document.querySelector('.container')
+let popupContent = document.querySelector('.popup .content-loader')
 const postsPath = path.join(store.get('currentProjectPath'), '_posts')
 const draftsPath = path.join(store.get('currentProjectPath'), '_drafts')
+const mediaFolder = path.join(store.get('currentProjectPath'), 'assets')
+
+let mediaFiles = {}
+
+const mediaLibraryPath = functions.htmlPath('medialib')
 
 document.querySelector('.nav-posts').addEventListener('click', function (e) {
     let others = document.querySelector('.sidenav span.active')
@@ -61,7 +67,7 @@ function generatePostsList(){
         let bla = content.split('---')
         let yml = bla[1]
         let data = yaml.load(yml)
-        console.log(data)
+        // console.log(data)
         let d = new Date(data.date)
         const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
@@ -132,7 +138,8 @@ function postEditor(filePath){
     let yml = bla[1]
     let p = yaml.load(yml)
     let html = ''
-    fS = {}
+    fS = {},
+    editor = ''
 
     fs.readFile(configPath.toString(), (err, data) => {
         if (err) throw err
@@ -154,7 +161,7 @@ function postEditor(filePath){
             for (let sets in fS){
             if (fS.hasOwnProperty(sets)) {
                     if (fS[sets].area == 'main') {
-                        console.log(`${sets} belongs in main area`)
+                        // console.log(`${sets} belongs in main area`)
                         html += functions.generateMeta('post', fS, sets, p[sets])
                     }
                 }
@@ -163,7 +170,8 @@ function postEditor(filePath){
 
         html += `       <div class="wrap">
                             <label for="edit-content" class="up">Content</label>
-                            <div id="editSection"></div>
+                            <button class="btn small" id="add-media"><i class="far fa-images"></i> Add Image</button>
+                            <div id="editPostContent"></div>
                         </div>
                     </div>
                 </div>
@@ -207,7 +215,7 @@ function postEditor(filePath){
         </div>`
         pageContent.innerHTML = html
         editor = new Editor({
-            el: document.querySelector('#editSection'),
+            el: document.querySelector('#editPostContent'),
             initialValue: bla[2],
             initialEditType: 'wysiwyg',
             previewStyle: 'tab',
@@ -249,7 +257,8 @@ function postEditor(filePath){
 
 function postCreator(){
     let html = ''
-    fS = {}
+    fS = {},
+    editor = ''
     fs.readFile(configPath.toString(), (err, data) => {
         if (err) throw err
         let config = JSON.parse(data)
@@ -270,7 +279,7 @@ function postCreator(){
             for (let sets in fS) {
                 if (fS.hasOwnProperty(sets)) {
                     if (fS[sets].area == 'main') {
-                        console.log(`${sets} belongs in main area`)
+                        // console.log(`${sets} belongs in main area`)
                         html += functions.generateMeta('post', fS, sets)
                     }
                 }
@@ -279,7 +288,8 @@ function postCreator(){
 
         html += `       <div class="wrap">
                             <label for="edit-content" class="up">Content</label>
-                            <div id="editSection"></div>
+                            <button class="btn small" id="add-media"><i class="far fa-images"></i> Add Image</button>
+                            <div id="createPostContent"></div>
                         </div>
                     </div>
                 </div>
@@ -316,7 +326,7 @@ function postCreator(){
         </div>`
         pageContent.innerHTML = html
         editor = new Editor({
-            el: document.querySelector('#editSection'),
+            el: document.querySelector('#createPostContent'),
             initialEditType: 'wysiwyg',
             previewStyle: 'tab',
             height: '500px'
@@ -373,9 +383,9 @@ function createFileContent(draft, editor){
     output = `---\n`
     output += yaml.safeDump(config)
     output += `---\n`
-    output += editor.getValue()
+    output += editor.getMarkdown()
 
-    console.log(output)
+    // console.log(output)
 
     fs.writeFile(newPostPath, output, 'utf8', function (err) {
         if (err) return console.log(err);
@@ -400,3 +410,9 @@ function savePostDraft(filePath, editor) {
     alert('Draft Saved')
 }
 
+pageContent.addEventListener('click', function (e) {
+    if (e.target && e.target.id == 'add-media') {
+        let el = e.target
+        functions.loadMediaGallery(mediaLibraryPath, popupContent, mediaFolder, editor)
+    }
+})

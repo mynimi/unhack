@@ -37,7 +37,7 @@ function generateSiteConfig(){
     // Get document, or throw exception on error
     try {
         doc = yaml.safeLoad(fs.readFileSync(siteConfigPath, 'utf8'));
-        console.log(doc);
+        // console.log(doc);
     } catch (e) {
         console.log(e);
     }
@@ -77,10 +77,10 @@ function saveSiteConfig(){
         config[key] = val
     })
 
-    console.log(config)
+    // console.log(config)
 
     const newConfig = yaml.safeDump(config)
-    console.log(newConfig)
+    // console.log(newConfig)
     fs.writeFile(siteConfigPath, newConfig, 'utf8', function (err) {
         if (err) return console.log(err);
     });

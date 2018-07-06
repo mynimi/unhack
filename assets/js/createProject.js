@@ -50,7 +50,7 @@ if(!store.get('currentProjectPath')){
             if (projectToOpen) {
                 const configPath = path.join(projectToOpen.toString(), 'unhack.json');
 
-                console.log(configPath)
+                // console.log(configPath)
 
                 if (fs.existsSync(configPath)) {
                     store.set('currentProjectPath', projectToOpen)
@@ -60,8 +60,8 @@ if(!store.get('currentProjectPath')){
                     const c = JSON.parse(config)
 
                     store.set('projectName', c.name)
-                    console.log(c.name)
-                    console.log('new project path is ' + store.get('currentProjectPath'))
+                    // console.log(c.name)
+                    // console.log('new project path is ' + store.get('currentProjectPath'))
                     fs.readFile(dashboard, (err, data) => {
                         pageContent.innerHTML = data
                         if (err) {
@@ -75,7 +75,7 @@ if(!store.get('currentProjectPath')){
                 } else {
                     dialog.showErrorBox('Not an Unhack Project', 'The Directory you selected does not seem to be an Unhack Project.')
                 }
-                console.log(projectToOpen)
+                // console.log(projectToOpen)
             }
             
         }

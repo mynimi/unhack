@@ -33,7 +33,7 @@ document.querySelector('.nav-pages').addEventListener('click', function (e) {
 
 function generatePagesList(){
     let allPages = functions.getPages(pagesPath)
-    console.log(allPages)
+    // console.log(allPages)
 
     let output = `<div class="middle">
                     <h1>Pages</h1>
@@ -57,7 +57,7 @@ function generatePagesList(){
         let bla = content.split('---')
         let yml = bla[1]
         let data = yaml.load(yml)
-        console.log(data)
+        // console.log(data)
 
         let status;
         if (data.published == false) {
@@ -146,7 +146,7 @@ function pageEditor(filePath){
             for (let sets in fS) {
                 if (fS.hasOwnProperty(sets)) {
                     if (fS[sets].area == 'main') {
-                        console.log(`${sets} belongs in main area`)
+                        // console.log(`${sets} belongs in main area`)
                         html += functions.generateMeta('page', fS, sets, p[sets])
                     }
                 }
@@ -155,7 +155,7 @@ function pageEditor(filePath){
 
         html += `       <div class="wrap">
                             <label for="edit-content" class="up">Content</label>
-                            <div id="editSection"></div>
+                            <button class="btn small" id="add-media"><i class="far fa-images"></i> Insert Media</button>                            <div id="editSection"></div>
                         </div>
                     </div>
                 </div>
@@ -262,7 +262,7 @@ function pageCreator() {
             for (let sets in fS) {
                 if (fS.hasOwnProperty(sets)) {
                     if (fS[sets].area == 'main') {
-                        console.log(`${sets} belongs in main area`)
+                        // console.log(`${sets} belongs in main area`)
                         html += functions.generateMeta('page', fS, sets)
                     }
                 }
@@ -271,6 +271,7 @@ function pageCreator() {
 
         html += `       <div class="wrap">
                             <label for="edit-content" class="up">Content</label>
+                            <button class="btn small" id="add-media"><i class="far fa-images"></i> Insert Media</button>
                             <div id="editSection"></div>
                         </div>
                     </div>
@@ -359,9 +360,9 @@ function createFileContent(draft, editor){
     output = `---\n`
     output += yaml.safeDump(config)
     output += `---\n`
-    output += editor.getValue()
+    output += editor.getMarkdown()
 
-    console.log(output)
+    // console.log(output)
 
     fs.writeFile(newpagePath, output, 'utf8', function (err) {
         if (err) return console.log(err);

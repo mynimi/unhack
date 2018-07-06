@@ -1,5 +1,6 @@
+[] Insert Media in more than one Post at a time causes problem...
 [] Hash Passwords in Settings
-[] jekyll Theme
+[] Jekyll Theme
 [] Publish via FTP
 [] Publish via GitHub
 [] Image Library
@@ -12,3 +13,8 @@
 
 [] Help Website
 [] Multilanguage Support
+
+[] CLEANUP
+[] check required fields in forms for formats etc. 
+
+[] Allow Multiple File Upload in Media

@@ -34,18 +34,18 @@ body.navigation{
 
 
 
-.popup.media{
-    .content{
-        column-count: 3;
+.media-gallery{
+    margin-top: 20px;
+    column-count: 3;
+    column-gap: 5px;
 
-        img{
-            // padding: 20px;
-            display: inline-block;
-            margin-bottom: 10px;
-            box-sizing: border-box;
-            width: 100%;
-            cursor: pointer;
-        }
+    img{
+        // padding: 20px;
+        display: inline-block;
+        margin-bottom: 5px;
+        box-sizing: border-box;
+        width: 100%;
+        cursor: pointer;
     }
 }
 
@@ -77,4 +77,9 @@ body.navigation{
 .tui-editor-defaultUI-toolbar button:active,
 .tui-editor-defaultUI-toolbar button.active{
     color: $main-color;
+}
+
+// hide include image button
+.tui-image.tui-toolbar-icons{
+    display: none;
 }

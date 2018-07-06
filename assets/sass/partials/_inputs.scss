@@ -19,8 +19,8 @@ input:not([type="submit"]):not([type="button"]):not([type="checkbox"]):not([type
         }
     }
 
-    input,
-    textarea{
+    > input,
+    > textarea{
         background: transparent;
         font-size: $root-font-size;
         padding: 0;
@@ -35,16 +35,16 @@ input:not([type="submit"]):not([type="button"]):not([type="checkbox"]):not([type
         }
     }
 
-    textarea{
+    > textarea{
         width: 100%;
         height: 100%;
     }
 
-    input[type="color"],
-    input[type="file"]{
+    > input[type="color"],
+    > input[type="file"]{
         margin: 5px 0;
     }
-    label{
+    > label{
         position: absolute;
         top: auto;
         left: 10px;

@@ -231,14 +231,20 @@ header {
 .Index .topnav .site {
   display: none; }
 
-.droparea {
+.droppable, .droparea {
   width: 100%;
-  min-height: 60vh;
+  min-height: 100px;
   border: 2px dashed #b3b3b3;
   position: relative;
   padding: 20px;
   -webkit-box-sizing: border-box;
-  box-sizing: border-box; }
+  box-sizing: border-box;
+  text-align: center; }
+  .droppable.dragging, .dragging.droparea {
+    background: rgba(68, 127, 126, 0.3); }
+
+.droparea {
+  min-height: 60vh; }
   .droparea div {
     position: absolute;
     top: 50%;
@@ -423,26 +429,26 @@ input:not([type="submit"]):not([type="button"]):not([type="checkbox"]):not([type
     border-color: #bb8081; }
     .wrap.focus label {
       color: #bb8081 !important; }
-  .wrap input,
-  .wrap textarea {
+  .wrap > input,
+  .wrap > textarea {
     background: transparent;
     font-size: 19px;
     padding: 0;
     border: 0;
     color: #FDFDFD;
     font-family: "Roboto", "Calibri", "Arial", sans-serif; }
-    .wrap input:focus, .wrap input:active,
-    .wrap textarea:focus,
-    .wrap textarea:active {
+    .wrap > input:focus, .wrap > input:active,
+    .wrap > textarea:focus,
+    .wrap > textarea:active {
       border: 0px solid transparent;
       outline: 0; }
-  .wrap textarea {
+  .wrap > textarea {
     width: 100%;
     height: 100%; }
-  .wrap input[type="color"],
-  .wrap input[type="file"] {
+  .wrap > input[type="color"],
+  .wrap > input[type="file"] {
     margin: 5px 0; }
-  .wrap label {
+  .wrap > label {
     position: absolute;
     top: auto;
     left: 10px;
@@ -450,7 +456,7 @@ input:not([type="submit"]):not([type="button"]):not([type="checkbox"]):not([type
     -o-transition: .3s all ease;
     transition: .3s all ease;
     color: #FDFDFD; }
-    .wrap label.up {
+    .wrap > label.up {
       background: #000;
       font-size: .8em;
       top: 0;
@@ -458,10 +464,10 @@ input:not([type="submit"]):not([type="button"]):not([type="checkbox"]):not([type
       -ms-transform: translateY(-50%);
       transform: translateY(-50%);
       color: #948080; }
-      .card .wrap label.up,
-      .popup .wrap label.up {
+      .card .wrap > label.up,
+      .popup .wrap > label.up {
         background: #242424; }
-      .tab .wrap label.up {
+      .tab .wrap > label.up {
         background: #1a1a1a; }
 
 .label {
@@ -973,12 +979,15 @@ body.navigation .card {
   .preview-open .card {
     min-width: 200px; }
 
-.popup.media .content {
+.media-gallery {
+  margin-top: 20px;
   -webkit-column-count: 3;
-  column-count: 3; }
-  .popup.media .content img {
+  column-count: 3;
+  -webkit-column-gap: 5px;
+  column-gap: 5px; }
+  .media-gallery img {
     display: inline-block;
-    margin-bottom: 10px;
+    margin-bottom: 5px;
     -webkit-box-sizing: border-box;
     box-sizing: border-box;
     width: 100%;
@@ -1004,3 +1013,6 @@ body.navigation .card {
 .tui-editor-defaultUI-toolbar button:active,
 .tui-editor-defaultUI-toolbar button.active {
   color: #FDFDFD; }
+
+.tui-image.tui-toolbar-icons {
+  display: none; }

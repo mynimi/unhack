@@ -88,7 +88,7 @@ app.on('ready', () => {
                             if (files) {
                                 const configPath = path.join(files.toString(), 'unhack.json');
 
-                                console.log(configPath)
+                                // console.log(configPath)
 
                                 if (fs.existsSync(configPath)) {
                                     store.set('currentProjectPath', files)
@@ -99,8 +99,8 @@ app.on('ready', () => {
                                     const c = JSON.parse(config)
 
                                     store.set('projectName', c.name)
-                                    console.log(c.name)
-                                    console.log('new project path is ' + store.get('currentProjectPath'))
+                                    // console.log(c.name)
+                                    // console.log('new project path is ' + store.get('currentProjectPath'))
 
                                     mainWindow.setTitle(`unHack | ${store.get('projectName')} ${store.get('currentProjectPath') ? store.get('currentProjectPath') : ''}`)
 
@@ -109,7 +109,7 @@ app.on('ready', () => {
                                 } else {
                                     dialog.showErrorBox('Not an Unhack Project', 'The Directory you selected does not seem to be an Unhack Project.')
                                 }
-                                console.log(files)
+                                // console.log(files)
                             } 
                         })
                     }, 
@@ -197,7 +197,7 @@ app.on('ready', () => {
     const menu = Menu.buildFromTemplate(template)
     Menu.setApplicationMenu(menu)
 
-    console.log('current Path' + store.get('currentProjectPath'));
+    // console.log('current Path' + store.get('currentProjectPath'));
 
     mainWindow.on('resize', () => {
         // The event doesn't pass us the window size, so we call the `getBounds` method which returns an object with

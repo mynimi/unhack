@@ -116,14 +116,14 @@ Date.prototype.toDateInputValue = (function () {
 module.exports.addToConfig = function addToConfig(addConfig){
     const configPath = store.get('configFilePath')
     if (configPath) {
-        console.log(configPath)
+        // console.log(configPath)
         fs.readFile(configPath.toString(), (err, data) => {
             if (err) throw err
             let oldConfig = JSON.parse(data)
             let newConfig = { ...oldConfig, ...addConfig}
-            console.log(oldConfig)
-            console.log(addConfig)
-            console.log(newConfig)
+            // console.log(oldConfig)
+            // console.log(addConfig)
+            // console.log(newConfig)
 
             fs.writeFile(configPath.toString(), JSON.stringify(newConfig, null, 2), (err) => {
                 if (err) throw err
@@ -137,7 +137,7 @@ module.exports.addToConfig = function addToConfig(addConfig){
 module.exports.deleteFile = function deleteFile(filePath) {
     fs.unlink(filePath, (err) => {
         if (err) throw err;
-        console.log(`${filePath} was deleted`)
+        alert(`${filePath} was deleted`)
     })
 }
 
@@ -202,9 +202,9 @@ module.exports.closePopup = function closePopup() {
 
 module.exports.getPages = function getPages(dir, filelist = []) {
     fs.readdirSync(dir).forEach(file => {
-        console.log(path.extname(file))
+        // console.log(path.extname(file))
         if(path.extname(file) == '.html' || path.extname(file) == '.markdown' || path.extname(file) == '.md'){
-            console.log(file)
+            // console.log(file)
             const dirFile = path.join(dir, file);
             try {
                 filelist = getPages(dirFile, filelist);
@@ -240,11 +240,11 @@ module.exports.inputStyle = function inputStyle(){
         styleInput(elem, 'initial')
         elem.addEventListener('focus', function () {
             styleInput(this, 'focus')
-            console.log('focus')
+            // console.log('focus')
         })
         elem.addEventListener('blur', function () {
             styleInput(this, 'blur')
-            console.log('blur')
+            // console.log('blur')
         })
     });
 }
@@ -266,4 +266,62 @@ function styleInput(e, a) {
     if (a == 'blur') {
         e.parentNode.classList.remove('focus')
     }
+}
+
+module.exports.loadMediaGallery = function loadMediaGallery(mediaLibraryPath, popupContent, mediaFolder, editor) {
+    let squire = document.querySelectorAll('[id*="squire"], [class*="squire"]')
+    console.log(squire)
+    squire.forEach(e => e.parentNode.removeChild(e));
+
+    fs.readFile(mediaLibraryPath, (err, data) => {
+        popupContent.innerHTML = data
+        exports.inputStyle()
+        exports.fillGallery(mediaFolder)
+        popupContent.addEventListener('click', function (e) {
+            if (e.target && e.target.src) {
+                let el = e.target
+                let src = el.src
+                exports.closePopup()
+                editor.insertText(`![${path.basename(src)}]({{ "/assets/${path.basename(src)}" | absolute_url }})`)
+            }
+        });
+        document.ondragover = document.ondrop = (ev) => {
+            ev.preventDefault()
+        }
+        const dropArea = document.querySelector('.droppable')
+        dropArea.ondrop = (ev) => {
+            imageToAdd = ev.dataTransfer.files[0].path
+
+            ev.preventDefault()
+
+            dropArea.classList.remove('dragging')
+
+            if (imageToAdd.toString().includes(mediaFolder.toString())) {
+                alert('File is already in Assets Folder')
+            } else {
+                let newImagePath = path.join(mediaFolder, path.basename(imageToAdd))
+                exports.copyFile(imageToAdd, newImagePath, function () {
+                    exports.fillGallery(mediaFolder)
+                    alert('File Added')
+                })
+            }
+
+        }
+        dropArea.ondragenter = (ev) => {
+            dropArea.classList.add('dragging')
+        }
+        dropArea.ondragleave = (ev) => {
+            dropArea.classList.remove('dragging')
+        }
+    })
+    exports.openPopup()
+}
+
+module.exports.fillGallery = function fillGallery(mediaFolder) {
+    let images = exports.getPathsInDir(mediaFolder.toString())
+    let lib = ``
+    for (let img in images) {
+        lib += `<img src="${images[img]}" alt="${path.basename(images[img])}">`
+    }
+    document.querySelector('.media-gallery').innerHTML = lib
 }
