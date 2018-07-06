@@ -21,7 +21,14 @@ let config = {}
 let fS = {}
 
 let pageContent = document.querySelector('.container')
+let popupContent = document.querySelector('.popup .content-loader')
 const pagesPath = path.join(store.get('currentProjectPath'))
+
+const mediaFolder = path.join(store.get('currentProjectPath'), 'assets')
+
+let mediaFiles = {}
+
+const mediaLibraryPath = functions.htmlPath('medialib')
 
 document.querySelector('.nav-pages').addEventListener('click', function (e) {
     let others = document.querySelector('.sidenav span.active')
@@ -387,3 +394,9 @@ function savePageDraft(filePath, editor) {
     alert('Draft Saved')
 }
 
+// pageContent.addEventListener('click', function (e) {
+//     if (e.target && e.target.id == 'add-media') {
+//         let el = e.target
+//         functions.loadMediaGallery(mediaLibraryPath, popupContent, mediaFolder, editor)
+//     }
+// })

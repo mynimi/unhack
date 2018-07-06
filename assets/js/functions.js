@@ -93,7 +93,13 @@ module.exports.generateMeta = function generateMeta(template,parent, child, init
             </div>`
         }
         if (prop.type == 'image') {
-            output = `image ${help}`
+            output = 
+                    `<div class="wrap">
+                    <label class="up" for="${child}">${child.toProperCase()}</label>
+                    <div class="feat-img">${(initialVal != '') ? `<img src="${initialVal}">` : ''}</div>
+                    <button class="btn media-chooser">Choose File</button>
+                    ${help}
+                    </div>`
         }
 
     }
@@ -269,10 +275,10 @@ function styleInput(e, a) {
 }
 
 module.exports.loadMediaGallery = function loadMediaGallery(mediaLibraryPath, popupContent, mediaFolder, editor) {
-    let squire = document.querySelectorAll('[id*="squire"], [class*="squire"]')
-    console.log(squire)
-    squire.forEach(e => e.parentNode.removeChild(e));
-
+    // let squire = document.querySelectorAll('[id*="squire"], [class*="squire"]')
+    // console.log(squire)
+    // squire.forEach(e => e.parentNode.removeChild(e));
+    
     fs.readFile(mediaLibraryPath, (err, data) => {
         popupContent.innerHTML = data
         exports.inputStyle()
@@ -282,7 +288,8 @@ module.exports.loadMediaGallery = function loadMediaGallery(mediaLibraryPath, po
                 let el = e.target
                 let src = el.src
                 exports.closePopup()
-                editor.insertText(`![${path.basename(src)}]({{ "/assets/${path.basename(src)}" | absolute_url }})`)
+                // TODO FIGURE OUT HOW TO MAKE THIS WORK MORE THAN ONCE!
+                // editor.insertText(`![${path.basename(src)}]({{ "/assets/${path.basename(src)}" | absolute_url }})`)
             }
         });
         document.ondragover = document.ondrop = (ev) => {

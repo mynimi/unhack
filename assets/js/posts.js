@@ -252,6 +252,11 @@ function postEditor(filePath){
             }
         }
 
+        if (e.target && e.target.id == 'add-media') {
+            let el = e.target
+            functions.loadMediaGallery(mediaLibraryPath, popupContent, mediaFolder, editor)
+        }
+
     })
 }
 
@@ -349,6 +354,12 @@ function postCreator(){
             let el = e.target
             savePost(false, editor)
         }
+
+        if (e.target && e.target.id == 'add-media') {
+            let el = e.target
+            functions.loadMediaGallery(mediaLibraryPath, popupContent, mediaFolder, editor)
+        }
+
     })
 }
 
@@ -409,10 +420,3 @@ function savePostDraft(filePath, editor) {
     createFileContent(true, editor)
     alert('Draft Saved')
 }
-
-pageContent.addEventListener('click', function (e) {
-    if (e.target && e.target.id == 'add-media') {
-        let el = e.target
-        functions.loadMediaGallery(mediaLibraryPath, popupContent, mediaFolder, editor)
-    }
-})
