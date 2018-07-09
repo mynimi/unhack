@@ -162,7 +162,7 @@ function pageEditor(filePath){
 
         html += `       <div class="wrap">
                             <label for="edit-content" class="up">Content</label>
-                            <button class="btn small" id="add-media"><i class="far fa-images"></i> Insert Media</button>                            <div id="editSection"></div>
+                            <div id="editSection"></div>
                         </div>
                     </div>
                 </div>
@@ -278,7 +278,6 @@ function pageCreator() {
 
         html += `       <div class="wrap">
                             <label for="edit-content" class="up">Content</label>
-                            <button class="btn small" id="add-media"><i class="far fa-images"></i> Insert Media</button>
                             <div id="editSection"></div>
                         </div>
                     </div>
@@ -306,9 +305,9 @@ function pageCreator() {
                 </div>
             </div>
             <button class="btn">Preview</button>
-            <button class="btn" id="save-page-edit">Save Page</button>
-            <button class="btn" id="save-page-draft-edit">Save Draft</button>
-            <button class="btn" id="cancel-page-edit">Cancel</button>
+            <button class="btn" id="save-page-new">Save Page</button>
+            <button class="btn" id="save-page-draft-new">Save Draft</button>
+            <button class="btn" id="cancel-page-new">Cancel</button>
         </div>`
         pageContent.innerHTML = html
         editor = new Editor({
@@ -321,17 +320,17 @@ function pageCreator() {
     })
 
     pageContent.addEventListener('click', function (e) {
-        if (e.target && e.target.id == 'cancel-page-edit') {
+        if (e.target && e.target.id == 'cancel-page-new') {
             let el = e.target
             if (confirm('Are you sure you want to cancel? All changes will be lost?')) {
                 generatePagesList();
             }
         }
-        if (e.target && e.target.id == 'save-page-draft-edit') {
+        if (e.target && e.target.id == 'save-page-draft-new') {
             let el = e.target
             savePageDraft(false, editor)
         }
-        if (e.target && e.target.id == 'save-page-edit') {
+        if (e.target && e.target.id == 'save-page-new') {
             let el = e.target
             savePage(false, editor)
         }

@@ -87,7 +87,7 @@ popupContent.addEventListener('click', function (e) {
         gitHubS.gitHubProjectUrl = document.querySelector('input[name="github-project-url"]').value
 
         functions.addToConfig(addConfig)
-
+        popupContent.innerHTML = ''
         functions.closePopup();
     }
 })

@@ -59,7 +59,7 @@ if(!store.get('currentProjectPath')){
                     const config = fs.readFileSync(configPath)
                     const c = JSON.parse(config)
 
-                    store.set('projectName', c.name)
+                    store.set('projectName', c.name.toString())
                     // console.log(c.name)
                     // console.log('new project path is ' + store.get('currentProjectPath'))
                     fs.readFile(dashboard, (err, data) => {
@@ -71,7 +71,6 @@ if(!store.get('currentProjectPath')){
                     ipcRenderer.send('create-new-done')
                     document.querySelector('body').classList.add('has-sidenav')
                     document.querySelector('.sidenav').classList.remove('hidden')
-
                 } else {
                     dialog.showErrorBox('Not an Unhack Project', 'The Directory you selected does not seem to be an Unhack Project.')
                 }
@@ -201,6 +200,7 @@ popupContent.addEventListener('click', function (e) {
                 }
             })
 
+            popupContent.innerHTML = ''
             functions.closePopup()
 
             ipcRenderer.send('create-new-done')

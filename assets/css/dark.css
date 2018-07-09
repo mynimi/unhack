@@ -1,3 +1,25 @@
+.gu-mirror {
+  position: fixed !important;
+  margin: 0 !important;
+  z-index: 9999 !important;
+  opacity: 0.8;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=80)";
+  filter: alpha(opacity=80); }
+
+.gu-hide {
+  display: none !important; }
+
+.gu-unselectable {
+  -webkit-user-select: none !important;
+  -moz-user-select: none !important;
+  -ms-user-select: none !important;
+  user-select: none !important; }
+
+.gu-transit {
+  opacity: 0.2;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=20)";
+  filter: alpha(opacity=20); }
+
 html, body, body, div, span, applet, object, iframe,
 h1, h2, h3, h4, h5, h6, p, blockquote, pre,
 a,
@@ -136,6 +158,9 @@ p + p {
   .btn:hover {
     background: #6B7F7F;
     color: white; }
+  .btn.disabled {
+    opacity: .4;
+    cursor: not-allowed; }
 
 .small {
   font-size: 70%; }
@@ -629,6 +654,10 @@ table {
       left: -5px;
       z-index: -1; }
 
+#available-pages .menu-element {
+  display: inline-block;
+  width: auto; }
+
 .areas {
   margin: 20px 0;
   display: -webkit-box;
@@ -663,7 +692,7 @@ table {
       .areas .area .menu-element .edit {
         display: inline-block; }
     .areas .area .placeholder {
-      font-size: .8em;
+      font-size: .7em;
       position: absolute;
       top: 0;
       left: 5px;

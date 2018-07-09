@@ -152,6 +152,11 @@ pre{
         background: $link-hover-color;
         color: black-or-white($link-hover-color);
     }
+
+    &.disabled{
+        opacity: .4;
+        cursor: not-allowed;
+    }
 }
 
 .small{

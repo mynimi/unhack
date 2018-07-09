@@ -7,6 +7,8 @@ const {
     remote
 } = require('electron');
 
+let popupContent = document.querySelector('.popup .content-loader')
+
 
 if (store.get('advancedView')) {
     document.querySelector('body').classList.add('advanced-view-on')
@@ -16,17 +18,20 @@ if (store.get('advancedView')) {
 
 document.querySelector('body').addEventListener('click', function(e){
     if (e.target && e.target.id == 'behind-popup'){
+        popupContent.innerHTML = ''
         functions.closePopup();
     }
 });
 
 document.querySelector('.popup .close').addEventListener('click', function(){
+    popupContent.innerHTML = ''
     functions.closePopup();
 });
 
 document.onkeydown = function (evt) {
     evt = evt || window.event;
     if (evt.keyCode == 27) {
+        popupContent.innerHTML = ''
         functions.closePopup();
     }
 };

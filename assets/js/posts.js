@@ -68,9 +68,11 @@ function generatePostsList(){
         let yml = bla[1]
         let data = yaml.load(yml)
         // console.log(data)
-        let d = new Date(data.date)
-        const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-
+        let date = ''
+        if(data.date){
+            date = functions.changeDateFormat(data.date)
+        }
+        
         let status;
         if(p.includes('_drafts')){
             status = 'Draft'
@@ -80,7 +82,7 @@ function generatePostsList(){
         output +=   `<tr>
                         <td>${path.basename(p.toString())}</td>
                         <td>${data.title}</td>
-                        <td>${months[d.getMonth()]} ${d.getDay()}, ${d.getFullYear()}</td>
+                        <td>${date}</td>
                         <td>${data.categories}</td>
                         <td>${status}</td>
                         <td>
@@ -92,6 +94,7 @@ function generatePostsList(){
     })
     output += `</tbody></table></div></div></div></div>`
 
+    pageContent.innerHTML = ''
     pageContent.innerHTML = output
     // functions.inputStyle()
 
@@ -137,7 +140,7 @@ function postEditor(filePath){
     let bla = content.split('---')
     let yml = bla[1]
     let p = yaml.load(yml)
-    let html = ''
+    let html = `current File Path: ${filePath}`
     fS = {},
     editor = ''
 
@@ -170,7 +173,6 @@ function postEditor(filePath){
 
         html += `       <div class="wrap">
                             <label for="edit-content" class="up">Content</label>
-                            <button class="btn small" id="add-media"><i class="far fa-images"></i> Add Image</button>
                             <div id="editPostContent"></div>
                         </div>
                     </div>
@@ -213,6 +215,7 @@ function postEditor(filePath){
             <button class="btn" id="delete-post-edit">Delete Post</button>
             <button class="btn" id="cancel-post-edit">Cancel</button>
         </div>`
+        pageContent.innerHTML = ''
         pageContent.innerHTML = html
         editor = new Editor({
             el: document.querySelector('#editPostContent'),
@@ -257,8 +260,15 @@ function postEditor(filePath){
             functions.loadMediaGallery(mediaLibraryPath, popupContent, mediaFolder, editor)
         }
 
+
     })
 }
+
+pageContent.addEventListener('click', function (e) {
+    if (e.target && e.target.classList.contains('media-chooser')) {
+        functions.loadMediaGallery(mediaLibraryPath, popupContent, mediaFolder, e.target)
+    }
+})
 
 function postCreator(){
     let html = ''
@@ -293,7 +303,6 @@ function postCreator(){
 
         html += `       <div class="wrap">
                             <label for="edit-content" class="up">Content</label>
-                            <button class="btn small" id="add-media"><i class="far fa-images"></i> Add Image</button>
                             <div id="createPostContent"></div>
                         </div>
                     </div>
@@ -325,10 +334,11 @@ function postCreator(){
                 </div>
             </div>
             <button class="btn">Preview</button>
-            <button class="btn" id="save-post-edit">Save Post</button>
-            <button class="btn" id="save-post-draft-edit">Save Draft</button>
-            <button class="btn" id="cancel-post-edit">Cancel</button>
+            <button class="btn" id="save-post-new">Save Post</button>
+            <button class="btn" id="save-post-draft-new">Save Draft</button>
+            <button class="btn" id="cancel-post-new">Cancel</button>
         </div>`
+        pageContent.innerHTML = ''
         pageContent.innerHTML = html
         editor = new Editor({
             el: document.querySelector('#createPostContent'),
@@ -340,26 +350,20 @@ function postCreator(){
     })
 
     pageContent.addEventListener('click', function (e) {
-        if (e.target && e.target.id == 'cancel-post-edit') {
+        if (e.target && e.target.id == 'cancel-post-new') {
             let el = e.target
             if (confirm('Are you sure you want to cancel? All changes will be lost?')) {
                 generatePostsList();
             }
         }
-        if (e.target && e.target.id == 'save-post-draft-edit') {
+        if (e.target && e.target.id == 'save-post-draft-new') {
             let el = e.target
             savePostDraft(false, editor)
         }
-        if (e.target && e.target.id == 'save-post-edit') {
+        if (e.target && e.target.id == 'save-post-new') {
             let el = e.target
             savePost(false, editor)
         }
-
-        if (e.target && e.target.id == 'add-media') {
-            let el = e.target
-            functions.loadMediaGallery(mediaLibraryPath, popupContent, mediaFolder, editor)
-        }
-
     })
 }
 
@@ -406,7 +410,7 @@ function createFileContent(draft, editor){
 function savePost(filePath, editor) {
     // delete old file
     if(filePath){
-        functions.deleteFile(filePath)
+        // functions.deleteFile(filePath)
     }    
     createFileContent(false, editor)
     alert('Post Saved')
@@ -415,7 +419,7 @@ function savePost(filePath, editor) {
 function savePostDraft(filePath, editor) {
     // delete old file
     if (filePath) {
-        functions.deleteFile(filePath)
+        // functions.deleteFile(filePath)
     }
     createFileContent(true, editor)
     alert('Draft Saved')

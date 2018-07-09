@@ -22,19 +22,19 @@ module.exports.retrieveMeta = function retrieveMeta(template,parent, child, conf
         }
         if (prop.type == "radio" || prop.type == 'checkbox') {
             let options = prop.options
-            config[child] = document.querySelector(`input[name="${options}"]:checked`).value
+            config[child] = document.querySelector(`input[name="${child}"]:checked`).value
         }
         if (prop.type == 'textarea') {
             config[child] = document.querySelector(`textarea[name="${child}"]`).value
         }
         if (prop.type == 'image') {
-            // return image src
+            config[child] = document.querySelector(`img[name="${child}"`).dataset.metapath
         }
     }        
     return config;
 }
 
-module.exports.generateMeta = function generateMeta(template,parent, child, initialVal){
+module.exports.generateMeta = function generateMeta(template, parent, child, initialVal) {
     let prop = parent[child]
     let output = ''
     let help
@@ -74,13 +74,10 @@ module.exports.generateMeta = function generateMeta(template,parent, child, init
             let options = prop.options
             for (let o in options){
                 if(options.hasOwnProperty(o)){
-                    output += `<input id="${options[o]}" name="${options}" value="${options[o]}" type="${prop.type}" ${(options[o] == initialVal) ? 'checked' : ''} ${(prop.maxlength) ? `maxlength="${prop.maxlength}"` : ''}>`
+                    output += `<input id="${options[o]}" name="${child}" value="${options[o]}" type="${prop.type}" ${(options[o] == initialVal) ? 'checked' : ''} ${(prop.maxlength) ? `maxlength="${prop.maxlength}"` : ''}>`
                     output += `<label for="${options[o]}">${options[o].toString().toProperCase()}</label>`
                     output += '<br>'
                 }
-            }
-            if(!options.indexOf(initialVal) > -1){
-                output += `<p class="small note">The current Value does not seem to be an available option, choose one of the available options, or fix settings</p>`
             }
             output += `${help}</div>`
         }
@@ -96,7 +93,8 @@ module.exports.generateMeta = function generateMeta(template,parent, child, init
             output = 
                     `<div class="wrap">
                     <label class="up" for="${child}">${child.toProperCase()}</label>
-                    <div class="feat-img">${(initialVal != '') ? `<img src="${initialVal}">` : ''}</div>
+                    ${(initialVal != '') ? `<img name="${child}" src="${path.join(store.get('currentProjectPath'), initialVal)}" data-metapath="${initialVal}" name="${child}">` : ''
+                    } 
                     <button class="btn media-chooser">Choose File</button>
                     ${help}
                     </div>`
@@ -143,7 +141,7 @@ module.exports.addToConfig = function addToConfig(addConfig){
 module.exports.deleteFile = function deleteFile(filePath) {
     fs.unlink(filePath, (err) => {
         if (err) throw err;
-        alert(`${filePath} was deleted`)
+        // alert(`${filePath} was deleted`)
     })
 }
 
@@ -198,20 +196,22 @@ module.exports.openPopup = function openPopup() {
 }
 
 module.exports.closePopup = function closePopup() {
-    const popup = document.querySelector('.popup');
-    const body = document.querySelector('body');
-    const backdrop = document.querySelector('#behind-popup');
+    let popup = document.querySelector('.popup');
+    let body = document.querySelector('body');
+    let backdrop = document.getElementById('behind-popup');
     popup.style.display = 'none'
     body.classList.remove('popup-open')
-    backdrop.remove()
+    if(backdrop != null){
+        backdrop.remove()
+    }
 }
 
 module.exports.getPages = function getPages(dir, filelist = []) {
     fs.readdirSync(dir).forEach(file => {
         // console.log(path.extname(file))
-        if(path.extname(file) == '.html' || path.extname(file) == '.markdown' || path.extname(file) == '.md'){
+        if((path.extname(file) == '.html' || path.extname(file) == '.markdown' || path.extname(file) == '.md') && (path.basename(file, '.md') != 'README')){
             // console.log(file)
-            const dirFile = path.join(dir, file);
+            let dirFile = path.join(dir, file);
             try {
                 filelist = getPages(dirFile, filelist);
             } catch (err) {
@@ -227,11 +227,13 @@ module.exports.getPages = function getPages(dir, filelist = []) {
 // List all Files in Given Directory
 module.exports.getPathsInDir = function getPathsInDir(dir, filelist = []) {
     fs.readdirSync(dir).forEach(file => {
-        const dirFile = path.join(dir, file);
+        let dirFile = path.join(dir, file);
         try {
             filelist = getPathsInDir(dirFile, filelist);
         } catch (err) {
-            if (err.code === 'ENOTDIR' || err.code === 'EBUSY') filelist = [...filelist, dirFile];
+            if (err.code === 'ENOTDIR' || err.code === 'EBUSY' || err.code === 'ENOENT' ){
+                filelist = [...filelist, dirFile];
+            }
             else throw err;
         }
     });
@@ -274,12 +276,12 @@ function styleInput(e, a) {
     }
 }
 
-module.exports.loadMediaGallery = function loadMediaGallery(mediaLibraryPath, popupContent, mediaFolder, editor) {
+module.exports.loadMediaGallery = function loadMediaGallery(mediaLibraryPath, popupContent, mediaFolder, pressedElem) {
     // let squire = document.querySelectorAll('[id*="squire"], [class*="squire"]')
     // console.log(squire)
     // squire.forEach(e => e.parentNode.removeChild(e));
     
-    fs.readFile(mediaLibraryPath, (err, data) => {
+    fs.readFile(mediaLibraryPath.toString(), (err, data) => {
         popupContent.innerHTML = data
         exports.inputStyle()
         exports.fillGallery(mediaFolder)
@@ -287,8 +289,16 @@ module.exports.loadMediaGallery = function loadMediaGallery(mediaLibraryPath, po
             if (e.target && e.target.src) {
                 let el = e.target
                 let src = el.src
+                popupContent.innerHTML = ''
                 exports.closePopup()
                 // TODO FIGURE OUT HOW TO MAKE THIS WORK MORE THAN ONCE!
+                if (pressedElem.previousElementSibling.tagName == 'IMG'){
+                    pressedElem.previousElementSibling.src = src
+                } else{
+                    console.log(pressedElem.previousElementSibling.htmlFor)
+                    pressedElem.insertAdjacentHTML('beforebegin',
+                        `<img src="${src}" data-metapath="/assets/${path.basename(src)}" name="${pressedElem.previousElementSibling.htmlFor}">`)
+                }                
                 // editor.insertText(`![${path.basename(src)}]({{ "/assets/${path.basename(src)}" | absolute_url }})`)
             }
         });
@@ -297,7 +307,7 @@ module.exports.loadMediaGallery = function loadMediaGallery(mediaLibraryPath, po
         }
         const dropArea = document.querySelector('.droppable')
         dropArea.ondrop = (ev) => {
-            imageToAdd = ev.dataTransfer.files[0].path
+            let imageToAdd = ev.dataTransfer.files[0].path
 
             ev.preventDefault()
 
@@ -328,7 +338,24 @@ module.exports.fillGallery = function fillGallery(mediaFolder) {
     let images = exports.getPathsInDir(mediaFolder.toString())
     let lib = ``
     for (let img in images) {
-        lib += `<img src="${images[img]}" alt="${path.basename(images[img])}">`
+        lib += path.extname(img)
+
+        if(path.extname(images[img]) == '.svg' || path.extname(images[img]) == '.jpg' ||path.extname(images[img]) == '.png' || path.extname(images[img]) == '.gif' || path.extname(images[img]) == '.jpeg'){
+            lib += `<img src="${images[img]}" alt="${path.basename(images[img])}">`
+        }
     }
     document.querySelector('.media-gallery').innerHTML = lib
+}
+
+module.exports.changeDateFormat = function changeDateFormat(inputDate) { // expects Y-m-d
+    var splitDate = inputDate.split('-');
+    if (splitDate.count == 0) {
+        return null;
+    }
+
+    var year = splitDate[0];
+    var month = splitDate[1];
+    var day = splitDate[2];
+
+    return month + '\/' + day + '\/' + year;
 }
