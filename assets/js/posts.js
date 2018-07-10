@@ -1,7 +1,5 @@
 const fs = require('fs')
 const path = require('path')
-const shell = require('shelljs')
-const child_process = require('child_process')
 const prefs = require('./prefs')
 const functions = require("./functions.js")
 const yaml = require('js-yaml');
@@ -35,7 +33,11 @@ document.querySelector('.nav-posts').addEventListener('click', function (e) {
     let el = e.target
     others.classList.remove("active")
     el.classList.add("active")
-    generatePostsList()
+    if(store.has('currentPostEditPath')){
+        postEditor(store.get('currentPostEditPath'))
+    } else{
+        generatePostsList()
+    }
 })
 
 function generatePostsList(){
@@ -55,7 +57,6 @@ function generatePostsList(){
                                             <th>Filename</th>
                                             <th>Title</th>
                                             <th>Date</th>
-                                            <th>Categories</th>
                                             <th>Status</th>
                                             <th>Actions</th>
                                         </tr>
@@ -83,7 +84,6 @@ function generatePostsList(){
                         <td>${path.basename(p.toString())}</td>
                         <td>${data.title}</td>
                         <td>${date}</td>
-                        <td>${data.categories}</td>
                         <td>${status}</td>
                         <td>
                             <button class="btn edit-post" data-postPath="${p}">Edit</button>
@@ -136,12 +136,18 @@ pageContent.addEventListener('click', function (e) {
 })
 
 function postEditor(filePath){
-    let content = fs.readFileSync(filePath.toString(), 'utf8')
+    if(store.has('currentPostEditPath')){
+        store.get('currentPostEditPath')
+    } else {
+        store.set('currentPostEditPath', filePath)
+    }
+    let currentPath = store.get('currentPostEditPath')
+    let content = fs.readFileSync(currentPath.toString(), 'utf8')
     let bla = content.split('---')
     let yml = bla[1]
     let p = yaml.load(yml)
-    let html = `current File Path: ${filePath}`
-    fS = {},
+    let html = ``
+    fS = {}
     editor = ''
 
     fs.readFile(configPath.toString(), (err, data) => {
@@ -209,7 +215,7 @@ function postEditor(filePath){
                     </div>
                 </div>
             </div>
-            <button class="btn">Preview</button>
+            <button class="btn disabled">Preview</button>
             <button class="btn" id="save-post-edit">Save Post</button>
             <button class="btn" id="save-post-draft-edit">Save Draft</button>
             <button class="btn" id="delete-post-edit">Delete Post</button>
@@ -231,39 +237,41 @@ function postEditor(filePath){
         if (e.target && e.target.id == 'cancel-post-edit') {
             let el = e.target
             if(confirm('Are you sure you want to cancel? All changes will be lost?')){
+                store.delete('currentPostEditPath')
                 generatePostsList();
             }
         }
         if (e.target && e.target.id == 'save-post-draft-edit') {
             let el = e.target
-            savePostDraft(filePath, editor)
+            savePostDraft(currentPath, editor)
         }
         if (e.target && e.target.id == 'save-post-edit') {
             let el = e.target
-            savePost(filePath, editor)
+            savePost(currentPath, editor)
         }
 
         if (e.target && e.target.id == 'delete-post-edit') {
             let el = e.target
             alert('delete')
-            if (confirm(`Are you sure you want to delete ${filePath}?`)) {
-                fs.unlink(filePath, (err) => {
+            if (confirm(`Are you sure you want to delete ${currentPath}?`)) {
+                fs.unlink(currentPath.toString(), (err) => {
                     if (err) throw err;
                     generatePostsList()
-                    alert(`${filePath} was deleted`)
+                    alert(`${currentPath} was deleted`)
+                    store.delete('currentPostEditPath')
                 });
             }
         }
 
-        if (e.target && e.target.id == 'add-media') {
-            let el = e.target
-            functions.loadMediaGallery(mediaLibraryPath, popupContent, mediaFolder, editor)
-        }
+        // if (e.target && e.target.id == 'add-media') {
+        //     let el = e.target
+        //     functions.loadMediaGallery(mediaLibraryPath, popupContent, mediaFolder, editor)
+        // }
 
 
     })
 }
-
+// for posts and pages
 pageContent.addEventListener('click', function (e) {
     if (e.target && e.target.classList.contains('media-chooser')) {
         functions.loadMediaGallery(mediaLibraryPath, popupContent, mediaFolder, e.target)
@@ -333,7 +341,7 @@ function postCreator(){
                     </div>
                 </div>
             </div>
-            <button class="btn">Preview</button>
+            <button class="btn disabled">Preview</button>
             <button class="btn" id="save-post-new">Save Post</button>
             <button class="btn" id="save-post-draft-new">Save Draft</button>
             <button class="btn" id="cancel-post-new">Cancel</button>
@@ -409,8 +417,9 @@ function createFileContent(draft, editor){
 
 function savePost(filePath, editor) {
     // delete old file
-    if(filePath){
-        // functions.deleteFile(filePath)
+    if(filePath != false){
+        functions.deleteFile(filePath.toString())
+        store.delete('currentPostEditPath')
     }    
     createFileContent(false, editor)
     alert('Post Saved')
@@ -418,8 +427,9 @@ function savePost(filePath, editor) {
 
 function savePostDraft(filePath, editor) {
     // delete old file
-    if (filePath) {
-        // functions.deleteFile(filePath)
+    if (filePath != false) {
+        functions.deleteFile(filePath.toString())
+        store.delete('currentPostEditPath')
     }
     createFileContent(true, editor)
     alert('Draft Saved')

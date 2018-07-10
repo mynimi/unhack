@@ -1,7 +1,5 @@
 const fs = require('fs')
 const path = require('path')
-const shell = require('shelljs')
-const child_process = require('child_process')
 const prefs = require('./prefs')
 const functions = require("./functions.js")
 const yaml = require('js-yaml');
@@ -35,7 +33,11 @@ document.querySelector('.nav-pages').addEventListener('click', function (e) {
     let el = e.target
     others.classList.remove("active")
     el.classList.add("active")
-    generatePagesList()
+    if (store.has('currentPageEditPath')) {
+        postEditor(store.get('currentPageEditPath'))
+    } else {
+        generatePagesList()
+    }
 })
 
 function generatePagesList(){
@@ -85,6 +87,7 @@ function generatePagesList(){
     })
     output += `</tbody></table></div></div></div></div>`
 
+    pageContent.innerHTML = ''
     pageContent.innerHTML = output
     // functions.inputStyle()
 
@@ -126,12 +129,19 @@ pageContent.addEventListener('click', function (e) {
 })
 
 function pageEditor(filePath){
-    let content = fs.readFileSync(filePath.toString(), 'utf8')
+    if (store.has('currentPageEditPath')) {
+        store.get('currentPageEditPath')
+    } else {
+        store.set('currentPageEditPath', filePath)
+    }
+    let currentPath = store.get('currentPageEditPath')
+    let content = fs.readFileSync(currentPath.toString(), 'utf8')
     let bla = content.split('---')
     let yml = bla[1]
     let p = yaml.load(yml)
     let html = ''
     fS = {}
+    editor = ''
 
     fs.readFile(configPath.toString(), (err, data) => {
         if (err) throw err
@@ -198,7 +208,7 @@ function pageEditor(filePath){
                     </div>
                 </div>
             </div>
-            <button class="btn">Preview</button>
+            <button class="btn disabled">Preview</button>
             <button class="btn" id="save-page-edit">Save Page</button>
             <button class="btn" id="save-page-draft-edit">Save Draft</button>
             <button class="btn" id="delete-page-edit">Delete Page</button>
@@ -219,26 +229,28 @@ function pageEditor(filePath){
         if (e.target && e.target.id == 'cancel-page-edit') {
             let el = e.target
             if(confirm('Are you sure you want to cancel? All changes will be lost?')){
+                store.delete('currentPageEditPath')
                 generatePagesList();
             }
         }
         if (e.target && e.target.id == 'save-page-draft-edit') {
             let el = e.target
-            savePageDraft(filePath, editor)
+            savePageDraft(currentPath, editor)
         }
         if (e.target && e.target.id == 'save-page-edit') {
             let el = e.target
-            savePage(filePath, editor)
+            savePage(currentPath, editor)
         }
 
         if (e.target && e.target.id == 'delete-page-edit') {
             let el = e.target
             alert('delete')
-            if (confirm(`Are you sure you want to delete ${filePath}?`)) {
-                fs.unlink(filePath, (err) => {
+            if (confirm(`Are you sure you want to delete ${currentPath}?`)) {
+                fs.unlink(currentPath.toString(), (err) => {
                     if (err) throw err;
                     generatePagesList()
-                    alert(`${filePath} was deleted`)
+                    alert(`${currentPath} was deleted`)
+                    store.delete('currentPageEditPath')
                 });
             }
         }
@@ -304,7 +316,7 @@ function pageCreator() {
                     </div>
                 </div>
             </div>
-            <button class="btn">Preview</button>
+            <button class="btn disabled">Preview</button>
             <button class="btn" id="save-page-new">Save Page</button>
             <button class="btn" id="save-page-draft-new">Save Draft</button>
             <button class="btn" id="cancel-page-new">Cancel</button>
@@ -377,17 +389,19 @@ function createFileContent(draft, editor){
 
 function savePage(filePath, editor) {
     // delete old file
-    if(filePath){
-        functions.deleteFile(filePath)
-    }    
+    if(filePath != false){
+        functions.deleteFile(filePath.toString())
+        store.delete('currentPageEditPath')
+    }     
     createFileContent(false, editor)
     alert('Page Saved')
 }
 
 function savePageDraft(filePath, editor) {
     // delete old file
-    if (filePath) {
-        functions.deleteFile(filePath)
+    if (filePath != false) {
+        functions.deleteFile(filePath.toString())
+        store.delete('currentPageEditPath')
     }
     createFileContent(true, editor)
     alert('Draft Saved')

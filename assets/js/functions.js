@@ -16,19 +16,23 @@ module.exports.retrieveMeta = function retrieveMeta(template,parent, child, conf
         if (!prop.type) {
             prop.type = 'text'
         }
+        let val = ''
 
         if (prop.type == 'text' || prop.type == 'date' || prop.type == 'number') {
-            config[child] = document.querySelector(`input[name="${child}"]`).value        
+            val = document.querySelector(`input[name="${child}"]`).value
         }
         if (prop.type == "radio" || prop.type == 'checkbox') {
             let options = prop.options
-            config[child] = document.querySelector(`input[name="${child}"]:checked`).value
+            val = document.querySelector(`input[name="${child}"]:checked`).value
         }
         if (prop.type == 'textarea') {
-            config[child] = document.querySelector(`textarea[name="${child}"]`).value
+            val = document.querySelector(`textarea[name="${child}"]`).value
         }
         if (prop.type == 'image') {
-            config[child] = document.querySelector(`img[name="${child}"`).dataset.metapath
+            val = document.querySelector(`img[name="${child}"`).dataset.metapath
+        }
+        if(val != ''){
+            config[child] = val
         }
     }        
     return config;
@@ -294,6 +298,7 @@ module.exports.loadMediaGallery = function loadMediaGallery(mediaLibraryPath, po
                 // TODO FIGURE OUT HOW TO MAKE THIS WORK MORE THAN ONCE!
                 if (pressedElem.previousElementSibling.tagName == 'IMG'){
                     pressedElem.previousElementSibling.src = src
+                    pressedElem.previousElementSibling.dataset.metapath = `/assets/${path.basename(src)}`
                 } else{
                     console.log(pressedElem.previousElementSibling.htmlFor)
                     pressedElem.insertAdjacentHTML('beforebegin',
