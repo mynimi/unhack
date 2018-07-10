@@ -7,10 +7,8 @@ const store = new Store({
             height: 700
         },
         uiSkin: 'light',
-        advancedView: true,
-        projectName: 'Create Site',
-        currentProjectPath: '',
-        configFilePath: ''
+        advancedView: false,
+        projectName: 'Create Site'
     }
 });
 

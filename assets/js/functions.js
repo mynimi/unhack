@@ -1,6 +1,7 @@
 "use strict"
 const fs = require('fs')
 const path = require('path')
+const yaml = require('js-yaml');
 const prefs = require('./prefs')
 let store = prefs.store
 
@@ -9,6 +10,7 @@ let store = prefs.store
 module.exports.htmlPath = function htmlPath(filename) {
     return path.join(__dirname, '..', 'html', filename+'.html');
 }
+
 module.exports.retrieveMeta = function retrieveMeta(template,parent, child, config){
     let prop = parent[child]
 
@@ -235,7 +237,7 @@ module.exports.getPathsInDir = function getPathsInDir(dir, filelist = []) {
         try {
             filelist = getPathsInDir(dirFile, filelist);
         } catch (err) {
-            if (err.code === 'ENOTDIR' || err.code === 'EBUSY' || err.code === 'ENOENT' ){
+            if (err.code === 'ENOTDIR' || err.code === 'EBUSY') {
                 filelist = [...filelist, dirFile];
             }
             else throw err;
@@ -353,6 +355,7 @@ module.exports.fillGallery = function fillGallery(mediaFolder) {
 }
 
 module.exports.changeDateFormat = function changeDateFormat(inputDate) { // expects Y-m-d
+    inputDate = inputDate.substring(0, 10);
     var splitDate = inputDate.split('-');
     if (splitDate.count == 0) {
         return null;
@@ -363,4 +366,80 @@ module.exports.changeDateFormat = function changeDateFormat(inputDate) { // expe
     var day = splitDate[2];
 
     return month + '\/' + day + '\/' + year;
+}
+
+module.exports.generateFilesList = function generateFilesList(fileList, type, pageContent){
+    fs.readFile(exports.htmlPath('filesList'), (err, data) => {
+        pageContent.innerHTML = data
+        document.querySelector('h1').innerHTML = `<span>${type.toProperCase()}s</span>`
+        document.querySelector('.cardholder').insertAdjacentHTML('beforebegin', `<button class="btn" id="create-new-${type}">Create New ${type.toProperCase()}</button>`);
+        document.querySelector('table').classList.add(type)
+        let list = ''
+        // iterate through all posts
+        fileList.forEach(function (p) {
+            let content = fs.readFileSync(p.toString(), 'utf8')
+            let bla = content.split('---')
+            let yml = bla[1]
+            let data = yaml.load(yml)
+            // console.log(data)
+            let status;
+            let date = ''
+            if(type == 'post'){
+                if (data.date) {
+                    date = exports.changeDateFormat(data.date)
+                }
+                if (p.includes('_drafts')) {
+                    status = 'Draft'
+                } else {
+                    status = 'Published'
+                }
+            } else{
+                if (data.published == false) {
+                    status = 'Draft'
+                } else {
+                    status = 'Published'
+                }
+            }
+            list += `<tr>
+                        <td>${path.basename(p.toString())}</td>
+                        <td>${data.title}</td>
+                        <td class="date">${date}</td>
+                        <td>${status}</td>
+                        <td>
+                            <button class="btn edit-${type}" data-${type}Path="${p}">Edit</button>
+                            <button class="btn duplicate-${type}" data-${type}Path="${p}">Duplicate</button>
+                            <button class="btn delete-${type}" data-${type}Path="${p}">Delete</button>
+                        </td>
+                    </tr>`
+        })
+        if (list == '') {
+            list = 'No Entries yet'
+        }
+        document.querySelector('tbody').innerHTML = list
+        if (err) {
+            console.log(err)
+        }
+    })
+}
+
+module.exports.duplicateFile = function duplicateFile(target, dataAttribute){
+    let el = target
+    let oP = el.dataset[dataAttribute]
+    let insert = "_copy";
+    let position = oP.lastIndexOf('.');
+    let nP = oP.substr(0, position) + insert + oP.substr(position);
+    exports.copyFile(oP, nP, function () {})
+    alert('copied')
+}
+
+module.exports.goDelete = function goDelete(target, dataAttribute){
+    let el = target
+    let oP = el.dataset[dataAttribute]
+    if (confirm(`Are you sure you want to delete ${oP}?`)) {
+        fs.unlink(oP.toString(), (err) => {
+            if (err) throw err;
+
+            alert(`${oP} was deleted`)
+        });
+    }
 }

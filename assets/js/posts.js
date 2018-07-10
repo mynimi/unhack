@@ -41,86 +41,28 @@ document.querySelector('.nav-posts').addEventListener('click', function (e) {
 })
 
 function generatePostsList(){
-    let postPathList = functions.getPathsInDir(postsPath.toString())
-    let draftPathList = functions.getPathsInDir(draftsPath.toString())
+    let postPathList = []
+    let draftPathList = []
+    if (fs.existsSync(postsPath.toString())) {
+        postPathList = functions.getPathsInDir(postsPath.toString())
+    }
+    if (fs.existsSync(draftsPath.toString())) {
+        draftPathList = functions.getPathsInDir(draftsPath.toString())
+    }
     let allPosts = [...draftPathList, ...postPathList]
 
-    let output = `<div class="middle">
-                    <h1><span>Posts</span></h1>
-                    <button class="btn" id="create-new-post">Create New Post</button>
-                    <div class="cardholder">
-                        <div class="card">
-                            <div class="card-content">
-                                <table>
-                                    <thead>
-                                        <tr>
-                                            <th>Filename</th>
-                                            <th>Title</th>
-                                            <th>Date</th>
-                                            <th>Status</th>
-                                            <th>Actions</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>`
-    // iterate through all posts
-    allPosts.forEach(function(p){
-        let content = fs.readFileSync(p.toString(), 'utf8')
-        let bla = content.split('---')
-        let yml = bla[1]
-        let data = yaml.load(yml)
-        // console.log(data)
-        let date = ''
-        if(data.date){
-            date = functions.changeDateFormat(data.date)
-        }
-        
-        let status;
-        if(p.includes('_drafts')){
-            status = 'Draft'
-        } else{
-            status = 'Published'
-        }
-        output +=   `<tr>
-                        <td>${path.basename(p.toString())}</td>
-                        <td>${data.title}</td>
-                        <td>${date}</td>
-                        <td>${status}</td>
-                        <td>
-                            <button class="btn edit-post" data-postPath="${p}">Edit</button>
-                            <button class="btn duplicate-post" data-postPath="${p}">Duplicate</button>
-                            <button class="btn delete-post" data-postPath="${p}">Delete</button>
-                        </td>
-                    </tr>`
-    })
-    output += `</tbody></table></div></div></div></div>`
-
-    pageContent.innerHTML = ''
-    pageContent.innerHTML = output
-    // functions.inputStyle()
-
+    functions.generateFilesList(allPosts, 'post', pageContent)
 }
 
 pageContent.addEventListener('click', function (e) {
     if (e.target && e.target.classList.contains('duplicate-post')) {
-        let el = e.target
-        let oP = el.dataset.postpath
-        let insert = "_copy";
-        let position = oP.lastIndexOf('.');
-        let nP = oP.substr(0, position) + insert + oP.substr(position);
-        functions.copyFile(oP, nP, function(){generatePostsList()})
-        alert('copied')
+        functions.duplicateFile(e.target, 'postpath')
+        generatePostsList()
     }
 
     if (e.target && e.target.classList.contains('delete-post')) {
-        let el = e.target
-        let oP = el.dataset.postpath
-        if(confirm(`Are you sure you want to delete ${oP}?`)){
-            fs.unlink(oP, (err) => {
-                if (err) throw err;
-                generatePostsList()
-                alert(`${oP} was deleted`)
-            });
-        }
+        functions.goDelete(e.target, 'postpath')
+        generatePostsList()
     }
 
     if (e.target && e.target.classList.contains('edit-post')) {

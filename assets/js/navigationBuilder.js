@@ -18,7 +18,6 @@ const pagesPath = store.get('currentProjectPath')
 
 const menuDataPath = path.join(store.get('currentProjectPath'), '_data', 'menu.yml')
 
-
 document.querySelector('.nav-navigation').addEventListener('click', function (e) {
     let others = document.querySelector('.sidenav span.active')
     let el = e.target

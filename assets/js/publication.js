@@ -30,6 +30,35 @@ pageContent.addEventListener('click', function (e) {
 // TODO: Generate Hashs for Passwords
 
 function openPublicationSettings(){
+    // Save Button Click
+    popupContent.addEventListener('click', function (e) {
+        if (e.target && e.target.id == 'save-publication-settings') {
+            const method = document.querySelector('input[name="publish-platform"]:checked').value
+            store.set('publicationSettings.method', method)
+            addConfig.publicationSettings = {}
+            const pS = addConfig.publicationSettings
+            pS.ftp = {}
+            pS.gitHub = {}
+            const ftpS = pS.ftp
+            const gitHubS = pS.gitHub
+            pS.method = method
+
+            ftpS.ftpHost = document.querySelector('input[name="ftp-host"]').value
+            ftpS.ftpUsername = document.querySelector('input[name="ftp-username"]').value
+            ftpS.ftpPassword = document.querySelector('input[name="ftp-password"]').value
+            ftpS.ftpPort = document.querySelector('input[name="ftp-port"]').value
+            ftpS.ftpDirectory = document.querySelector('input[name="ftp-directory"]').value
+
+            gitHubS.gitHubUsername = document.querySelector('input[name="github-username"]').value
+            gitHubS.gitHubPassword = document.querySelector('input[name="github-password"]').value
+            gitHubS.gitHubProjectUrl = document.querySelector('input[name="github-project-url"]').value
+
+            functions.addToConfig(addConfig)
+            popupContent.innerHTML = ''
+            functions.closePopup();
+        }
+    })
+    
     fs.readFile(publicationSettingsPath, (err, data) => {
         popupContent.innerHTML = data
 
@@ -63,31 +92,3 @@ function openPublicationSettings(){
     functions.openPopup()
 }
 
-// Save Button Click
-popupContent.addEventListener('click', function (e) {
-    if (e.target && e.target.id == 'save-publication-settings') {
-        const method = document.querySelector('input[name="publish-platform"]:checked').value
-        store.set('publicationSettings.method', method)
-        addConfig.publicationSettings = {}
-        const pS = addConfig.publicationSettings
-        pS.ftp = {}
-        pS.gitHub = {}
-        const ftpS = pS.ftp 
-        const gitHubS = pS.gitHub
-        pS.method = method
-
-        ftpS.ftpHost = document.querySelector('input[name="ftp-host"]').value
-        ftpS.ftpUsername = document.querySelector('input[name="ftp-username"]').value
-        ftpS.ftpPassword = document.querySelector('input[name="ftp-password"]').value
-        ftpS.ftpPort = document.querySelector('input[name="ftp-port"]').value
-        ftpS.ftpDirectory = document.querySelector('input[name="ftp-directory"]').value
-
-        gitHubS.gitHubUsername = document.querySelector('input[name="github-username"]').value
-        gitHubS.gitHubPassword = document.querySelector('input[name="github-password"]').value
-        gitHubS.gitHubProjectUrl = document.querySelector('input[name="github-project-url"]').value
-
-        functions.addToConfig(addConfig)
-        popupContent.innerHTML = ''
-        functions.closePopup();
-    }
-})

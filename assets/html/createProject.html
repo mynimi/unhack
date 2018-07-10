@@ -11,9 +11,14 @@
         <label for="project-name">Project Name</label>
         <input type="text" id="project-name" name="project-name">
     </div>
-    <button class="btn" id="create-site">Create New Site</button>
+    <button class="btn" id="create-site">Create New Site with jekyll</button>
+    <button class="btn disabled" id="clone-unhacked">Create New Site with Unhacked Theme</button>
+    <p class="small help">
+        <i class="fas fa-info-circle"></i>
+        Create new Site will create a new site using jekyll new command, with unhacked theme clones starter theme made for unHack App (easier to use)
+    </p>
 </div>
-<div class="advanced-view">
-    <p>Output:</p>
-    <textarea id="output"></textarea>
+<div class="wrap" style="opacity: .8">
+    <label for="output" class="up">Output</label>
+    <textarea name="output" id="output" placeholder="Output from Creation Command"></textarea>
 </div>

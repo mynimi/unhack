@@ -1,23 +1,20 @@
 const fs = require('fs');
 const path = require('path');
-const shell = require('shelljs')
 const child_process = require('child_process');
 const prefs = require('./prefs')
 let store = prefs.store
 
 const {
-    ipcRenderer,
-    remote
+    ipcRenderer
 } = require('electron');
 
 let pageContent = document.querySelector('.container')
 let popupContent = document.querySelector('.popup .content-loader') 
 const functions = require("./functions.js");
+const dashboard = require("./dashboard.js")
 
 const createProjectPath = functions.htmlPath('createProject')
 const openProjectPath = functions.htmlPath('openProject')
-
-const dashboard = functions.htmlPath('dashboard')
 
 ipcRenderer.on('create-project', function(){
     fs.readFile(createProjectPath, (err, data) => {
@@ -28,12 +25,12 @@ ipcRenderer.on('create-project', function(){
 });
 
 ipcRenderer.on('project-opened', function(){
-    fs.readFile(dashboard, (err, data) => {
-        pageContent.innerHTML = data
-    })
+    dashboard.open()
 })
 
-if(!store.get('currentProjectPath')){
+if(store.has('currentProjectPath')){
+    dashboard.open()
+} else {
     fs.readFile(openProjectPath, (err, data) => {
         pageContent.innerHTML = data
         let projectToOpen
@@ -50,8 +47,6 @@ if(!store.get('currentProjectPath')){
             if (projectToOpen) {
                 const configPath = path.join(projectToOpen.toString(), 'unhack.json');
 
-                // console.log(configPath)
-
                 if (fs.existsSync(configPath)) {
                     store.set('currentProjectPath', projectToOpen)
                     store.set('configFilePath', configPath)
@@ -60,23 +55,15 @@ if(!store.get('currentProjectPath')){
                     const c = JSON.parse(config)
 
                     store.set('projectName', c.name.toString())
-                    // console.log(c.name)
-                    // console.log('new project path is ' + store.get('currentProjectPath'))
-                    fs.readFile(dashboard, (err, data) => {
-                        pageContent.innerHTML = data
-                        if (err) {
-                            console.log(err);
-                        }
-                    })
+                    dashboard.open()
                     ipcRenderer.send('create-new-done')
                     document.querySelector('body').classList.add('has-sidenav')
                     document.querySelector('.sidenav').classList.remove('hidden')
                 } else {
                     dialog.showErrorBox('Not an Unhack Project', 'The Directory you selected does not seem to be an Unhack Project.')
                 }
-                // console.log(projectToOpen)
             }
-            
+
         }
         dropArea.ondragenter = (ev) => {
             dropArea.classList.add('dragging')
@@ -94,11 +81,7 @@ if(!store.get('currentProjectPath')){
                 functions.openPopup()
             }
         })
-    })
-} else {
-    fs.readFile(dashboard, (err, data) => {
-        pageContent.innerHTML = data
-    })
+    })    
 }
 
 // Variables
@@ -191,14 +174,7 @@ popupContent.addEventListener('click', function (e) {
                 if (err) throw err;
             });
 
-            const siteCreated = functions.htmlPath('dashboard')
-
-            fs.readFile(siteCreated, (err, data) => {
-                pageContent.innerHTML = data
-                if (err) {
-                    console.log(err);
-                }
-            })
+            dashboard.open()
 
             popupContent.innerHTML = ''
             functions.closePopup()

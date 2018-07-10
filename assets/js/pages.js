@@ -34,7 +34,7 @@ document.querySelector('.nav-pages').addEventListener('click', function (e) {
     others.classList.remove("active")
     el.classList.add("active")
     if (store.has('currentPageEditPath')) {
-        postEditor(store.get('currentPageEditPath'))
+        pageEditor(store.get('currentPageEditPath'))
     } else {
         generatePagesList()
     }
@@ -42,66 +42,13 @@ document.querySelector('.nav-pages').addEventListener('click', function (e) {
 
 function generatePagesList(){
     let allPages = functions.getPages(pagesPath)
-    // console.log(allPages)
-
-    let output = `<div class="middle">
-                    <h1><span>Pages</span></h1>
-                    <button class="btn" id="create-new-page">Create New Page</button>
-                    <div class="cardholder">
-                        <div class="card">
-                            <div class="card-content">
-                                <table>
-                                    <thead>
-                                        <tr>
-                                            <th>Filename</th>
-                                            <th>Title</th>
-                                            <th>Status</th>
-                                            <th>Actions</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>`
-    // iterate through all pages
-    allPages.forEach(function(p){
-        let content = fs.readFileSync(p.toString(), 'utf8')
-        let bla = content.split('---')
-        let yml = bla[1]
-        let data = yaml.load(yml)
-        // console.log(data)
-
-        let status;
-        if (data.published == false) {
-            status = 'Draft'
-        } else{
-            status = 'Published'
-        }
-        output +=   `<tr>
-                        <td>${path.basename(p.toString())}</td>
-                        <td>${data.title}</td>
-                        <td>${status}</td>
-                        <td>
-                            <button class="btn edit-page" data-pagePath="${p}">Edit</button>
-                            <button class="btn duplicate-page" data-pagePath="${p}">Duplicate</button>
-                            <button class="btn delete-page" data-pagePath="${p}">Delete</button>
-                        </td>
-                    </tr>`
-    })
-    output += `</tbody></table></div></div></div></div>`
-
-    pageContent.innerHTML = ''
-    pageContent.innerHTML = output
-    // functions.inputStyle()
-
+    functions.generateFilesList(allPages, 'page', pageContent)
 }
 
 pageContent.addEventListener('click', function (e) {
     if (e.target && e.target.classList.contains('duplicate-page')) {
-        let el = e.target
-        let oP = el.dataset.pagepath
-        let insert = "_copy";
-        let position = oP.lastIndexOf('.');
-        let nP = oP.substr(0, position) + insert + oP.substr(position);
-        functions.copyFile(oP, nP, function(){generatePagesList()})
-        alert('copied')
+        functions.duplicateFile(e.target, 'pagepath')
+        generatePagesList()
     }
 
     if (e.target && e.target.classList.contains('delete-page')) {

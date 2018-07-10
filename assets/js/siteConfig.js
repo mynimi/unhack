@@ -21,21 +21,20 @@ document.querySelector('.nav-config').addEventListener('click', function(e){
     let el = e.target
     others.classList.remove("active")
     el.classList.add("active")
-
     generateSiteConfig()
 })
 
-pageContent.addEventListener('click', function (e) {
-    if (e.target && e.target.id == 'saveconfig') {
-        saveSiteConfig()
-    }
-
-    if(e.target && e.target.id == 'edit-site-config'){
-        generateSiteConfig()
-    }
-})
-
 function generateSiteConfig(){
+    pageContent.addEventListener('click', function (e) {
+        if (e.target && e.target.id == 'saveconfig') {
+            saveSiteConfig()
+        }
+
+        if (e.target && e.target.id == 'edit-site-config') {
+            generateSiteConfig()
+        }
+    })
+
     let doc = {}
 
     // Get document, or throw exception on error
