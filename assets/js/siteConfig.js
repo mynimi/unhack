@@ -40,7 +40,7 @@ function generateSiteConfig(){
     // Get document, or throw exception on error
     try {
         doc = yaml.safeLoad(fs.readFileSync(siteConfigPath, 'utf8'));
-        // console.log(doc);
+        console.log(doc);
     } catch (e) {
         console.log(e);
     }
@@ -53,10 +53,18 @@ function generateSiteConfig(){
 
     for (var key in doc) {
         if (doc.hasOwnProperty(key)) {
+            console.log(doc[key])
+            let isArray = false
+            if (Array.isArray(doc[key])) {
+                isArray = true
+            }
             output += `<div class="wrap">` +
                 `<label for="${key}">${key}</label>` +
-                `<input type="text" name="${key}" id="${key}" value="${doc[key]}">` +
-                `</div>`
+                `<input type="text" data-isanarray="${isArray}" name="${key}" id="${key}" value="${doc[key]}">`
+            if(isArray){
+                output += `<p class="small help">Separate with Comma</p>`
+            }
+            output += `</div>`
         }
     }
 
@@ -76,14 +84,18 @@ function saveSiteConfig(){
 
     children.forEach(function(item){
         let key = item.id
-        let val = item.value 
+        let val = item.value
+
+        if (item.dataset.isanarray == 'true') {
+            val = item.value.split(',')
+        }
         config[key] = val
     })
 
-    // console.log(config)
+    console.log(config)
 
     const newConfig = yaml.safeDump(config)
-    // console.log(newConfig)
+    console.log(newConfig)
     fs.writeFile(siteConfigPath, newConfig, 'utf8', function (err) {
         if (err) return console.log(err);
     });

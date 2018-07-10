@@ -18,14 +18,13 @@
   "license": "CC0-1.0",
   "devDependencies": {
     "electron": "^2.0.2",
+    "ftp-deploy": "^2.1.2",
     "jekyll": "^3.0.0-beta1",
-    "js-yaml": "^3.12.0",
-    "shelljs": "^0.8.2"
+    "js-yaml": "^3.12.0"
   },
   "dependencies": {
     "dragula": "^3.7.2",
     "electron-store": "^2.0.0",
-    "password-hash-and-salt": "^0.1.4",
     "tui-editor": "^1.2.3"
   }
 }

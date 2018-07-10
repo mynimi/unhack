@@ -23,6 +23,9 @@ module.exports.retrieveMeta = function retrieveMeta(template,parent, child, conf
         if (prop.type == 'text' || prop.type == 'date' || prop.type == 'number') {
             val = document.querySelector(`input[name="${child}"]`).value
         }
+        if (prop.type == 'list') {
+            val = document.querySelector(`input[name="${child}"]`).value.split(',')
+        }
         if (prop.type == "radio" || prop.type == 'checkbox') {
             let options = prop.options
             val = document.querySelector(`input[name="${child}"]:checked`).value
@@ -70,6 +73,16 @@ module.exports.generateMeta = function generateMeta(template, parent, child, ini
                 `<div class="wrap">
                         <label for="${child}">${child.toProperCase()}</label>
                         <input type="${prop.type}" name="${child}" id="${child}" value="${initialVal}" ${(prop.maxlength) ? `maxlength="${prop.maxlength}"` : ''}>
+                        ${help}
+                    </div>`
+        }
+
+        if (prop.type == 'list') {
+            help += 'separate with comma'
+            output =
+                `<div class="wrap">
+                        <label for="${child}">${child.toProperCase()}</label>
+                        <input type="${prop.type}" name="${child}" id="${child}" data-isanarray="true"value="${initialVal}" ${(prop.maxlength) ? `maxlength="${prop.maxlength}"` : ''}>
                         ${help}
                     </div>`
         }
