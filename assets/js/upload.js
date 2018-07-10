@@ -15,9 +15,8 @@ const popupContent = document.querySelector('.popup .content-loader')
 const currentProjectPath = store.get('currentProjectPath')
 
 
-let pubMethod = store.get('publicationSettings.method')
-
 pageContent.addEventListener('click', function(e){
+    let pubMethod = store.get('publicationSettings.method')
     if(e.target && e.target.id == 'upload-site'){
         if (pubMethod == undefined) {
             alert('No Publication Method Selected, please Edit Publication Settings first!')
@@ -77,7 +76,6 @@ pageContent.addEventListener('click', function(e){
 
                     popupContent.addEventListener('click', function (e) {
                         if (e.target && e.target.id == 'upload-generated-site') {
-                            alert('upload starting')
                             if (pubMethod == 'ftp') {
                                 if (ftpS.ftpPort == '') {
                                     ftpS.ftpPort = 21
@@ -117,7 +115,65 @@ pageContent.addEventListener('click', function(e){
                                 })
                                 console.log(`password is ${store.get('ftpPassword')}`)
                             }
-                            // else if(pubMethod == 'github') {}
+                            else if(pubMethod == 'github') {
+                                let sourceBranch = 'source'
+                                let siteBranch = 'gh-pages'
+
+                                // let remoteURL = `https://github.com/${gitHubS.gitHubUsername}/${gitHubS.gitHubRepoName}.git`
+                                let remoteURL = `git@github.com:${gitHubS.gitHubUsername}/${gitHubS.gitHubRepoName}.git`
+
+                                if (gitHubS.gitHubRepoName.includes('.github.io')) {
+                                    siteBranch == 'master'
+                                }
+
+                                if(fs.existsSync(path.join(currentProjectPath.toString(), '.git/'))){
+                                    alert('is a Git directory')
+                                    const child = child_process.spawn(`git add -A && git commit -m "create source branch" && git pull && git push origin ${sourceBranch} && git branch -D ${siteBranch} && git checkout -b ${siteBranch} && sed '1d' -i .gitignore && git add -A && git commit -m "add _site" && git filter-branch --subdirectory-filter _site/ -f && git push -f origin ${siteBranch} && git checkout ${sourceBranch}`, {
+                                        shell: 'cmd',
+                                        cwd: currentProjectPath
+                                    })
+
+                                    child.stdout.pipe(process.stdout);
+                                    child.stderr.pipe(process.stderr);
+                                    child.stdin.end();
+
+                                    child.stdout.on('data', function (data) {
+                                        // console.log('stdout: ' + data);
+                                        htmlOutput.insertAdjacentHTML('beforeend', 'stdout: ' + data); //Here is where the output goes
+                                    });
+                                    child.stderr.on('data', function (data) {
+                                        // console.log('stderr: ' + data);
+                                        htmlOutput.insertAdjacentHTML('beforeend', 'stderr: ' + data); //Here is where the error output goes
+                                    });
+                                    child.on('close', function (code) {
+                                        // console.log('closing code: ' + code);
+                                        htmlOutput.insertAdjacentHTML('beforeend', 'closing code: ' + code); //Here you can get the exit code of the script
+                                    });
+                                } else{
+                                    alert('is not a git directory')
+                                    const child = child_process.spawn(`git init && git config user.email "${gitHubS.gitHubUserEmail}" && git config user.name "${gitHubS.gitHubUsername}" && git checkout -b ${sourceBranch} && git remote add origin ${remoteURL} && git add -A && git commit -m "create source branch" && git push origin ${sourceBranch} && git checkout -b ${siteBranch} && sed '1d' -i .gitignore && git add -A && git commit -m "add _site" && git filter-branch --subdirectory-filter _site/ -f && git push -f origin ${siteBranch} && git checkout ${sourceBranch}`, {
+                                        shell: 'cmd',
+                                        cwd: currentProjectPath
+                                    })
+
+                                    child.stdout.pipe(process.stdout);
+                                    child.stderr.pipe(process.stderr);
+                                    child.stdin.end();
+
+                                    child.stdout.on('data', function (data) {
+                                        // console.log('stdout: ' + data);
+                                        htmlOutput.insertAdjacentHTML('beforeend', 'stdout: ' + data); //Here is where the output goes
+                                    });
+                                    child.stderr.on('data', function (data) {
+                                        // console.log('stderr: ' + data);
+                                        htmlOutput.insertAdjacentHTML('beforeend', 'stderr: ' + data); //Here is where the error output goes
+                                    });
+                                    child.on('close', function (code) {
+                                        // console.log('closing code: ' + code);
+                                        htmlOutput.insertAdjacentHTML('beforeend', 'closing code: ' + code); //Here you can get the exit code of the script
+                                    });
+                                }
+                            }
                         }
                     })
                 })

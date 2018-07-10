@@ -31,7 +31,7 @@ function openPublicationSettings(){
     // Save Button Click
     popupContent.addEventListener('click', function (e) {
         if (e.target && e.target.id == 'save-publication-settings') {
-            const method = document.querySelector('input[name="publish-platform"]:checked').value
+            let method = document.querySelector('input[name="publish-platform"]:checked').value
             store.set('publicationSettings.method', method)
             addConfig.publicationSettings = {}
             const pS = addConfig.publicationSettings
@@ -51,12 +51,13 @@ function openPublicationSettings(){
             ftpS.ftpDirectory = document.querySelector('input[name="ftp-directory"]').value
 
             gitHubS.gitHubUsername = document.querySelector('input[name="github-username"]').value
+            gitHubS.gitHubUserEmail = document.querySelector('input[name="github-useremail"]').value
 
             let gitHubPW = document.querySelector('input[name="github-password"]')
             if (gitHubPW.value != '') {
                 store.set('gitHubPassword', gitHubPW.value)
             }
-            gitHubS.gitHubProjectUrl = document.querySelector('input[name="github-project-url"]').value
+            gitHubS.gitHubRepoName = document.querySelector('input[name="github-repository-name"]').value
 
             functions.addToConfig(addConfig)
             popupContent.innerHTML = ''
@@ -84,7 +85,8 @@ function openPublicationSettings(){
                 document.querySelector('input[name="ftp-directory"]').value = ftpS.ftpDirectory
 
                 document.querySelector('input[name="github-username"]').value = gitHubS.gitHubUsername
-                document.querySelector('input[name="github-project-url"]').value = gitHubS.gitHubProjectUrl
+                document.querySelector('input[name="github-useremail"]').value = gitHubS.gitHubUserEmail
+                document.querySelector('input[name="github-repository-name"]').value = gitHubS.gitHubRepoName
 
                 // console.log(pS)
 
