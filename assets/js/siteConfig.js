@@ -12,7 +12,10 @@ const {
 
 let pageContent = document.querySelector('.container')
 
-const configPath = store.get('currentProjectPath')
+let configPath = ''
+if (store.has('currentProjectPath')){
+    configPath = store.get('currentProjectPath').toString()
+}
 
 const siteConfigPath = path.join(configPath, '_config.yml')
 

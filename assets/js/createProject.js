@@ -32,6 +32,7 @@ if(store.has('currentProjectPath')){
     dashboard.open()
 } else {
     fs.readFile(openProjectPath, (err, data) => {
+        store.clear()
         pageContent.innerHTML = data
         let projectToOpen
 
@@ -127,6 +128,7 @@ ipcRenderer.on('selectedItem', function (event, path) {
 
 popupContent.addEventListener('click', function (e) {
     if (e.target && e.target.id == 'create-site') {
+        store.clear()
         const siteName = document.getElementById('project-name').value
         let htmlOutput = document.querySelector('#output')
 

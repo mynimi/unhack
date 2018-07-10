@@ -13,16 +13,22 @@ const {
     ipcRenderer,
     remote
 } = require('electron');
-
-const configPath = store.get('configFilePath')
+let configPath = ''
+if (store.has('configFilePath')) {
+    configPath = store.get('configFilePath')
+}
+let currentProjectPath = ''
+if (store.has('currentProjectPath')){
+    currentProjectPath = store.get('currentProjectPath').toString()
+}
 let config = {}
 let fS = {}
 
 let pageContent = document.querySelector('.container')
 let popupContent = document.querySelector('.popup .content-loader')
-const postsPath = path.join(store.get('currentProjectPath'), '_posts')
-const draftsPath = path.join(store.get('currentProjectPath'), '_drafts')
-const mediaFolder = path.join(store.get('currentProjectPath'), 'assets')
+let postsPath = path.join(currentProjectPath, '_posts')
+let draftsPath = path.join(currentProjectPath, '_drafts')
+let mediaFolder = path.join(currentProjectPath, 'assets')
 
 let mediaFiles = {}
 

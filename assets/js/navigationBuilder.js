@@ -16,7 +16,6 @@ let pageLinks = ''
 let menuArea = ''
 const pagesPath = store.get('currentProjectPath')
 
-const menuDataPath = path.join(store.get('currentProjectPath'), '_data', 'menu.yml')
 
 document.querySelector('.nav-navigation').addEventListener('click', function (e) {
     let others = document.querySelector('.sidenav span.active')
@@ -27,6 +26,19 @@ document.querySelector('.nav-navigation').addEventListener('click', function (e)
 })
 
 function navigationBuilder() {
+    let menuDataPath = path.join(store.get('currentProjectPath').toString(), '_data', 'menu.yml')
+    let configPath = store.get('configFilePath')
+
+    const config = fs.readFileSync(configPath)
+    const c = JSON.parse(config)
+    console.log(c)
+
+    if(c.menuSupport){
+        // yay menu supported by theme
+    } else {
+        alert("Seems like your Theme doesn't support the Navigation Builder, Read the Documentation to find out to add Menu Support.")
+    }
+
     pageContent.addEventListener('click', function (e) {
         let menuAreas = document.querySelector('.menu-areas')
         let count = menuAreas.childElementCount
@@ -153,7 +165,7 @@ function navigationBuilder() {
 
     pageContent.innerHTML = output
 
-    pageLinks = functions.getPages(pagesPath)
+    pageLinks = functions.getPages(pagesPath.toString())
     let availablePages = ''
     pageLinks.forEach(function (p) {
         let content = fs.readFileSync(p.toString(), 'utf8')

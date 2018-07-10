@@ -14,15 +14,15 @@ const {
     remote
 } = require('electron');
 
-const configPath = store.get('configFilePath')
+const configPath = store.get('configFilePath').toString()
 let config = {}
 let fS = {}
 
 let pageContent = document.querySelector('.container')
 let popupContent = document.querySelector('.popup .content-loader')
-const pagesPath = path.join(store.get('currentProjectPath'))
+const pagesPath = path.join(store.get('currentProjectPath').toString())
 
-const mediaFolder = path.join(store.get('currentProjectPath'), 'assets')
+const mediaFolder = path.join(store.get('currentProjectPath').toString(), 'assets')
 
 let mediaFiles = {}
 
