@@ -1,12 +1,10 @@
 const fs = require('fs')
-const path = require('path')
 const prefs = require('./prefs')
 const functions = require("./functions.js")
 let store = prefs.store
 
 const {
-    ipcRenderer,
-    remote
+    ipcRenderer
 } = require('electron');
 
 const pageContent = document.querySelector('.container')
@@ -45,12 +43,19 @@ function openPublicationSettings(){
 
             ftpS.ftpHost = document.querySelector('input[name="ftp-host"]').value
             ftpS.ftpUsername = document.querySelector('input[name="ftp-username"]').value
-            ftpS.ftpPassword = document.querySelector('input[name="ftp-password"]').value
+            let ftpPW = document.querySelector('input[name="ftp-password"]')
+            if(ftpPW.value != ''){
+                store.set('ftpPassword', ftpPW.value)
+            }
             ftpS.ftpPort = document.querySelector('input[name="ftp-port"]').value
             ftpS.ftpDirectory = document.querySelector('input[name="ftp-directory"]').value
 
             gitHubS.gitHubUsername = document.querySelector('input[name="github-username"]').value
-            gitHubS.gitHubPassword = document.querySelector('input[name="github-password"]').value
+
+            let gitHubPW = document.querySelector('input[name="github-password"]')
+            if (gitHubPW.value != '') {
+                store.set('gitHubPassword', gitHubPW.value)
+            }
             gitHubS.gitHubProjectUrl = document.querySelector('input[name="github-project-url"]').value
 
             functions.addToConfig(addConfig)
@@ -75,12 +80,10 @@ function openPublicationSettings(){
 
                 document.querySelector('input[name="ftp-host"]').value = ftpS.ftpHost
                 document.querySelector('input[name="ftp-username"]').value = ftpS.ftpUsername
-                document.querySelector('input[name="ftp-password"]').value = ftpS.ftpPassword
                 document.querySelector('input[name="ftp-port"]').value = ftpS.ftpPort
                 document.querySelector('input[name="ftp-directory"]').value = ftpS.ftpDirectory
 
                 document.querySelector('input[name="github-username"]').value = gitHubS.gitHubUsername
-                document.querySelector('input[name="github-password"]').value = gitHubS.gitHubPassword
                 document.querySelector('input[name="github-project-url"]').value = gitHubS.gitHubProjectUrl
 
                 // console.log(pS)

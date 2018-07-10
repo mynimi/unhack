@@ -25,6 +25,7 @@
   "dependencies": {
     "dragula": "^3.7.2",
     "electron-store": "^2.0.0",
+    "password-hash-and-salt": "^0.1.4",
     "tui-editor": "^1.2.3"
   }
 }
