@@ -27,65 +27,65 @@ document.querySelector('.nav-navigation').addEventListener('click', function (e)
     navigationBuilder()
 })
 
-pageContent.addEventListener('click', function (e) {
-    let menuAreas = document.querySelector('.menu-areas')
-    let count = menuAreas.childElementCount
+function navigationBuilder() {
+    pageContent.addEventListener('click', function (e) {
+        let menuAreas = document.querySelector('.menu-areas')
+        let count = menuAreas.childElementCount
 
-    if (e.target && e.target.id == 'add-drop-area') {
-        let el = e.target
-        menuAreas.insertAdjacentHTML('beforeend', `<div class="area area${count+1}"><div class="placeholder">Drag Element inside</div></div>`)
-    }
-
-    if (e.target && e.target.id == 'save-custom-menu') {
-        let navFile = {}
-        let dropdown = []
-
-        for (var i = 0; i < count; i++) {            
-            let area = document.querySelector(`.area${i+1}`)
-            let el = {}
-            console.log(area.childElementCount)
-            if (area.childElementCount > 1){
-                if (area.childElementCount > 2) {
-                    let items = document.querySelectorAll(`.area${i+1} span`)
-                    let children = []
-                    items.forEach(function (elem, index) {
-                        let i = index
-                        let child = {}
-                        if (i == 0) {
-                            el.title = elem.textContent
-                            el.children = children
-                        } else {
-                            child.title = elem.textContent
-                            child.url = elem.dataset.navurl
-                            children.push(child)
-                        }
-                    })
-                } else {
-                    let item = document.querySelector(`.area${i+1} span`)
-                    el.title = item.textContent
-                    el.url = item.dataset.navurl
-                }
-                dropdown.push(el)
-            }
+        if (e.target && e.target.id == 'add-drop-area') {
+            let el = e.target
+            menuAreas.insertAdjacentHTML('beforeend', `<div class="area area${count+1}"><div class="placeholder">Drag Element inside</div></div>`)
         }
 
-        navFile.dropdown = dropdown
-        console.log(navFile)
-        let newMenuFile = yaml.safeDump(navFile, {
-            skipInvalid: true
-        })
-        fs.writeFile(menuDataPath, newMenuFile, 'utf8', function (err) {
-            if (err) {
-                return console.log(err);
-            } else{
-                navigationBuilder()
-                alert('New Menu Saved')
-            }
-        });
-    }
-})
+        if (e.target && e.target.id == 'save-custom-menu') {
+            let navFile = {}
+            let dropdown = []
 
-function navigationBuilder() {
+            for (var i = 0; i < count; i++) {
+                let area = document.querySelector(`.area${i+1}`)
+                let el = {}
+                console.log(area.childElementCount)
+                if (area.childElementCount > 1) {
+                    if (area.childElementCount > 2) {
+                        let items = document.querySelectorAll(`.area${i+1} span`)
+                        let children = []
+                        items.forEach(function (elem, index) {
+                            let i = index
+                            let child = {}
+                            if (i == 0) {
+                                el.title = elem.textContent
+                                el.children = children
+                            } else {
+                                child.title = elem.textContent
+                                child.url = elem.dataset.navurl
+                                children.push(child)
+                            }
+                        })
+                    } else {
+                        let item = document.querySelector(`.area${i+1} span`)
+                        el.title = item.textContent
+                        el.url = item.dataset.navurl
+                    }
+                    dropdown.push(el)
+                }
+            }
+
+            navFile.dropdown = dropdown
+            console.log(navFile)
+            let newMenuFile = yaml.safeDump(navFile, {
+                skipInvalid: true
+            })
+            fs.writeFile(menuDataPath, newMenuFile, 'utf8', function (err) {
+                if (err) {
+                    return console.log(err);
+                } else {
+                    navigationBuilder()
+                    alert('New Menu Saved')
+                }
+            });
+        }
+    })
+
     if (fs.existsSync(menuDataPath)) {
         let menuData = yaml.safeLoad(fs.readFileSync(menuDataPath, 'utf8'));
         console.log(menuData)
