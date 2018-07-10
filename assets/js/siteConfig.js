@@ -1,4 +1,4 @@
-yaml = require('js-yaml');
+const yaml = require('js-yaml')
 const fs = require('fs')
 const path = require('path')
 const prefs = require('./prefs')
