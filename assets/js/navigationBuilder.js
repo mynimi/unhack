@@ -14,7 +14,7 @@ let pageContent = document.querySelector('.container')
 let pageLinks = ''
 const pagesPath = path.join(store.get('currentProjectPath'))
 
-let output = `<h1>Build Your Menu</h1>
+let output = `<h1><span>Build Your Menu</span></h1>
                 <div class="cardholder">
                     <div class="card">
                         <div class="card-content">

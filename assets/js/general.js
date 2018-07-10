@@ -36,14 +36,21 @@ document.onkeydown = function (evt) {
     }
 };
 
+
+let currentSkin = store.get('uiSkin')
+let sS = document.querySelector('#main-style')
+
+if (currentSkin == "light") {
+    sS.href = "assets/css/main.css"    
+} else {
+    sS.href = "assets/css/dark.css"
+}
+
 ipcRenderer.on('toggle-dark-mode', function () {
-    setUIStyle();
+    changeUIStyle(currentSkin, sS);
 })
 
-function setUIStyle(){
-    let currentSkin = store.get('uiSkin')
-    let sS = document.querySelector('#main-style')
-
+function changeUIStyle(currentSkin, sS) {
     if(currentSkin == "light"){
         sS.href = "assets/css/dark.css"
         store.set('uiSkin', 'dark')

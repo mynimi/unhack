@@ -45,7 +45,7 @@ function generatePagesList(){
     // console.log(allPages)
 
     let output = `<div class="middle">
-                    <h1>Pages</h1>
+                    <h1><span>Pages</span></h1>
                     <button class="btn" id="create-new-page">Create New Page</button>
                     <div class="cardholder">
                         <div class="card">
@@ -149,7 +149,7 @@ function pageEditor(filePath){
         fS = config.frontMatterSettings
 
         html += `<div class="middle pageContents">
-                    <h1>Edit Page</h1>
+                    <h1><span>Edit Page</span></h1>
                     <div class="cards-alt">
                         <div class="main">
                             <div class="card">
@@ -220,7 +220,7 @@ function pageEditor(filePath){
             initialValue: bla[2],
             initialEditType: 'wysiwyg',
             previewStyle: 'tab',
-            height: '500px'
+            height: '900px'
         });
         functions.inputStyle()
     })
@@ -267,7 +267,7 @@ function pageCreator() {
         fS = config.frontMatterSettings
 
         html += `<div class="middle pageContents">
-                    <h1>Create Page</h1>
+                    <h1><span>Create Page</span></h1>
                     <div class="cards-alt">
                         <div class="main">
                             <div class="card">
@@ -326,7 +326,7 @@ function pageCreator() {
             el: document.querySelector('#editSection'),
             initialEditType: 'wysiwyg',
             previewStyle: 'tab',
-            height: '500px'
+            height: '900px'
         });
         functions.inputStyle()
     })

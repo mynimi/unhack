@@ -79,7 +79,7 @@ $header-background: $mediumgray;
 $header-color: black-or-white($header-background);
 $header-link-color: rgba($header-color, .7);
 $header-link-hover: $header-color;
-$sidenav-background: $gray;
+$sidenav-background: $white;
 $table-row-bg: darken($white, 5%);
 
 $dragdroparea-border: 2px dashed darken($white, 30%);
@@ -112,7 +112,7 @@ $sidenav-width: 200px;
     $header-color: black-or-white($header-background);
     $header-link-color: rgba($header-color, .7);
     $header-link-hover: $header-color;
-    $sidenav-background: invert($gray);
+    $sidenav-background: invert($white);
     $table-row-bg: invert(darken($white, 5%));
 
     $dragdroparea-border: 2px dashed darken($white, 30%);

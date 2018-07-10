@@ -11,6 +11,12 @@ $lightgray: #F6F6F6;
 $gray: darken($lightgray, 10%);
 $mediumgray: darken($lightgray, 30%);
 
-$accent-alt: #6B7F7F;
-$accent: #447F7E;
-$brand: #D73E4B;
+$red: #D73E4B;
+$darkred: #8A1A24;
+$yellow: #E4B958;
+$blue: #218C9E;
+$darkblue: #156370;
+
+$accent-alt:$darkblue;
+$accent: $blue;
+$brand:$red;

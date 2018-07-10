@@ -46,7 +46,7 @@ function generatePostsList(){
     let allPosts = [...draftPathList, ...postPathList]
 
     let output = `<div class="middle">
-                    <h1>Posts</h1>
+                    <h1><span>Posts</span></h1>
                     <button class="btn" id="create-new-post">Create New Post</button>
                     <div class="cardholder">
                         <div class="card">
@@ -156,7 +156,7 @@ function postEditor(filePath){
         fS = config.frontMatterSettings
 
         html += `<div class="middle postContents">
-                    <h1>Edit Post</h1>
+                    <h1><span>Edit Post</span></h1>
                     <div class="cards-alt">
                         <div class="main">
                             <div class="card">
@@ -228,7 +228,7 @@ function postEditor(filePath){
             initialValue: bla[2],
             initialEditType: 'wysiwyg',
             previewStyle: 'tab',
-            height: '500px'
+            height: '900px'
         });
         functions.inputStyle()
     })
@@ -288,7 +288,7 @@ function postCreator(){
         fS = config.frontMatterSettings
         
         html += `<div class="middle postContents">
-                    <h1>Create Post</h1>
+                    <h1><span>Create Post</span></h1>
                     <div class="cards-alt">
                         <div class="main">
                             <div class="card">
@@ -352,7 +352,7 @@ function postCreator(){
             el: document.querySelector('#createPostContent'),
             initialEditType: 'wysiwyg',
             previewStyle: 'tab',
-            height: '500px'
+            height: '900px'
         });
         functions.inputStyle()
     })

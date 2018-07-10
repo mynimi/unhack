@@ -47,7 +47,7 @@ function generateSiteConfig(){
     }
 
     let output = `<div class="middle">` +
-        `<h1>Site Configuration</h1>` +
+        `<h1><span>Site Configuration</span></h1>` +
         `<div class="cardholder">` +
         `<div class="card">` +
         `<div class="card-content siteConfig">`

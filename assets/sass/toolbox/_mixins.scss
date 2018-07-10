@@ -1,6 +1,18 @@
 // PROJECT MIXINS
 //---------------------------------------------------------------------
+@mixin brandStyling(){
+    &:before {
+        content: '>';
+    }
 
+    &:after {
+        content: '.';
+    }
+    & span:after{
+        content: '/';
+        color: $brand;
+    }
+}
 
 // TOOLBOX MIXINS
 //---------------------------------------------------------------------

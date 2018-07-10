@@ -61,9 +61,10 @@ input:not([type="submit"]):not([type="button"]):not([type="checkbox"]):not([type
             .tab &{
                 background: $tab-area-active-bg;
             }
-            font-size: .8em;
+            font-size: .9em;
             top: 0;
             transform: translateY(-50%);
+            font-weight: bold;
             color: $input-label-color;
         }
 

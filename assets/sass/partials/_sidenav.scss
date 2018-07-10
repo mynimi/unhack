@@ -10,19 +10,25 @@
     box-sizing: border-box;
 
     a,
-    span{
+   nav > span{
         color: black-or-white($sidenav-background);
         display: block;
         padding: 5px;
         margin: 5px 0;
         border-bottom: 1px solid rgba(black-or-white($sidenav-background), .1);
+        cursor: pointer;
 
         &:hover{
             opacity: .7;
         }
 
         &.active{
-            color: red;
+            color: $darkred;
+            
+            &:before{
+                content: '>';
+                color: $brand;
+            }
         }
     }
 }
