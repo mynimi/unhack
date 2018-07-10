@@ -140,7 +140,7 @@ app.on('ready', () => {
         {
             label: 'View',
             submenu: [
-                { label: 'Toggle Dark Mode',
+                { label: 'Toggle Between Dark & Light Mode',
                     click: function(){
                         mainWindow.webContents.send('toggle-dark-mode')
                     }

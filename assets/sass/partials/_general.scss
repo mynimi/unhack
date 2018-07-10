@@ -61,7 +61,7 @@ h6{
 }
 
 // Links
-a{
+a, .link{
     @if $link-transition == yes {
         transition: .3s all;
     }
@@ -74,6 +74,7 @@ a{
     }
 
     color: $link-color;
+    cursor: pointer;
 
     &:hover{
         cursor: pointer;

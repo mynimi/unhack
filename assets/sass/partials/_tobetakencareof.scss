@@ -1,3 +1,27 @@
+.localhost-info{
+    width: 200px;
+    padding: 20px;
+    background: $card-background;
+    color: $main-color;
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    z-index: 99999;
+    font-size: .8em;
+    p{
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+    .btn.small{
+        margin: 0;
+    }
+    &:after{
+        content: 'Localhost';
+        position: absolute;
+        top: 5px;
+        right: 5px;
+    }
+}
 body.navigation{
     .card{
         width: 100% !important;

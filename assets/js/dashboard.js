@@ -16,7 +16,7 @@ document.querySelector('.nav-dashboard').addEventListener('click', function (e) 
     let el = e.target
     others.classList.remove("active")
     el.classList.add("active")
-    exports.openDashboard()
+    exports.open()
 })
 
 module.exports.open = function openDashboard(){

@@ -46,9 +46,9 @@ h5 { font-size: 1.08em; }
 
 h6 { font-size: 1em; }
 
-a, .btn { -webkit-transition: .3s all; -o-transition: .3s all; transition: .3s all; text-decoration: none; color: #218C9E; }
+a, .btn, .link { -webkit-transition: .3s all; -o-transition: .3s all; transition: .3s all; text-decoration: none; color: #218C9E; cursor: pointer; }
 
-a:hover, .btn:hover { cursor: pointer; color: #156370; }
+a:hover, .btn:hover, .link:hover { cursor: pointer; color: #156370; }
 
 img { max-width: 100%; height: auto; }
 
@@ -232,6 +232,8 @@ input:not([type="submit"]):not([type="button"]):not([type="checkbox"]):not([type
 
 table { width: 100%; position: relative; }
 
+table.page .date { display: none; }
+
 table th { text-align: left; font-size: .9em; font-weight: bold; padding: 3px; }
 
 table td { padding: 5px; background: #f2f2f2; color: black; border-top: 5px solid #fff; -webkit-transition: .3 all ease; -o-transition: .3 all ease; transition: .3 all ease; }
@@ -353,6 +355,14 @@ table thead:after { content: ''; width: calc(100% + 10px); height: 100%; backgro
 .navbar .parent, .navbar a, .navbar .btn { display: block; position: relative; margin: 0 10px; cursor: pointer; }
 
 .navbar .children { display: block; position: absolute; top: 100%; left: 0; width: auto; border-left: 3px solid black; }
+
+.localhost-info { width: 200px; padding: 20px; background: #fff; color: #000; position: fixed; top: 10px; right: 10px; z-index: 99999; font-size: .8em; }
+
+.localhost-info p { padding: 0 !important; margin: 0 !important; }
+
+.localhost-info .btn.small { margin: 0; }
+
+.localhost-info:after { content: 'Localhost'; position: absolute; top: 5px; right: 5px; }
 
 body.navigation .card { width: 100% !important; }
 
