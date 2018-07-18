@@ -26,6 +26,7 @@ if(store.get('isJekyllInstalled')){
             console.error(`exec error: ${err}`);
             store.set('isJekyllInstalled', false)
             ipcRenderer.send('show-error-message', 'No Jekyll Found', "Looks like you don't have jekyll installed. unHack requires jekyll to be installed in order to function.")
+            ipcRenderer.send('open-link', 'https://jekyllrb.com/docs/installation/')
             return;
         }
         console.log(`jekyll version is ${stdout}`);

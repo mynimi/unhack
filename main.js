@@ -4,7 +4,8 @@ const {
     BrowserWindow,
     ipcMain,
     dialog,
-    Menu
+    Menu,
+    shell
 } = require('electron')
 const fs = require('fs');
 const path = require('path');
@@ -37,7 +38,7 @@ function createWindow() {
     mainWindow.loadFile('index.html')
 
     // Open the DevTools.
-    mainWindow.webContents.openDevTools()
+    // mainWindow.webContents.openDevTools()
 
     // Emitted when the window is closed.
     mainWindow.on('closed', function () {
@@ -155,8 +156,15 @@ app.on('ready', () => {
                         mainWindow.webContents.send('open-publication-settings');
                     }
                 },
-                { label: 'Upload Site' },
-                { label: 'Preview Site' }
+                { label: 'Upload Site',
+                    click: function(){
+                        mainWindow.webContents.send('open-upload')
+                    }
+                 },
+                {
+                    label: 'Preview Site',
+                    enabled: 'false'
+                }
             ]
         },
         {
@@ -178,10 +186,19 @@ app.on('ready', () => {
         {
             role: 'Help',
             submenu: [
-                { label: 'Documentation' },
-                { label: 'About' },
+                { label: 'Documentation',
+                  click(){
+                      shell.openExternal('https://github.com/mynimi/unhack/blob/master/README.md')
+                  }
+                },
+                {
+                    label: 'About',
+                    enabled: 'false'
+                },
                 { type: 'separator' },
-                { label: 'unHack Website'},
+                { label: 'unHack Website',
+                enabled: 'false'
+                },
             ]
         },
         {
@@ -201,6 +218,7 @@ app.on('ready', () => {
                 },
                 {
                     label: `Turn Advanced View ${store.get('advancedView') ? 'Off' : 'On'}`,
+                    enabled: 'false',
                     type: 'checkbox',
                     click(){
                         if(store.get('advancedView')){
@@ -271,7 +289,9 @@ app.on('ready', () => {
             message: msg
         })
     })
-
+    ipcMain.on('open-link', function(event, urlToOpen){
+        shell.openExternal(urlToOpen)
+    })
     ipcMain.on('ready-to-start', function(event){
         mainWindow.webContents.send('show-open-and-create')
     })

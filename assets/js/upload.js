@@ -17,21 +17,30 @@ if(store.has('currentProjectPath')) {
     currentProjectPath = store.get('currentProjectPath').toString()
 }
 
+ipcRenderer.on('open-upload', function () {
+    runUpload()
+})
 
 pageContent.addEventListener('click', function(e){
+    if (e.target && e.target.id == 'upload-site') {
+        runUpload()
+    }
+})
+
+function runUpload() {
     let pubMethod = store.get('publicationSettings.method')
-    if(e.target && e.target.id == 'upload-site'){
+    
         if (pubMethod == undefined) {
             ipcRenderer.send('show-message-box', 'error', 'No Method Selected', 'No Publication Method Selected, please Edit Publication Settings first!')
         } else {
-            popupContent.innerHTML =    `<h1><span>Publish Site</span></h1>
+            popupContent.innerHTML = `<h1><span>Publish Site</span></h1>
                                         <p>Publishing via ${pubMethod}</p>
                                         <div class="wrap"><label for="generation-output" class="up">Generating jekyll site</label><textarea name="generation-output" id="generation-output" placeholder="output" style="min-height: 200px"></textarea></div>`
             functions.openPopup()
-            if(pubMethod == 'ftp'){
+            if (pubMethod == 'ftp') {
                 console.log(`password is ${store.get('ftpPassword')}`)
             }
-            if(pubMethod == 'gitHub'){
+            if (pubMethod == 'gitHub') {
                 console.log(`password is ${store.get('gitHubPassword')}`)
             }
 
@@ -40,7 +49,7 @@ pageContent.addEventListener('click', function(e){
                 shell: 'cmd',
                 cwd: currentProjectPath
             })
-            
+
             child.stdout.pipe(process.stdout);
             child.stderr.pipe(process.stderr);
             child.stdin.end();
@@ -80,6 +89,7 @@ pageContent.addEventListener('click', function(e){
                     let localRoot = path.join(currentProjectPath.toString(), '_site')
 
                     let filesToUpload = functions.getPathsInDir(localRoot)
+
                     function flatten(lists) {
                         return lists.reduce((a, b) => a.concat(b), []);
                     }
@@ -107,14 +117,14 @@ pageContent.addEventListener('click', function(e){
                                 if (ftpS.ftpPort == '') {
                                     ftpS.ftpPort = 21
                                 }
-                                
+
                                 var Client = require('ftp');
                                 var c = new Client();
-                                c.on('error', function(){
+                                c.on('error', function () {
                                     htmlOutput.insertAdjacentHTML('beforeend', 'FTP Error: ' + err);
                                 })
 
-                                c.on('end', function(){
+                                c.on('end', function () {
                                     htmlOutput.insertAdjacentHTML('beforeend', 'FTP End');
                                 })
 
@@ -123,7 +133,7 @@ pageContent.addEventListener('click', function(e){
                                     functions.closePopup()
                                     ipcRenderer.send('show-message-box', 'none', 'FTP UPloaded', 'Site was uploaded.')
                                 })
-                                
+
                                 c.on('ready', function () {
                                     // get current directory listing
                                     c.list(ftpS.ftpDirectory, function (err, list) {
@@ -132,8 +142,8 @@ pageContent.addEventListener('click', function(e){
                                         c.end();
                                     });
                                     // remove previous site directory
-                                    c.rmdir(ftpS.ftpDirectory, true, function(err){
-                                        if(err) throw err;
+                                    c.rmdir(ftpS.ftpDirectory, true, function (err) {
+                                        if (err) throw err;
                                         c.end();
                                     })
                                     // get current directory listing
@@ -170,15 +180,15 @@ pageContent.addEventListener('click', function(e){
                                         console.dir(list);
                                         c.end();
                                     });
-                                    
+
                                     // upload all the files
                                     for (let i = 0; i < filesToUpload.length; i++) {
                                         let inString = filesToUpload[i]
                                         let outString = inString.replace(localRoot, ftpS.ftpDirectory);
                                         // console.log(`in: ${inString}`)
                                         // console.log(`out: ${outString.replace(/\\/g, '/')}`)
-                                            c.put(`${inString}`, `${outString.replace(/\\/g, '/')}`,
-                                                    function (err) {
+                                        c.put(`${inString}`, `${outString.replace(/\\/g, '/')}`,
+                                            function (err) {
                                                 if (err) throw err;
                                                 c.end();
                                             });
@@ -192,15 +202,14 @@ pageContent.addEventListener('click', function(e){
                                     });
                                 });
 
-                                  c.connect({
-                                              host: ftpS.ftpHost,
-                                              user: ftpS.ftpUsername,
-                                              password: store.get('ftpPassword'),
-                                              debug: console.log
-                                            });
+                                c.connect({
+                                    host: ftpS.ftpHost,
+                                    user: ftpS.ftpUsername,
+                                    password: store.get('ftpPassword'),
+                                    debug: console.log
+                                });
 
-                            }
-                            else if(pubMethod == 'github') {
+                            } else if (pubMethod == 'github') {
                                 let sourceBranch = 'source'
                                 let siteBranch = 'gh-pages'
 
@@ -211,7 +220,7 @@ pageContent.addEventListener('click', function(e){
                                     siteBranch == 'master'
                                 }
 
-                                if(fs.existsSync(path.join(currentProjectPath.toString(), '.git/'))){
+                                if (fs.existsSync(path.join(currentProjectPath.toString(), '.git/'))) {
                                     alert('is a Git directory')
                                     const child = child_process.spawn(`git add -A && git commit -m "create source branch" && git pull && git push origin ${sourceBranch} && git branch -D ${siteBranch} && git checkout -b ${siteBranch} && sed '1d' -i .gitignore && git add -A && git commit -m "add _site" && git filter-branch --subdirectory-filter _site/ -f && git push -f origin ${siteBranch} && git checkout ${sourceBranch}`, {
                                         shell: 'cmd',
@@ -234,7 +243,7 @@ pageContent.addEventListener('click', function(e){
                                         // console.log('closing code: ' + code);
                                         htmlOutput.insertAdjacentHTML('beforeend', 'closing code: ' + code); //Here you can get the exit code of the script
                                     });
-                                } else{
+                                } else {
                                     alert('is not a git directory')
                                     const child = child_process.spawn(`git init && git config user.email "${gitHubS.gitHubUserEmail}" && git config user.name "${gitHubS.gitHubUsername}" && git checkout -b ${sourceBranch} && git remote add origin ${remoteURL} && git add -A && git commit -m "create source branch" && git push origin ${sourceBranch} && git checkout -b ${siteBranch} && sed '1d' -i .gitignore && git add -A && git commit -m "add _site" && git filter-branch --subdirectory-filter _site/ -f && git push -f origin ${siteBranch} && git checkout ${sourceBranch}`, {
                                         shell: 'cmd',
@@ -265,5 +274,4 @@ pageContent.addEventListener('click', function(e){
             }
 
         }
-    }
-})
+}

@@ -46,7 +46,7 @@ if (currentSkin == "light") {
 }
 
 ipcRenderer.on('toggle-dark-mode', function () {
-    changeUIStyle(currentSkin, sS);
+    changeUIStyle(store.get('uiSkin'), sS);
 })
 
 function changeUIStyle(currentSkin, sS) {
