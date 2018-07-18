@@ -48,9 +48,21 @@ ipcRenderer.on('project-opened', function(){
 
 ipcRenderer.on('show-open-and-create', function(){
     console.log('we are ready to start')
+
     if (store.has('currentProjectPath')) {
-        dashboard.open()
-    } else {
+        console.log('we have a path')
+        if (fs.existsSync(store.get('currentProjectPath').toString())) {
+            console.log('path still exists.')
+            dashboard.open()
+        } else{
+            console.log('path no longer exists, so we start over.')
+            showDropArea()
+        }
+    } else{
+        showDropArea()
+    }
+
+    function showDropArea() {
         fs.readFile(openProjectPath, (err, data) => {
             store.clear()
             pageContent.innerHTML = data
@@ -150,61 +162,68 @@ ipcRenderer.on('selectedItem', function (event, path) {
 popupContent.addEventListener('click', function (e) {
     if (e.target && e.target.id == 'create-site') {
         store.clear()
+        const parentDirectory = document.getElementById('selectedItem').value
         const siteName = document.getElementById('project-name').value
-        let htmlOutput = document.querySelector('#output')
 
-        htmlOutput.innerHTML = "" // clear previous Output
+        if(parentDirectory == '' || siteName == ''){
+            ipcRenderer.send('show-error-message', 'Error', "Please fill out all fields before hitting create.")
+        } else{
+            let htmlOutput = document.querySelector('#output')
 
-        const child = child_process.spawn(`jekyll new ${siteName}`, {
-            shell: 'cmd',
-            cwd: projectParentPath
-        })
+            htmlOutput.innerHTML = "" // clear previous Output
 
-        child.stdout.pipe(process.stdout);
-        child.stderr.pipe(process.stderr);
-        child.stdin.end();
+            const child = child_process.spawn(`jekyll new ${siteName}`, {
+                shell: 'cmd',
+                cwd: projectParentPath
+            })
 
-        child.stdout.on('data', function (data) {
-            console.log('stdout: ' + data);
-            htmlOutput.insertAdjacentHTML('beforeend', 'stdout: ' + data); //Here is where the output goes
-        });
-        child.stderr.on('data', function (data) {
-            console.log('stderr: ' + data);
-            htmlOutput.insertAdjacentHTML('beforeend', 'stderr: ' + data); //Here is where the error output goes
-        });
-        child.on('close', function (code) {
-            console.log('closing code: ' + code);
-            htmlOutput.insertAdjacentHTML('beforeend', 'closing code: ' + code); //Here you can get the exit code of the script
-        });
+            child.stdout.pipe(process.stdout);
+            child.stderr.pipe(process.stderr);
+            child.stdin.end();
 
-        child.on('exit', function () {
-            // write PAth to config
-            const projectPath = path.join(projectParentPath, siteName)
-
-            store.set('currentProjectPath', projectPath);
-            store.set('projectName', siteName);
-
-            // Create a Config File
-            const unhackConfig = {
-                name: siteName,
-            }
-            const fileName = 'unhack.json';
-            const configPath = path.join(projectPath, fileName)
-
-            store.set('configFilePath', configPath)
-
-            fs.writeFile(configPath, JSON.stringify(unhackConfig, null, 2), (err) => {
-                if (err) throw err;
+            child.stdout.on('data', function (data) {
+                console.log('stdout: ' + data);
+                htmlOutput.insertAdjacentHTML('beforeend', 'stdout: ' + data); //Here is where the output goes
+            });
+            child.stderr.on('data', function (data) {
+                console.log('stderr: ' + data);
+                htmlOutput.insertAdjacentHTML('beforeend', 'stderr: ' + data); //Here is where the error output goes
+            });
+            child.on('close', function (code) {
+                console.log('closing code: ' + code);
+                htmlOutput.insertAdjacentHTML('beforeend', 'closing code: ' + code); //Here you can get the exit code of the script
             });
 
-            dashboard.open()
+            child.on('exit', function () {
+                // write PAth to config
+                const projectPath = path.join(projectParentPath, siteName)
 
-            popupContent.innerHTML = ''
-            functions.closePopup()
+                store.set('currentProjectPath', projectPath);
+                store.set('projectName', siteName);
 
-            ipcRenderer.send('create-new-done')
-            document.querySelector('body').classList.add('has-sidenav')
-            document.querySelector('.sidenav').classList.remove('hidden')
-        })
+                // Create a Config File
+                const unhackConfig = {
+                    name: siteName,
+                }
+                const fileName = 'unhack.json';
+                const configPath = path.join(projectPath, fileName)
+
+                store.set('configFilePath', configPath)
+
+                fs.writeFile(configPath, JSON.stringify(unhackConfig, null, 2), (err) => {
+                    if (err) throw err;
+                });
+
+                dashboard.open()
+
+                popupContent.innerHTML = ''
+                functions.closePopup()
+
+                ipcRenderer.send('create-new-done')
+                document.querySelector('body').classList.add('has-sidenav')
+                document.querySelector('.sidenav').classList.remove('hidden')
+            })
+
+        }
     }
 })
