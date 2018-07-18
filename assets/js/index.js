@@ -2,9 +2,9 @@
 require ('./general') // checked
 require('./appNav') // checked
 require('./createProject') // checked
-// require('./dashboard')
-// require('./publication')
-// require('./siteconfig')
+require('./dashboard') // checked
+require('./publication')
+require('./siteconfig') // checked
 // require('./posts')
 // require('./pages')
 require('./navigationBuilder') // checked

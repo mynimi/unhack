@@ -25,11 +25,12 @@ pageContent.addEventListener('click', function (e) {
     }
 })
 
-// TODO: Generate Hashs for Passwords
-
 function openPublicationSettings(){
     // Save Button Click
     popupContent.addEventListener('click', function (e) {
+        if (e.target && e.target.classList.contains('tab-toggle')){
+            functions.inputStyle()
+        }
         if (e.target && e.target.id == 'save-publication-settings') {
             let method = document.querySelector('input[name="publish-platform"]:checked').value
             store.set('publicationSettings.method', method)
@@ -60,7 +61,6 @@ function openPublicationSettings(){
             gitHubS.gitHubRepoName = document.querySelector('input[name="github-repository-name"]').value
 
             functions.addToConfig(addConfig)
-            popupContent.innerHTML = ''
             functions.closePopup();
         }
     })
@@ -73,21 +73,22 @@ function openPublicationSettings(){
             fs.readFile(configPath.toString(), (err, data) => {
                 if (err) throw err
                 let config = JSON.parse(data)
-                const pS = config.publicationSettings
-                const ftpS = pS.ftp
-                const gitHubS = pS.gitHub
+                if(config.publicationSettings){
+                    const pS = config.publicationSettings
+                    const ftpS = pS.ftp
+                    const gitHubS = pS.gitHub
 
-                document.querySelector(`input[value="${pS.method}"]`).checked = true
+                    document.querySelector(`input[value="${pS.method}"]`).checked = true
 
-                document.querySelector('input[name="ftp-host"]').value = ftpS.ftpHost
-                document.querySelector('input[name="ftp-username"]').value = ftpS.ftpUsername
-                document.querySelector('input[name="ftp-port"]').value = ftpS.ftpPort
-                document.querySelector('input[name="ftp-directory"]').value = ftpS.ftpDirectory
+                    document.querySelector('input[name="ftp-host"]').value = ftpS.ftpHost
+                    document.querySelector('input[name="ftp-username"]').value = ftpS.ftpUsername
+                    document.querySelector('input[name="ftp-port"]').value = ftpS.ftpPort
+                    document.querySelector('input[name="ftp-directory"]').value = ftpS.ftpDirectory
 
-                document.querySelector('input[name="github-username"]').value = gitHubS.gitHubUsername
-                document.querySelector('input[name="github-useremail"]').value = gitHubS.gitHubUserEmail
-                document.querySelector('input[name="github-repository-name"]').value = gitHubS.gitHubRepoName
-
+                    document.querySelector('input[name="github-username"]').value = gitHubS.gitHubUsername
+                    document.querySelector('input[name="github-useremail"]').value = gitHubS.gitHubUserEmail
+                    document.querySelector('input[name="github-repository-name"]').value = gitHubS.gitHubRepoName
+                }
                 // console.log(pS)
 
                 functions.inputStyle()

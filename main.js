@@ -242,6 +242,14 @@ app.on('ready', () => {
         dialog.showErrorBox(errorTitle, msg)
     })
 
+    ipcMain.on('show-message-box', function(event, msgType, msgTitle, msg){
+        dialog.showMessageBox({
+            type: msgType,
+            title: msgTitle,
+            message: msg
+        })
+    })
+
     ipcMain.on('ready-to-start', function(event){
         mainWindow.webContents.send('show-open-and-create')
     })

@@ -62,6 +62,5 @@ function changeUIStyle(currentSkin, sS) {
 alert.classList.add('hidden')
 
 document.querySelector('.alert .close').addEventListener('click', function(e){
-    console.log('click')
     document.querySelector('.alert').classList = 'alert hidden'
 })

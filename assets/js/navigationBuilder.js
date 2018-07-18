@@ -31,7 +31,7 @@ function navigationBuilder() {
 
     const config = fs.readFileSync(configPath)
     const c = JSON.parse(config)
-    console.log(c)
+    // console.log(c)
 
     if(c.menuSupport){
         // yay menu supported by theme
@@ -56,7 +56,7 @@ function navigationBuilder() {
             for (var i = 0; i < count; i++) {
                 let area = document.querySelector(`.area${i+1}`)
                 let el = {}
-                console.log(area.childElementCount)
+                // console.log(area.childElementCount)
                 if (area.childElementCount > 1) {
                     if (area.childElementCount > 2) {
                         let items = document.querySelectorAll(`.area${i+1} .menu-element`)
@@ -65,7 +65,6 @@ function navigationBuilder() {
                             let i = index
                             let child = {}
                             if (i == 0) {
-                                console.log(elem)
                                 if(elem.querySelector('span')){
                                     // console.log('is span')
                                     el.title = elem.querySelector('span').textContent
@@ -89,11 +88,11 @@ function navigationBuilder() {
                         })
                     } else {
                         if (document.querySelector(`.area${i+1} .custom`)){
-                            console.log('has a custom link')
+                            // console.log('has a custom link')
                             el.title = document.querySelector(`.area${i+1} .custom input[name="item-name"]`).value
                             el.url = document.querySelector(`.area${i+1} .custom input[name="item-url"]`).value
                         } else{
-                            console.log('has not a custom link')
+                            // console.log('has not a custom link')
                             let item = document.querySelector(`.area${i+1} span`)
                             el.title = item.textContent
                             el.url = item.dataset.navurl
@@ -104,7 +103,7 @@ function navigationBuilder() {
             }
 
             navFile.dropdown = dropdown
-            console.log(navFile)
+            // console.log(navFile)
             let newMenuFile = yaml.safeDump(navFile, {
                 skipInvalid: true
             })
@@ -113,7 +112,7 @@ function navigationBuilder() {
                     return console.log(err);
                 } else {
                     navigationBuilder()
-                    functions.displayAlert('success', 'Menu Saved', "Menu Data File was successfully saved.")
+                    ipcRenderer.send('show-message-box', 'none', 'Menu Saved', "Menu Data File was successfully saved.")
 
                 }
             });
@@ -122,7 +121,7 @@ function navigationBuilder() {
 
     if (fs.existsSync(menuDataPath)) {
         let menuData = yaml.safeLoad(fs.readFileSync(menuDataPath, 'utf8'));
-        console.log(menuData)
+        // console.log(menuData)
         nav = menuData.dropdown
         menuArea = `<div class="areas menu-areas">`
         for (var i = 0; i < nav.length; i++) {

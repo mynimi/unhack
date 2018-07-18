@@ -4,6 +4,9 @@ const path = require('path')
 const yaml = require('js-yaml');
 const prefs = require('./prefs')
 let store = prefs.store
+const {
+    ipcRenderer
+} = require('electron');
 
 
 // build HTML Path for given file
@@ -159,6 +162,7 @@ module.exports.addToConfig = function addToConfig(addConfig){
 
             fs.writeFile(configPath.toString(), JSON.stringify(newConfig, null, 2), (err) => {
                 if (err) throw err
+                ipcRenderer.send('show-message-box', 'none', 'Settings Saved', "Publication Settings were sucessfully saved to Config File.")
             })
         })
     } else {
