@@ -16,6 +16,24 @@ const dashboard = require("./dashboard.js")
 const createProjectPath = functions.htmlPath('createProject')
 const openProjectPath = functions.htmlPath('openProject')
 
+if(store.get('isJekyllInstalled')){
+    console.log('jekyll is installed is saved')
+    ipcRenderer.send('ready-to-start')
+} else{
+    console.log('jekyll is installed is not set')
+    child_process.exec('jekyll -v', (err, stdout, stderr) => {
+        if (err) {
+            console.error(`exec error: ${err}`);
+            store.set('isJekyllInstalled', false)
+            ipcRenderer.send('show-error-message', 'No Jekyll Found', "Looks like you don't have jekyll installed. unHack requires jekyll to be installed in order to function.")
+            return;
+        }
+        console.log(`jekyll version is ${stdout}`);
+        store.set('isJekyllInstalled', true)
+        ipcRenderer.send('ready-to-start')
+    });
+}
+
 ipcRenderer.on('create-project', function(){
     fs.readFile(createProjectPath, (err, data) => {
         popupContent.innerHTML = data
@@ -28,62 +46,65 @@ ipcRenderer.on('project-opened', function(){
     dashboard.open()
 })
 
-if(store.has('currentProjectPath')){
-    dashboard.open()
-} else {
-    fs.readFile(openProjectPath, (err, data) => {
-        store.clear()
-        pageContent.innerHTML = data
-        let projectToOpen
+ipcRenderer.on('show-open-and-create', function(){
+    console.log('we are ready to start')
+    if (store.has('currentProjectPath')) {
+        dashboard.open()
+    } else {
+        fs.readFile(openProjectPath, (err, data) => {
+            store.clear()
+            pageContent.innerHTML = data
+            let projectToOpen
 
-        document.ondragover = document.ondrop = (ev) => {
-            ev.preventDefault()
-        }
-        const dropArea = document.querySelector('.droparea')
-        dropArea.ondrop = (ev) => {
-            projectToOpen = ev.dataTransfer.files[0].path
-            ev.preventDefault()
-            dropArea.classList.remove('dragging')
+            document.ondragover = document.ondrop = (ev) => {
+                ev.preventDefault()
+            }
+            const dropArea = document.querySelector('.droparea')
+            dropArea.ondrop = (ev) => {
+                projectToOpen = ev.dataTransfer.files[0].path
+                ev.preventDefault()
+                dropArea.classList.remove('dragging')
 
-            if (projectToOpen) {
-                const configPath = path.join(projectToOpen.toString(), 'unhack.json');
+                if (projectToOpen) {
+                    const configPath = path.join(projectToOpen.toString(), 'unhack.json');
 
-                if (fs.existsSync(configPath)) {
-                    store.set('currentProjectPath', projectToOpen)
-                    store.set('configFilePath', configPath)
+                    if (fs.existsSync(configPath)) {
+                        store.set('currentProjectPath', projectToOpen)
+                        store.set('configFilePath', configPath)
 
-                    const config = fs.readFileSync(configPath)
-                    const c = JSON.parse(config)
+                        const config = fs.readFileSync(configPath)
+                        const c = JSON.parse(config)
 
-                    store.set('projectName', c.name.toString())
-                    dashboard.open()
-                    ipcRenderer.send('create-new-done')
-                    document.querySelector('body').classList.add('has-sidenav')
-                    document.querySelector('.sidenav').classList.remove('hidden')
-                } else {
-                    dialog.showErrorBox('Not an Unhack Project', 'The Directory you selected does not seem to be an Unhack Project.')
+                        store.set('projectName', c.name.toString())
+                        dashboard.open()
+                        ipcRenderer.send('create-new-done')
+                        document.querySelector('body').classList.add('has-sidenav')
+                        document.querySelector('.sidenav').classList.remove('hidden')
+                    } else {
+                        dialog.showErrorBox('Not an Unhack Project', 'The Directory you selected does not seem to be an Unhack Project.')
+                    }
                 }
+
+            }
+            dropArea.ondragenter = (ev) => {
+                dropArea.classList.add('dragging')
+            }
+            dropArea.ondragleave = (ev) => {
+                dropArea.classList.remove('dragging')
             }
 
-        }
-        dropArea.ondragenter = (ev) => {
-            dropArea.classList.add('dragging')
-        }
-        dropArea.ondragleave = (ev) => {
-            dropArea.classList.remove('dragging')
-        }
-
-        pageContent.addEventListener('click', function (e) {
-            if (e.target && e.target.id == 'start-create-new-project') {
-                fs.readFile(createProjectPath, (err, data) => {
-                    popupContent.innerHTML = data
-                    functions.inputStyle()
-                })
-                functions.openPopup()
-            }
+            pageContent.addEventListener('click', function (e) {
+                if (e.target && e.target.id == 'start-create-new-project') {
+                    fs.readFile(createProjectPath, (err, data) => {
+                        popupContent.innerHTML = data
+                        functions.inputStyle()
+                    })
+                    functions.openPopup()
+                }
+            })
         })
-    })    
-}
+    }
+})
 
 // Variables
 let projectParentPath;

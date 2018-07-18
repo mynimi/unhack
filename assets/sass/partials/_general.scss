@@ -242,13 +242,18 @@ header{
 .droparea{
     @extend .droppable;
     min-height: 60vh;
-    div {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
+    @include flexbox(row, wrap, center, center);
+    p{
+        flex-basis: 100%;
         text-align: center;
     }
+    // div {
+    //     position: absolute;
+    //     top: 50%;
+    //     left: 50%;
+    //     transform: translate(-50%, -50%);
+    //     text-align: center;
+    // }
 
     &.dragging{
         background: rgba($link-color, .3);

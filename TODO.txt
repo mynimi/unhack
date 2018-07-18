@@ -1,20 +1,22 @@
-[] Insert Media in more than one Post at a time causes problem...
-[] Hash Passwords in Settings
-[] Jekyll Theme
-[] Publish via FTP
-[] Publish via GitHub
-[] Image Library
-[] Choose Image
-[] Open Localhost
+[ ] Insert Media in more than one Post at a time causes problem...
+[ ] Hash Passwords in Settings --> stored in localstorage on PC
+[x] Jekyll Theme
+[ ] Publish via FTP
+[/] Publish via GitHub
+[x] Image Library
+[x] Choose Image
+[/] Open Localhost
+[ ] Generate new Site using jekyll theme
+[X] Navigation Builder
+[ ] Sidebar Builder
+[ ] Theme Options
 
-[] Navigation Builder
-[] Sidebar Builder
-[] Theme Options
+[ ] Help Website
+[ ] Multilanguage Support
 
-[] Help Website
-[] Multilanguage Support
+[ ] CLEANUP
+[ ] check required fields in forms for formats etc. 
 
-[] CLEANUP
-[] check required fields in forms for formats etc. 
+[ ] Allow Multiple File Upload in Media
 
-[] Allow Multiple File Upload in Media
+[ ] Package App

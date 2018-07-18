@@ -220,7 +220,6 @@ app.on('ready', () => {
         store.set('windowMaximized', false);
     })
 
-
     ipcMain.on('create-new-done', function(events){
         dialog.showMessageBox(mainWindow, {
             type: 'info',
@@ -228,8 +227,6 @@ app.on('ready', () => {
             message: 'Your Project has been opened'
         })
         mainWindow.setTitle(`unHack | ${store.get('projectName')} ${store.get('currentProjectPath') ? store.get('currentProjectPath') : ''}`)
-
-        
     })
     ipcMain.on('open-directory-dialog', function (event) {
         dialog.showOpenDialog(mainWindow, {
@@ -241,4 +238,11 @@ app.on('ready', () => {
         })
     })
 
+    ipcMain.on('show-error-message', function (event, errorTitle, msg) {
+        dialog.showErrorBox(errorTitle, msg)
+    })
+
+    ipcMain.on('ready-to-start', function(event){
+        mainWindow.webContents.send('show-open-and-create')
+    })
 });

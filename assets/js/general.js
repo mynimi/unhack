@@ -3,12 +3,10 @@ const prefs = require('./prefs')
 let store = prefs.store
 
 const {
-    ipcRenderer,
-    remote
+    ipcRenderer
 } = require('electron');
 
 let popupContent = document.querySelector('.popup .content-loader')
-
 
 if (store.get('advancedView')) {
     document.querySelector('body').classList.add('advanced-view-on')
@@ -36,7 +34,7 @@ document.onkeydown = function (evt) {
     }
 };
 
-
+// Change UI Skin
 let currentSkin = store.get('uiSkin')
 let sS = document.querySelector('#main-style')
 
