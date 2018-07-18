@@ -1,0 +1,56 @@
+<h1><span>Publication Settings</span></h1>
+<div class="content publication-settings">
+    <p>unHack supports two publishing methods. Click one of the tabs to choose and enter your information.</p>
+    <p>unHack will store the Password on your Computer within it's App storage. The password isn't shared or saved to any file. If you want to change the stored password, just type the new one into the password field and unHack will updated its storage.</p>
+    
+    <div class="tabholder">
+        <input type="radio" name="publish-platform" value="ftp" id="ftp">
+        <label for="ftp" class="tab-toggle">FTP</label>
+        <input type="radio" name="publish-platform" value="github" id="github">
+        <label for="github" class="tab-toggle">GitHub</label>
+
+        <div class="tab ftp">
+            <div class="wrap">
+                <label for="ftp-host">FTP Host</label>
+                <input type="text" name="ftp-host" id="ftp-host">
+            </div>
+            <div class="wrap">
+                <label for="ftp-username">FTP Username</label>
+                <input type="text" name="ftp-username" id="ftp-username">
+            </div>
+            <div class="wrap">
+                <label for="ftp-password">FTP Password</label>
+                <input type="password" name="ftp-password" id="ftp-password">
+            </div>
+            <div class="wrap">
+                <label for="ftp-port">FTP Port</label>
+                <input type="number" name="ftp-port" id="ftp-port">
+            </div>
+            <div class="wrap">
+                <label for="ftp-directory">FTP Directory</label>
+                <input type="text" name="ftp-directory" id="ftp-directory">
+            </div>
+        </div>
+        <div class="tab github">
+            <p class="small help"><i class="fas fa-info-circle"></i> Will be published using SSH, please check Tutorial <a href="https://help.github.com/articles/connecting-to-github-with-ssh/">on how to Generate Key and Ad to GitHub</a></p>
+            <div class="wrap">
+                <label for="github-username">GitHub Username</label>
+                <input type="text" name="github-username" id="github-username">
+            </div>
+            <div class="wrap">
+                <label for="github-useremail">GitHub User Email</label>
+                <input type="email" name="github-useremail" id="github-useremail">
+            </div>
+            <div class="wrap">
+                <label for="github-password">GitHub Password</label>
+                <input type="password" name="github-password" id="github-password">
+            </div>
+            <div class="wrap">
+                <label for="github-repository-name">GitHub Repository Name</label>
+                <input type="text" name="github-repository-name" id="github-repository-name">
+            </div>
+        </div>
+
+    </div>
+    <button class="btn" id="save-publication-settings">Save Settings</button>
+</div>

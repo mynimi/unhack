@@ -21,8 +21,6 @@
     "dragula": "^3.7.2",
     "electron-store": "^2.0.0",
     "fontawesome": "^4.7.2",
-    "ftp": "^0.3.10",
-    "ftp-client": "^0.2.2",
     "ftp-deploy": "^2.1.2",
     "jekyll": "^3.0.0-beta1",
     "js-yaml": "^3.12.0",

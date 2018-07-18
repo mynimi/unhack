@@ -1,0 +1,24 @@
+<h1><span>Create New Project</span></h1>
+<p>Build a new jekyll site in a given directory.</p>
+
+<div class="content">
+    <div class="wrap directory">
+        <button class="btn small" id="select-directory">Directory</button>
+        <label for="selectedItem">Project Parent Directory</label>
+        <input type="text" id="selectedItem" name="selectedItem" class="file">
+    </div>
+    <div class="wrap">
+        <label for="project-name">Project Name</label>
+        <input type="text" id="project-name" name="project-name">
+    </div>
+    <button class="btn" id="create-site">Create New Site with jekyll</button>
+    <button class="btn disabled" id="clone-unhacked">Create New Site with Unhacked Theme</button>
+    <p class="small help">
+        <i class="fas fa-info-circle"></i>
+        Create new Site will create a new site using jekyll new command, with unhacked theme clones starter theme made for unHack App (easier to use)
+    </p>
+</div>
+<div class="wrap" style="opacity: .8">
+    <label for="output" class="up">Output</label>
+    <textarea name="output" id="output" placeholder="Output from Creation Command"></textarea>
+</div>

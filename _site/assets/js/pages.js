@@ -16,7 +16,7 @@ const {
 } = require('electron');
 let configPath = ''
 if (store.has('configFilePath')) {
-    configPath = store.get('configFilePath').toString()
+    configPath = store.get('configFilePath')
 }
 let config = {}
 let fS = {}
@@ -71,9 +71,6 @@ pageContent.addEventListener('click', function (e) {
 
     if (e.target && e.target.id == 'create-new-page') {
         let el = e.target
-        let others = document.querySelector('.sidenav span.active')
-        others.classList.remove("active")
-        document.querySelector('.nav-pages').classList.add("active")
         pageCreator()
     }
 })

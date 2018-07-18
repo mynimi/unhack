@@ -90,7 +90,7 @@ module.exports.generateMeta = function generateMeta(template, parent, child, ini
         }
 
         if (prop.type == 'list') {
-            prop.help += 'separate with comma'
+            help += 'separate with comma'
             output =
                 `<div class="wrap">
                         <label for="${child}">${child.toProperCase()}</label>

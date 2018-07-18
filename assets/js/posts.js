@@ -11,7 +11,8 @@ let store = prefs.store
 
 const {
     ipcRenderer,
-    remote
+    remote,
+    shell
 } = require('electron');
 let configPath = ''
 if (store.has('configFilePath')) {
@@ -40,7 +41,7 @@ document.querySelector('.nav-posts').addEventListener('click', function (e) {
     others.classList.remove("active")
     el.classList.add("active")
     if(store.has('currentPostEditPath')){
-        postEditor(store.get('currentPostEditPath'))
+        postEditor(store.get('currentPostEditPath').toString())
     } else{
         generatePostsList()
     }
@@ -67,7 +68,7 @@ pageContent.addEventListener('click', function (e) {
     }
 
     if (e.target && e.target.classList.contains('delete-post')) {
-        functions.goDelete(e.target, 'postpath')
+        functions.moveToTrash(e.target, 'postpath')
         generatePostsList()
     }
 
@@ -79,6 +80,9 @@ pageContent.addEventListener('click', function (e) {
 
     if (e.target && e.target.id == 'create-new-post') {
         let el = e.target
+        let others = document.querySelector('.sidenav span.active')
+        others.classList.remove("active")
+        document.querySelector('.nav-posts').classList.add("active")
         postCreator()
     }
 })
@@ -89,7 +93,7 @@ function postEditor(filePath){
     } else {
         store.set('currentPostEditPath', filePath)
     }
-    let currentPath = store.get('currentPostEditPath')
+    let currentPath = store.get('currentPostEditPath').toString()
     let content = fs.readFileSync(currentPath.toString(), 'utf8')
     let bla = content.split('---')
     let yml = bla[1]
@@ -200,15 +204,12 @@ function postEditor(filePath){
 
         if (e.target && e.target.id == 'delete-post-edit') {
             let el = e.target
-            alert('delete')
             if (confirm(`Are you sure you want to delete ${currentPath}?`)) {
-                fs.unlink(currentPath.toString(), (err) => {
-                    if (err) throw err;
-                    generatePostsList()
-                    alert(`${currentPath} was deleted`)
-                    store.delete('currentPostEditPath')
-                });
+                if (shell.moveItemToTrash(currentPath)) {
+                    ipcRenderer.send('show-message-box', 'none', 'Page Deleted', `${currentPath} was successfully moved to the trash.`)
+                }
             }
+            generatePostsList()
         }
 
         // if (e.target && e.target.id == 'add-media') {

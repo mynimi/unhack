@@ -27,6 +27,15 @@ document.querySelector('.nav-config').addEventListener('click', function(e){
     generateSiteConfig()
 })
 
+pageContent.addEventListener('click', function(e){
+    if (e.target && e.target.id == 'edit-site-config') {
+        let others = document.querySelector('.sidenav span.active')
+        let el = document.querySelector('.nav-config')
+        others.classList.remove("active")
+        el.classList.add("active")
+        generateSiteConfig()
+    }
+})
 function generateSiteConfig(){
     pageContent.addEventListener('click', function (e) {
         if (e.target && e.target.id == 'saveconfig') {
@@ -58,16 +67,45 @@ function generateSiteConfig(){
         if (doc.hasOwnProperty(key)) {
             // console.log(doc[key])
             let isArray = false
+            let isObject = false
+
             if (Array.isArray(doc[key])) {
                 isArray = true
             }
-            output += `<div class="wrap">` +
-                `<label for="${key}">${key}</label>` +
-                `<input type="text" data-isanarray="${isArray}" name="${key}" id="${key}" value="${doc[key]}">`
-            if(isArray){
-                output += `<p class="small help">Separate with Comma</p>`
+            if ((typeof doc[key] === "object") && (doc[key] !== null) && isArray == false) {
+                isObject = true
             }
-            output += `</div>`
+            if(isObject){
+                let o = doc[key]
+                output += '<div>' +
+                        `<input type="text" data-isanobject="${isObject}" name="${key}" id="${key}" value="${key}">`
+                for (var k in o) {
+                    if (o.hasOwnProperty(k)) {
+                        let isArray = false
+
+                        if (Array.isArray(o[k])) {
+                            isArray = true
+                        }
+
+                        output += `<div class="wrap">` +
+                            `<label for="${k}">${k}</label>` +
+                            `<input class="objectInput" type="text" data-isanarray="${isArray}" name="${k}" id="${k}" value="${o[k]}">`
+                        if (isArray) {
+                            output += `<p class="small help">Separate with Comma</p>`
+                        }
+                        output += `</div>`
+                    }
+                }
+                output += '</div>'
+            } else{
+                output += `<div class="wrap">` +
+                    `<label for="${key}">${key}</label>` +
+                    `<input type="text" data-isanarray="${isArray}" data-isanobject="${isObject}" name="${key}" id="${key}" value="${doc[key]}">`
+                if (isArray) {
+                    output += `<p class="small help">Separate with Comma</p>`
+                }
+                output += `</div>`
+            }
         }
     }
 
@@ -83,7 +121,7 @@ function generateSiteConfig(){
 
 function saveSiteConfig(){
     let config = {}
-    var children = document.querySelectorAll('.siteConfig .wrap input')
+    var children = document.querySelectorAll('.siteConfig div > input')
 
     children.forEach(function(item){
         let key = item.id
@@ -92,7 +130,26 @@ function saveSiteConfig(){
         if (item.dataset.isanarray == 'true') {
             val = item.value.split(',')
         }
-        config[key] = val
+        if(item.dataset.isanobject == 'true'){
+            val = {}
+            let items = item.parentNode.childNodes
+            // console.log(items)
+            items.forEach(function(child){
+                ch = child.childNodes
+                // console.log(ch)
+                ch.forEach(function(c){
+                    if (c.classList.contains('objectInput')){
+                        k = c.id
+                        v = c.value
+                        val[k] = v
+                    }
+                })
+            })
+            // console.log(val)
+        }
+        if(!item.classList.contains('objectInput')){
+            config[key] = val
+        }
     })
 
     // console.log(config)

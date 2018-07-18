@@ -59,7 +59,7 @@ pageContent.addEventListener('click', function(e){
             });
 
             child.on('exit', function () {
-                popupContent.insertAdjacentHTML('beforeend', `${(pubMethod == 'ftp') ? '<p><i class="fas fa-exclamation-triangle"></i> All Contents of given Directory will be removed and replaced with current generated site. This cannot be undone and affects your live site on the Internet.</p>' : ''}<button class="btn" id="upload-generated-site">Upload Site</button>`)
+                popupContent.insertAdjacentHTML('beforeend', '<button class="btn" id="upload-generated-site">Upload Site</button>')
             })
             const configPath = store.get('configFilePath')
             if (configPath) {
@@ -77,128 +77,46 @@ pageContent.addEventListener('click', function(e){
                     gitHubS.gitHubUsername
                     gitHubS.gitHubProjectUrl
 
-                    let localRoot = path.join(currentProjectPath.toString(), '_site')
-
-                    let filesToUpload = functions.getPathsInDir(localRoot)
-                    function flatten(lists) {
-                        return lists.reduce((a, b) => a.concat(b), []);
-                    }
-
-                    function getDirectories(srcpath) {
-                        return fs.readdirSync(srcpath)
-                            .map(file => path.join(srcpath, file))
-                            .filter(path => fs.statSync(path).isDirectory());
-                    }
-
-                    function getDirectoriesRecursive(srcpath) {
-                        return [srcpath, ...flatten(getDirectories(srcpath).map(getDirectoriesRecursive))];
-                    }
-
-                    let subDirs = getDirectoriesRecursive(localRoot)
-
-                    console.log(subDirs)
-                    console.log(filesToUpload)
-
                     popupContent.addEventListener('click', function (e) {
                         if (e.target && e.target.id == 'upload-generated-site') {
                             if (pubMethod == 'ftp') {
-                                htmlOutput.innerHTML = ''
-
                                 if (ftpS.ftpPort == '') {
                                     ftpS.ftpPort = 21
                                 }
-                                
-                                var Client = require('ftp');
-                                var c = new Client();
-                                c.on('error', function(){
-                                    htmlOutput.insertAdjacentHTML('beforeend', 'FTP Error: ' + err);
-                                })
+                                let ftpDeploy = new FtpDeploy();
 
-                                c.on('end', function(){
-                                    htmlOutput.insertAdjacentHTML('beforeend', 'FTP End');
-                                })
-
-                                c.on('close', function () {
-                                    htmlOutput.insertAdjacentHTML('beforeend', 'FTP Closed');
-                                    functions.closePopup()
-                                    ipcRenderer.send('show-message-box', 'none', 'FTP UPloaded', 'Site was uploaded.')
-                                })
-                                
-                                c.on('ready', function () {
-                                    // get current directory listing
-                                    c.list(ftpS.ftpDirectory, function (err, list) {
-                                        if (err) throw err;
-                                        console.dir(list);
-                                        c.end();
-                                    });
-                                    // remove previous site directory
-                                    c.rmdir(ftpS.ftpDirectory, true, function(err){
-                                        if(err) throw err;
-                                        c.end();
-                                    })
-                                    // get current directory listing
-                                    c.list(ftpS.ftpDirectory, function (err, list) {
-                                        if (err) throw err;
-                                        console.dir(list);
-                                        c.end();
-                                    });
-
-                                    // create new site directory
-                                    c.mkdir(ftpS.ftpDirectory, true, function (err) {
-                                        if (err) throw err;
-                                        c.end();
-                                    })
-                                    // get current directory listing
-                                    c.list(ftpS.ftpDirectory, function (err, list) {
-                                        if (err) throw err;
-                                        console.dir(list);
-                                        c.end();
-                                    });
-
-                                    // create all the necessary directories
-                                    for (let i = 0; i < subDirs.length; i++) {
-                                        let dirPath = subDirs[i].replace(localRoot, ftpS.ftpDirectory)
-                                        c.mkdir(`${dirPath.replace(/\\/g, '/')}`, true, function (err) {
-                                            if (err) throw err;
-                                            c.end();
-                                        });
-                                    }
-
-                                    // get current directory listing
-                                    c.list(ftpS.ftpDirectory, function (err, list) {
-                                        if (err) throw err;
-                                        console.dir(list);
-                                        c.end();
-                                    });
+                                let config = {
+                                    user: ftpS.ftpUsername, // NOTE that this was username in 1.x 
+                                    password: store.get('ftpPassword'), // optional, prompted if none given
+                                    host: ftpS.ftpHost,
+                                    port: ftpS.ftpPort,
+                                    localRoot: path.join(currentProjectPath.toString(), '_site'),
+                                    remoteRoot: ftpS.ftpDirectory,
+                                    // include: ['*', '**/*'],      // this would upload everything except dot files
+                                    include: ['*', '**/*'],
+                                    exclude: [],
+                                    deleteRemote: true // delete existing files at destination before uploading
+                                }
                                     
-                                    // upload all the files
-                                    for (let i = 0; i < filesToUpload.length; i++) {
-                                        let inString = filesToUpload[i]
-                                        let outString = inString.replace(localRoot, ftpS.ftpDirectory);
-                                        // console.log(`in: ${inString}`)
-                                        // console.log(`out: ${outString.replace(/\\/g, '/')}`)
-                                            c.put(`${inString}`, `${outString.replace(/\\/g, '/')}`,
-                                                    function (err) {
-                                                if (err) throw err;
-                                                c.end();
-                                            });
+                                // use with callback
+                                ftpDeploy.deploy(config, function (err) {
+                                    htmlOutput.innerHTML = ''
+                                    if (err) {
+                                        htmlOutput.insertAdjacentHTML('beforeend', err)
+                                        console.log(err)
+                                    } else {
+                                        htmlOutput.insertAdjacentHTML('beforeend', 'Files Uploaded')
                                     }
+                                })
 
-                                    // get current directory listing
-                                    c.list(ftpS.ftpDirectory, function (err, list) {
-                                        if (err) throw err;
-                                        console.dir(list);
-                                        c.end();
-                                    });
-                                });
-
-                                  c.connect({
-                                              host: ftpS.ftpHost,
-                                              user: ftpS.ftpUsername,
-                                              password: store.get('ftpPassword'),
-                                              debug: console.log
-                                            });
-
+                                ftpDeploy.on('uploading', function (data) {
+                                    htmlOutput.innerHTML = ''
+                                    htmlOutput.insertAdjacentHTML('beforeend', data);
+                                    htmlOutput.insertAdjacentHTML('beforeend', `totalFilesCount: ${data.totalFilesCount}`);
+                                    htmlOutput.insertAdjacentHTML('beforeend', `transferredFileCount: ${data.transferredFileCount}`);
+                                    htmlOutput.insertAdjacentHTML('beforeend', `filename: ${data.filename}`);
+                                })
+                                console.log(`password is ${store.get('ftpPassword')}`)
                             }
                             else if(pubMethod == 'github') {
                                 let sourceBranch = 'source'

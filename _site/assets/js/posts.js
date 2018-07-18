@@ -16,80 +16,86 @@ const {
 } = require('electron');
 let configPath = ''
 if (store.has('configFilePath')) {
-    configPath = store.get('configFilePath').toString()
+    configPath = store.get('configFilePath')
+}
+let currentProjectPath = ''
+if (store.has('currentProjectPath')){
+    currentProjectPath = store.get('currentProjectPath').toString()
 }
 let config = {}
 let fS = {}
 
 let pageContent = document.querySelector('.container')
 let popupContent = document.querySelector('.popup .content-loader')
-let pagesPath 
-let mediaFolder
-
-if(store.has('currentProjectPath')){
-    pagesPath = path.join(store.get('currentProjectPath').toString())
-    mediaFolder = path.join(store.get('currentProjectPath').toString(), 'assets')
-}
+let postsPath = path.join(currentProjectPath, '_posts')
+let draftsPath = path.join(currentProjectPath, '_drafts')
+let mediaFolder = path.join(currentProjectPath, 'assets')
 
 let mediaFiles = {}
 
 const mediaLibraryPath = functions.htmlPath('medialib')
 
-document.querySelector('.nav-pages').addEventListener('click', function (e) {
+document.querySelector('.nav-posts').addEventListener('click', function (e) {
     let others = document.querySelector('.sidenav span.active')
     let el = e.target
     others.classList.remove("active")
     el.classList.add("active")
-    if (store.has('currentPageEditPath')) {
-        pageEditor(store.get('currentPageEditPath'))
-    } else {
-        generatePagesList()
+    if(store.has('currentPostEditPath')){
+        postEditor(store.get('currentPostEditPath'))
+    } else{
+        generatePostsList()
     }
 })
 
-function generatePagesList(){
-    let allPages = functions.getPages(pagesPath)
-    functions.generateFilesList(allPages, 'page', pageContent)
+function generatePostsList(){
+    let postPathList = []
+    let draftPathList = []
+    if (fs.existsSync(postsPath.toString())) {
+        postPathList = functions.getPathsInDir(postsPath.toString())
+    }
+    if (fs.existsSync(draftsPath.toString())) {
+        draftPathList = functions.getPathsInDir(draftsPath.toString())
+    }
+    let allPosts = [...draftPathList, ...postPathList]
+
+    functions.generateFilesList(allPosts, 'post', pageContent)
 }
 
 pageContent.addEventListener('click', function (e) {
-    if (e.target && e.target.classList.contains('duplicate-page')) {
-        functions.duplicateFile(e.target, 'pagepath')
-        generatePagesList()
+    if (e.target && e.target.classList.contains('duplicate-post')) {
+        functions.duplicateFile(e.target, 'postpath')
+        generatePostsList()
     }
 
-    if (e.target && e.target.classList.contains('delete-page')) {
-        functions.moveToTrash(e.target, 'pagepath')
-        generatePagesList()
+    if (e.target && e.target.classList.contains('delete-post')) {
+        functions.moveToTrash(e.target, 'postpath')
+        generatePostsList()
     }
 
-    if (e.target && e.target.classList.contains('edit-page')) {
+    if (e.target && e.target.classList.contains('edit-post')) {
         let el = e.target
-        let oP = el.dataset.pagepath
-        pageEditor(oP)
+        let oP = el.dataset.postpath
+        postEditor(oP)
     }
 
-    if (e.target && e.target.id == 'create-new-page') {
+    if (e.target && e.target.id == 'create-new-post') {
         let el = e.target
-        let others = document.querySelector('.sidenav span.active')
-        others.classList.remove("active")
-        document.querySelector('.nav-pages').classList.add("active")
-        pageCreator()
+        postCreator()
     }
 })
 
-function pageEditor(filePath){
-    if (store.has('currentPageEditPath')) {
-        store.get('currentPageEditPath')
+function postEditor(filePath){
+    if(store.has('currentPostEditPath')){
+        store.get('currentPostEditPath')
     } else {
-        store.set('currentPageEditPath', filePath)
+        store.set('currentPostEditPath', filePath)
     }
-    let currentPath = store.get('currentPageEditPath')
+    let currentPath = store.get('currentPostEditPath')
     let content = fs.readFileSync(currentPath.toString(), 'utf8')
     let bla = content.split('---')
     let yml = bla[1]
     let p = yaml.load(yml)
-    let html = ''
+    let html = ``
     fS = {}
     editor = ''
 
@@ -98,23 +104,23 @@ function pageEditor(filePath){
         let config = JSON.parse(data)
         fS = config.frontMatterSettings
 
-        html += `<div class="middle pageContents">
-                    <h1><span>Edit Page</span></h1>
+        html += `<div class="middle postContents">
+                    <h1><span>Edit Post</span></h1>
                     <div class="cards-alt">
                         <div class="main">
                             <div class="card">
                                 <div class="card-content">`
         if (!fS) {
             html += `<div class="wrap">
-                <label for="title">Title</label>
-                <input type="text" name="title" id="title">
-            </div>`
+                        <label for="title">Title</label>
+                        <input type="text" name="title" id="title">
+                    </div>`
         } else {
-            for (let sets in fS) {
-                if (fS.hasOwnProperty(sets)) {
+            for (let sets in fS){
+            if (fS.hasOwnProperty(sets)) {
                     if (fS[sets].area == 'main') {
                         // console.log(`${sets} belongs in main area`)
-                        html += functions.generateMeta('page', fS, sets, p[sets])
+                        html += functions.generateMeta('post', fS, sets, p[sets])
                     }
                 }
             }
@@ -122,7 +128,7 @@ function pageEditor(filePath){
 
         html += `       <div class="wrap">
                             <label for="edit-content" class="up">Content</label>
-                            <div id="editSection"></div>
+                            <div id="editPostContent"></div>
                         </div>
                     </div>
                 </div>
@@ -147,7 +153,7 @@ function pageEditor(filePath){
             for (let sets in fS) {
                 if (fS.hasOwnProperty(sets)) {
                     if (fS[sets].area != 'main') {
-                        html += functions.generateMeta('page', fS, sets, p[sets])
+                        html += functions.generateMeta('post', fS, sets, p[sets])
                     }
                 }
             }
@@ -159,14 +165,15 @@ function pageEditor(filePath){
                 </div>
             </div>
             <button class="btn disabled">Preview</button>
-            <button class="btn" id="save-page-edit">Save Page</button>
-            <button class="btn" id="save-page-draft-edit">Save Draft</button>
-            <button class="btn" id="delete-page-edit">Delete Page</button>
-            <button class="btn" id="cancel-page-edit">Cancel</button>
+            <button class="btn" id="save-post-edit">Save Post</button>
+            <button class="btn" id="save-post-draft-edit">Save Draft</button>
+            <button class="btn" id="delete-post-edit">Delete Post</button>
+            <button class="btn" id="cancel-post-edit">Cancel</button>
         </div>`
+        pageContent.innerHTML = ''
         pageContent.innerHTML = html
         editor = new Editor({
-            el: document.querySelector('#editSection'),
+            el: document.querySelector('#editPostContent'),
             initialValue: bla[2],
             initialEditType: 'wysiwyg',
             previewStyle: 'tab',
@@ -176,50 +183,63 @@ function pageEditor(filePath){
     })
 
     pageContent.addEventListener('click', function (e) {
-        if (e.target && e.target.id == 'cancel-page-edit') {
+        if (e.target && e.target.id == 'cancel-post-edit') {
             let el = e.target
             if(confirm('Are you sure you want to cancel? All changes will be lost?')){
-                store.delete('currentPageEditPath')
-                generatePagesList();
+                store.delete('currentPostEditPath')
+                generatePostsList();
             }
         }
-        if (e.target && e.target.id == 'save-page-draft-edit') {
+        if (e.target && e.target.id == 'save-post-draft-edit') {
             let el = e.target
-            savePageDraft(currentPath, editor)
+            savePostDraft(currentPath, editor)
         }
-        if (e.target && e.target.id == 'save-page-edit') {
+        if (e.target && e.target.id == 'save-post-edit') {
             let el = e.target
-            savePage(currentPath, editor)
+            savePost(currentPath, editor)
         }
 
-        if (e.target && e.target.id == 'delete-page-edit') {
+        if (e.target && e.target.id == 'delete-post-edit') {
             let el = e.target
             if (confirm(`Are you sure you want to delete ${currentPath}?`)) {
                 if (shell.moveItemToTrash(currentPath)) {
                     ipcRenderer.send('show-message-box', 'none', 'Page Deleted', `${currentPath} was successfully moved to the trash.`)
                 }
             }
-            generatePagesList()
+            generatePostsList()
         }
+
+        // if (e.target && e.target.id == 'add-media') {
+        //     let el = e.target
+        //     functions.loadMediaGallery(mediaLibraryPath, popupContent, mediaFolder, editor)
+        // }
+
 
     })
 }
+// for posts and pages
+pageContent.addEventListener('click', function (e) {
+    if (e.target && e.target.classList.contains('media-chooser')) {
+        functions.loadMediaGallery(mediaLibraryPath, popupContent, mediaFolder, e.target)
+    }
+})
 
-function pageCreator() {
+function postCreator(){
     let html = ''
-    fS = {}
+    fS = {},
+    editor = ''
     fs.readFile(configPath.toString(), (err, data) => {
         if (err) throw err
         let config = JSON.parse(data)
         fS = config.frontMatterSettings
-
-        html += `<div class="middle pageContents">
-                    <h1><span>Create Page</span></h1>
+        
+        html += `<div class="middle postContents">
+                    <h1><span>Create Post</span></h1>
                     <div class="cards-alt">
                         <div class="main">
                             <div class="card">
                                 <div class="card-content">`
-        if (!fS) {
+        if(!fS){
             html += `<div class="wrap">
                         <label for="title">Title</label>
                         <input type="text" name="title" id="title">
@@ -229,7 +249,7 @@ function pageCreator() {
                 if (fS.hasOwnProperty(sets)) {
                     if (fS[sets].area == 'main') {
                         // console.log(`${sets} belongs in main area`)
-                        html += functions.generateMeta('page', fS, sets)
+                        html += functions.generateMeta('post', fS, sets)
                     }
                 }
             }
@@ -237,7 +257,7 @@ function pageCreator() {
 
         html += `       <div class="wrap">
                             <label for="edit-content" class="up">Content</label>
-                            <div id="editSection"></div>
+                            <div id="createPostContent"></div>
                         </div>
                     </div>
                 </div>
@@ -248,11 +268,15 @@ function pageCreator() {
                         <div class="card-content">`
         if (!fS) {
             html += `<p><i class="fas fa-exclamation-circle"></i> It seems like you don't have any Front Matter Configuration set up. You're Data Editing Experience can be better. <a href="#">learn more on how to configure.</a></p>`
+            html += `<div class="wrap">
+                        <label for="date">Date</label>
+                        <input type="date" name="date" id="date">
+                    </div>`
         } else {
             for (let sets in fS) {
                 if (fS.hasOwnProperty(sets)) {
                     if (fS[sets].area != 'main') {
-                        html += functions.generateMeta('page', fS, sets)
+                        html += functions.generateMeta('post', fS, sets)
                     }
                 }
             }
@@ -264,13 +288,14 @@ function pageCreator() {
                 </div>
             </div>
             <button class="btn disabled">Preview</button>
-            <button class="btn" id="save-page-new">Save Page</button>
-            <button class="btn" id="save-page-draft-new">Save Draft</button>
-            <button class="btn" id="cancel-page-new">Cancel</button>
+            <button class="btn" id="save-post-new">Save Post</button>
+            <button class="btn" id="save-post-draft-new">Save Draft</button>
+            <button class="btn" id="cancel-post-new">Cancel</button>
         </div>`
+        pageContent.innerHTML = ''
         pageContent.innerHTML = html
         editor = new Editor({
-            el: document.querySelector('#editSection'),
+            el: document.querySelector('#createPostContent'),
             initialEditType: 'wysiwyg',
             previewStyle: 'tab',
             height: '900px'
@@ -279,36 +304,38 @@ function pageCreator() {
     })
 
     pageContent.addEventListener('click', function (e) {
-        if (e.target && e.target.id == 'cancel-page-new') {
+        if (e.target && e.target.id == 'cancel-post-new') {
             let el = e.target
             if (confirm('Are you sure you want to cancel? All changes will be lost?')) {
-                generatePagesList();
+                generatePostsList();
             }
         }
-        if (e.target && e.target.id == 'save-page-draft-new') {
+        if (e.target && e.target.id == 'save-post-draft-new') {
             let el = e.target
-            savePageDraft(false, editor)
+            savePostDraft(false, editor)
         }
-        if (e.target && e.target.id == 'save-page-new') {
+        if (e.target && e.target.id == 'save-post-new') {
             let el = e.target
-            savePage(false, editor)
+            savePost(false, editor)
         }
     })
 }
 
 function createFileContent(draft, editor){
+    let newPostPath
     let config = {}
     let title = document.querySelector('#title').value
-    let newpagePath = path.join(pagesPath, `${functions.slugify(title)}.md`)
+    let date = document.querySelector('#date').value
+    let d = date.substr(0, 10)
 
     if(draft){
-        config.published = false
+        newPostPath = path.join(draftsPath, `${functions.slugify(title)}.md`)
     } else {
-        config.published = true
+        newPostPath = path.join(postsPath, `${d}-${functions.slugify(title)}.md`)
     }
 
     if(!fS) {
-        datas = document.querySelectorAll('.pageContents .wrap > input')
+        datas = document.querySelectorAll('.postContents .wrap > input')
         datas.forEach(function (item) {
             let key = item.id
             let val = item.value
@@ -317,7 +344,7 @@ function createFileContent(draft, editor){
     } else {
         for (let sets in fS) {
             if (fS.hasOwnProperty(sets)) {
-                functions.retrieveMeta('page', fS, sets, config)
+                functions.retrieveMeta('post', fS, sets, config)
             }
         }
     }
@@ -329,34 +356,27 @@ function createFileContent(draft, editor){
 
     // console.log(output)
 
-    fs.writeFile(newpagePath, output, 'utf8', function (err) {
+    fs.writeFile(newPostPath, output, 'utf8', function (err) {
         if (err) return console.log(err);
     });
 }
 
-function savePage(filePath, editor) {
+function savePost(filePath, editor) {
     // delete old file
     if(filePath != false){
         functions.deleteFile(filePath.toString())
-        store.delete('currentPageEditPath')
-    }     
+        store.delete('currentPostEditPath')
+    }    
     createFileContent(false, editor)
-    alert('Page Saved')
+    alert('Post Saved')
 }
 
-function savePageDraft(filePath, editor) {
+function savePostDraft(filePath, editor) {
     // delete old file
     if (filePath != false) {
         functions.deleteFile(filePath.toString())
-        store.delete('currentPageEditPath')
+        store.delete('currentPostEditPath')
     }
     createFileContent(true, editor)
     alert('Draft Saved')
 }
-
-// pageContent.addEventListener('click', function (e) {
-//     if (e.target && e.target.id == 'add-media') {
-//         let el = e.target
-//         functions.loadMediaGallery(mediaLibraryPath, popupContent, mediaFolder, editor)
-//     }
-// })
