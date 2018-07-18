@@ -1,30 +1,27 @@
 {
-  "name": "electron-quick-start",
-  "version": "1.0.0",
-  "description": "A minimal Electron application",
+  "name": "unhack-for-jekyll",
+  "version": "0.1.0",
+  "description": "A GUI for the static site generator jekyll",
   "main": "main.js",
   "scripts": {
-    "start": "electron ."
+    "start": "electron .",
+    "package-mac": "electron-packager . --overwrite --platform=darwin --arch=x64 --icon=assets/icons/mac/icon.icns --prune=true --out=release-builds",
+    "package-win": "electron-packager . unHack-for-jekyll --overwrite --asar=true --platform=win32 --arch=ia32 --icon=assets/icons/win/icon.ico --prune=true --out=release-builds --version-string.CompanyName=CE --version-string.FileDescription=CE --version-string.ProductName=\"unHack for jekyll\"",
+    "package-linux": "electron-packager . unHack-for-jekyll --overwrite --asar=true --platform=linux --arch=x64 --icon=assets/icons/png/icon.png --prune=true --out=release-builds"
   },
-  "repository": "https://github.com/electron/electron-quick-start",
-  "keywords": [
-    "Electron",
-    "quick",
-    "start",
-    "tutorial",
-    "demo"
-  ],
-  "author": "GitHub",
-  "license": "CC0-1.0",
+  "repository": "https://github.com/mynimi/unhack",
+  "author": "Myriam Frisano",
+  "license": "MIT",
   "devDependencies": {
     "electron": "^2.0.2",
-    "ftp-deploy": "^2.1.2",
-    "jekyll": "^3.0.0-beta1",
-    "js-yaml": "^3.12.0"
+    "electron-packager": "^12.1.0"
   },
   "dependencies": {
     "dragula": "^3.7.2",
     "electron-store": "^2.0.0",
-    "tui-editor": "^1.2.3"
+    "tui-editor": "^1.2.3",
+    "ftp-deploy": "^2.1.2",
+    "jekyll": "^3.0.0-beta1",
+    "js-yaml": "^3.12.0"
   }
 }
