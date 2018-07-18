@@ -23,10 +23,27 @@
             &:nth-child(2){
                 margin-left: 3px;
             }
-
+            span{
+                position: relative;
+                width: 100%;
+                
+                &:after {
+                    content: ' URL: ' attr(data-navurl);
+                    // position: absolute;
+                    // top: 0;
+                    // right: 5px;
+                    // transform: translateY(-50%);
+                    font-size: .8em;
+                    opacity: .7;
+                }
+            }
             .delete,
             .edit{
                 display: inline-block;
+            }
+
+            input{
+                width: 100% !important;
             }
         }
 
@@ -58,6 +75,8 @@
     border-radius: 3px;
     width: auto;
     height: auto !important;
+    position: relative;
+
     @include flexbox(row, wrap, space-between, center);
     font-size: .8em;
     .title{
@@ -85,5 +104,24 @@
     .edit-name{
         width: 100%;
         display: none;
+    }
+    input{
+        width: 100px !important;
+        padding: 3px;
+        // display: block;
+        margin: 5px;
+    }
+
+    &.custom{
+        &:before{
+            content: 'Custom Link';
+            position: absolute;
+            top: 0;
+            left: 5px;
+            transform: translateY(-50%);
+            font-size: .8em;
+            background: $card-background;
+            color: $accent;
+        }
     }
 }

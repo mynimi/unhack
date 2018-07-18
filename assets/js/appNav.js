@@ -1,3 +1,4 @@
+const fs = require('fs')
 const prefs = require('./prefs')
 const {
     ipcRenderer

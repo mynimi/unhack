@@ -7,6 +7,6 @@ require('./createProject') // checked
 // require('./siteconfig')
 // require('./posts')
 // require('./pages')
-// require('./navigationBuilder')
+require('./navigationBuilder') // checked
 // require('./upload')
 // require('./localhost')

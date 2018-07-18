@@ -11,6 +11,15 @@ module.exports.htmlPath = function htmlPath(filename) {
     return path.join(__dirname, '..', 'html', filename+'.html');
 }
 
+module.exports.displayAlert = function displayAlert(type, alertTitle, alertMsg) {
+    let alert = document.querySelector('.alert')
+    let title = document.querySelector('.alert-title span')
+    let msg = document.querySelector('.alert-message')
+    msg.innerHTML = alertMsg
+    title.innerHTML = alertTitle
+    alert.classList = `alert ${type}`
+}
+
 module.exports.retrieveMeta = function retrieveMeta(template,parent, child, config){
     let prop = parent[child]
 

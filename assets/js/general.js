@@ -7,6 +7,7 @@ const {
 } = require('electron');
 
 let popupContent = document.querySelector('.popup .content-loader')
+let alert = document.querySelector('.alert')
 
 if (store.get('advancedView')) {
     document.querySelector('body').classList.add('advanced-view-on')
@@ -57,3 +58,10 @@ function changeUIStyle(currentSkin, sS) {
         store.set('uiSkin', 'light')
     }
 }
+
+alert.classList.add('hidden')
+
+document.querySelector('.alert .close').addEventListener('click', function(e){
+    console.log('click')
+    document.querySelector('.alert').classList = 'alert hidden'
+})
