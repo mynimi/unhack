@@ -208,6 +208,7 @@ function postEditor(filePath){
                 if (shell.moveItemToTrash(currentPath)) {
                     ipcRenderer.send('show-message-box', 'none', 'Page Deleted', `${currentPath} was successfully moved to the trash.`)
                 }
+                store.delete('currentPostEditPath')
             }
             generatePostsList()
         }
