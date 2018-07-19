@@ -126,7 +126,7 @@ app.on('ready', () => {
                                     // console.log('new project path is ' + store.get('currentProjectPath'))
 
                                     mainWindow.setTitle(`unHack | ${store.get('projectName')} ${store.get('currentProjectPath') ? store.get('currentProjectPath') : ''}`)
-
+                                    mainWindow.reload();
                                     mainWindow.webContents.send('project-opened')
 
                                 } else {
@@ -209,11 +209,12 @@ app.on('ready', () => {
                     click(){
                         // Clear All Setings
                         store.clear()
-                        dialog.showMessageBox(mainWindow, {
+                        dialog.showMessageBox({
                             type: 'info',
                             title: 'Settings Cleared',
                             message: 'All User Settings have been reset to Default'
                         })
+                        mainWindow.reload()
                     }
                 },
                 {
@@ -267,6 +268,7 @@ app.on('ready', () => {
             message: 'Your Project has been opened'
         })
         mainWindow.setTitle(`unHack | ${store.get('projectName')} ${store.get('currentProjectPath') ? store.get('currentProjectPath') : ''}`)
+        mainWindow.reload();
     })
     ipcMain.on('open-directory-dialog', function (event) {
         dialog.showOpenDialog(mainWindow, {
@@ -294,5 +296,8 @@ app.on('ready', () => {
     })
     ipcMain.on('ready-to-start', function(event){
         mainWindow.webContents.send('show-open-and-create')
+    })
+    ipcMain.on('do-reload', function(event){
+        mainWindow.reload();
     })
 });

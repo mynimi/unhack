@@ -13,11 +13,12 @@ const {
 let pageContent = document.querySelector('.container')
 
 let configPath = ''
+let siteConfigPath = ''
+
 if (store.has('currentProjectPath')){
     configPath = store.get('currentProjectPath').toString()
+    siteConfigPath = path.join(configPath, '_config.yml')
 }
-
-const siteConfigPath = path.join(configPath, '_config.yml')
 
 document.querySelector('.nav-config').addEventListener('click', function(e){
     let others = document.querySelector('.sidenav span.active')
@@ -37,6 +38,7 @@ pageContent.addEventListener('click', function(e){
     }
 })
 function generateSiteConfig(){
+
     pageContent.addEventListener('click', function (e) {
         if (e.target && e.target.id == 'saveconfig') {
             saveSiteConfig()
