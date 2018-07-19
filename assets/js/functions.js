@@ -124,7 +124,7 @@ module.exports.generateMeta = function generateMeta(template, parent, child, ini
             output = 
                     `<div class="wrap">
                     <label class="up" for="${child}">${child.toProperCase()}</label>
-                    ${(initialVal != '') ? `<img name="${child}" src="${path.join(store.get('currentProjectPath'), initialVal)}" data-metapath="${initialVal}" name="${child}">` : ''
+                    ${(initialVal != '') ? `<img name="${child}" src="${path.join(store.get('currentProjectPath').toString(), initialVal)}" data-metapath="${initialVal}" name="${child}">` : ''
                     } 
                     <button class="btn media-chooser">Choose File</button>
                     ${help}

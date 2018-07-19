@@ -75,7 +75,7 @@ pageContent.addEventListener('click', function (e) {
     if (e.target && e.target.classList.contains('edit-post')) {
         let el = e.target
         let oP = el.dataset.postpath
-        postEditor(oP)
+        postEditor(oP.toString())
     }
 
     if (e.target && e.target.id == 'create-new-post') {

@@ -222,8 +222,8 @@ function runUpload() {
                                 let sourceBranch = 'source'
                                 let siteBranch = 'gh-pages'
 
-                                // let remoteURL = `https://github.com/${gitHubS.gitHubUsername}/${gitHubS.gitHubRepoName}.git`
-                                let remoteURL = `git@github.com:${gitHubS.gitHubUsername}/${gitHubS.gitHubRepoName}.git`
+                                let remoteURL = `https://github.com/${gitHubS.gitHubUsername}/${gitHubS.gitHubRepoName}.git`
+                                // let remoteURL = `git@github.com:${gitHubS.gitHubUsername}/${gitHubS.gitHubRepoName}.git`
 
                                 if (gitHubS.gitHubRepoName.includes('.github.io')) {
                                     siteBranch == 'master'
@@ -234,7 +234,6 @@ function runUpload() {
                                     let child;
                                     if (process.platform !== 'darwin') {
                                         child = child_process.spawn(`git add -A && git commit -m "create source branch" && git pull && git push origin ${sourceBranch} && git branch -D ${siteBranch} && git checkout -b ${siteBranch} && sed '1d' -i .gitignore && git add -A && git commit -m "add _site" && git filter-branch --subdirectory-filter _site/ -f && git push -f origin ${siteBranch} && git checkout ${sourceBranch}`, {
-                                            shell: 'cmd',
                                             cwd: currentProjectPath
                                         })
                                     } else {
@@ -265,7 +264,6 @@ function runUpload() {
                                     let child;
                                     if (process.platform !== 'darwin') {
                                         child = child_process.spawn(`git init && git config user.email "${gitHubS.gitHubUserEmail}" && git config user.name "${gitHubS.gitHubUsername}" && git checkout -b ${sourceBranch} && git remote add origin ${remoteURL} && git add -A && git commit -m "create source branch" && git push origin ${sourceBranch} && git checkout -b ${siteBranch} && sed '1d' -i .gitignore && git add -A && git commit -m "add _site" && git filter-branch --subdirectory-filter _site/ -f && git push -f origin ${siteBranch} && git checkout ${sourceBranch}`, {
-                                            shell: 'cmd',
                                             cwd: currentProjectPath
                                         })
                                     } else {
