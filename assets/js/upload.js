@@ -29,7 +29,7 @@ pageContent.addEventListener('click', function(e){
 
 function runUpload() {
     let pubMethod = store.get('publicationSettings.method')
-    
+
         if (pubMethod == undefined) {
             ipcRenderer.send('show-message-box', 'error', 'No Method Selected', 'No Publication Method Selected, please Edit Publication Settings first!')
         } else {
@@ -45,10 +45,19 @@ function runUpload() {
             }
 
             htmlOutput = document.getElementById('generation-output')
-            const child = child_process.spawn('jekyll build', {
-                shell: 'cmd',
-                cwd: currentProjectPath
-            })
+            let child;
+            if (process.platform !== 'darwin') {
+                child = child_process.spawn('jekyll build', {
+                    shell: 'cmd',
+                    cwd: currentProjectPath
+                })
+            } else {
+                child = child_process.spawn('jekyll build', {
+                    shell: 'true',
+                    cwd: currentProjectPath
+                })
+            }
+
 
             child.stdout.pipe(process.stdout);
             child.stderr.pipe(process.stderr);
@@ -222,10 +231,18 @@ function runUpload() {
 
                                 if (fs.existsSync(path.join(currentProjectPath.toString(), '.git/'))) {
                                     alert('is a Git directory')
-                                    const child = child_process.spawn(`git add -A && git commit -m "create source branch" && git pull && git push origin ${sourceBranch} && git branch -D ${siteBranch} && git checkout -b ${siteBranch} && sed '1d' -i .gitignore && git add -A && git commit -m "add _site" && git filter-branch --subdirectory-filter _site/ -f && git push -f origin ${siteBranch} && git checkout ${sourceBranch}`, {
-                                        shell: 'cmd',
-                                        cwd: currentProjectPath
-                                    })
+                                    let child;
+                                    if (process.platform !== 'darwin') {
+                                        child = child_process.spawn(`git add -A && git commit -m "create source branch" && git pull && git push origin ${sourceBranch} && git branch -D ${siteBranch} && git checkout -b ${siteBranch} && sed '1d' -i .gitignore && git add -A && git commit -m "add _site" && git filter-branch --subdirectory-filter _site/ -f && git push -f origin ${siteBranch} && git checkout ${sourceBranch}`, {
+                                            shell: 'cmd',
+                                            cwd: currentProjectPath
+                                        })
+                                    } else {
+                                        child = child_process.spawn(`git add -A && git commit -m "create source branch" && git pull && git push origin ${sourceBranch} && git branch -D ${siteBranch} && git checkout -b ${siteBranch} && sed '1d' -i .gitignore && git add -A && git commit -m "add _site" && git filter-branch --subdirectory-filter _site/ -f && git push -f origin ${siteBranch} && git checkout ${sourceBranch}`, {
+                                            shell: 'true',
+                                            cwd: currentProjectPath
+                                        })
+                                    }
 
                                     child.stdout.pipe(process.stdout);
                                     child.stderr.pipe(process.stderr);
@@ -245,10 +262,18 @@ function runUpload() {
                                     });
                                 } else {
                                     alert('is not a git directory')
-                                    const child = child_process.spawn(`git init && git config user.email "${gitHubS.gitHubUserEmail}" && git config user.name "${gitHubS.gitHubUsername}" && git checkout -b ${sourceBranch} && git remote add origin ${remoteURL} && git add -A && git commit -m "create source branch" && git push origin ${sourceBranch} && git checkout -b ${siteBranch} && sed '1d' -i .gitignore && git add -A && git commit -m "add _site" && git filter-branch --subdirectory-filter _site/ -f && git push -f origin ${siteBranch} && git checkout ${sourceBranch}`, {
-                                        shell: 'cmd',
-                                        cwd: currentProjectPath
-                                    })
+                                    let child;
+                                    if (process.platform !== 'darwin') {
+                                        child = child_process.spawn(`git init && git config user.email "${gitHubS.gitHubUserEmail}" && git config user.name "${gitHubS.gitHubUsername}" && git checkout -b ${sourceBranch} && git remote add origin ${remoteURL} && git add -A && git commit -m "create source branch" && git push origin ${sourceBranch} && git checkout -b ${siteBranch} && sed '1d' -i .gitignore && git add -A && git commit -m "add _site" && git filter-branch --subdirectory-filter _site/ -f && git push -f origin ${siteBranch} && git checkout ${sourceBranch}`, {
+                                            shell: 'cmd',
+                                            cwd: currentProjectPath
+                                        })
+                                    } else {
+                                        child = child_process.spawn(`git init && git config user.email "${gitHubS.gitHubUserEmail}" && git config user.name "${gitHubS.gitHubUsername}" && git checkout -b ${sourceBranch} && git remote add origin ${remoteURL} && git add -A && git commit -m "create source branch" && git push origin ${sourceBranch} && git checkout -b ${siteBranch} && sed '1d' -i .gitignore && git add -A && git commit -m "add _site" && git filter-branch --subdirectory-filter _site/ -f && git push -f origin ${siteBranch} && git checkout ${sourceBranch}`, {
+                                            shell: 'true',
+                                            cwd: currentProjectPath
+                                        })
+                                    }
 
                                     child.stdout.pipe(process.stdout);
                                     child.stderr.pipe(process.stderr);

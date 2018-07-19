@@ -9,7 +9,7 @@ const {
 } = require('electron');
 
 let pageContent = document.querySelector('.container')
-let popupContent = document.querySelector('.popup .content-loader') 
+let popupContent = document.querySelector('.popup .content-loader')
 const functions = require("./functions.js");
 const dashboard = require("./dashboard.js")
 
@@ -172,11 +172,19 @@ popupContent.addEventListener('click', function (e) {
             let htmlOutput = document.querySelector('#output')
 
             htmlOutput.innerHTML = "" // clear previous Output
+            let child;
 
-            const child = child_process.spawn(`jekyll new ${siteName}`, {
-                shell: 'cmd',
-                cwd: projectParentPath
-            })
+            if (process.platform !== 'darwin') {
+                child = child_process.spawn(`jekyll new ${siteName}`, {
+                    shell: 'cmd',
+                    cwd: projectParentPath
+                })
+            } else {
+                child = child_process.spawn(`jekyll new ${siteName}`, {
+                    shell: true,
+                    cwd: projectParentPath
+                })
+            }
 
             child.stdout.pipe(process.stdout);
             child.stderr.pipe(process.stderr);
