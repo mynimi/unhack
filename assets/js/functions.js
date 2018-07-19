@@ -5,7 +5,8 @@ const yaml = require('js-yaml');
 const prefs = require('./prefs')
 let store = prefs.store
 const {
-    ipcRenderer
+    ipcRenderer,
+    shell
 } = require('electron');
 
 
