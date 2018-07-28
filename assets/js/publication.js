@@ -54,10 +54,10 @@ function openPublicationSettings(){
             gitHubS.gitHubUsername = document.querySelector('input[name="github-username"]').value
             gitHubS.gitHubUserEmail = document.querySelector('input[name="github-useremail"]').value
 
-            let gitHubPW = document.querySelector('input[name="github-password"]')
-            if (gitHubPW.value != '') {
-                store.set('gitHubPassword', gitHubPW.value)
-            }
+            // let gitHubPW = document.querySelector('input[name="github-password"]')
+            // if (gitHubPW.value != '') {
+            //     store.set('gitHubPassword', gitHubPW.value)
+            // }
             gitHubS.gitHubRepoName = document.querySelector('input[name="github-repository-name"]').value
 
             functions.addToConfig(addConfig)

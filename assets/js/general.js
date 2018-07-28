@@ -3,7 +3,8 @@ const prefs = require('./prefs')
 let store = prefs.store
 
 const {
-    ipcRenderer
+    ipcRenderer,
+    shell
 } = require('electron');
 
 let popupContent = document.querySelector('.popup .content-loader')
@@ -19,6 +20,10 @@ document.querySelector('body').addEventListener('click', function(e){
     if (e.target && e.target.id == 'behind-popup'){
         popupContent.innerHTML = ''
         functions.closePopup();
+    }
+    if(e.target && e.target.classList.contains('open-in-browser')){
+        e.preventDefault()
+        shell.openExternal(e.target.href);
     }
 });
 

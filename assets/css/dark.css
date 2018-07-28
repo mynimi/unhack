@@ -183,6 +183,8 @@ p + p {
     opacity: .7; }
   .small.help {
     color: #156370; }
+    .small.help a, .small.help .btn {
+      text-decoration: underline; }
 
 p + h1,
 p + h2,

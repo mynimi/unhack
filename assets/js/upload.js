@@ -38,10 +38,10 @@ function runUpload() {
                                         <div class="wrap"><label for="generation-output" class="up">Generating jekyll site</label><textarea name="generation-output" id="generation-output" placeholder="output" style="min-height: 200px"></textarea></div>`
             functions.openPopup()
             if (pubMethod == 'ftp') {
-                console.log(`password is ${store.get('ftpPassword')}`)
+                // console.log(`password is ${store.get('ftpPassword')}`)
             }
             if (pubMethod == 'gitHub') {
-                console.log(`password is ${store.get('gitHubPassword')}`)
+                // console.log(`password is ${store.get('gitHubPassword')}`)
             }
 
             htmlOutput = document.getElementById('generation-output')
@@ -95,32 +95,32 @@ function runUpload() {
                     gitHubS.gitHubUsername
                     gitHubS.gitHubProjectUrl
 
-                    let localRoot = path.join(currentProjectPath.toString(), '_site')
-
-                    let filesToUpload = functions.getPathsInDir(localRoot)
-
-                    function flatten(lists) {
-                        return lists.reduce((a, b) => a.concat(b), []);
-                    }
-
-                    function getDirectories(srcpath) {
-                        return fs.readdirSync(srcpath)
-                            .map(file => path.join(srcpath, file))
-                            .filter(path => fs.statSync(path).isDirectory());
-                    }
-
-                    function getDirectoriesRecursive(srcpath) {
-                        return [srcpath, ...flatten(getDirectories(srcpath).map(getDirectoriesRecursive))];
-                    }
-
-                    let subDirs = getDirectoriesRecursive(localRoot)
-
-                    console.log(subDirs)
-                    console.log(filesToUpload)
-
                     popupContent.addEventListener('click', function (e) {
                         if (e.target && e.target.id == 'upload-generated-site') {
                             if (pubMethod == 'ftp') {
+                                let localRoot = path.join(currentProjectPath.toString(), '_site')
+
+                                let filesToUpload = functions.getPathsInDir(localRoot)
+
+                                function flatten(lists) {
+                                    return lists.reduce((a, b) => a.concat(b), []);
+                                }
+
+                                function getDirectories(srcpath) {
+                                    return fs.readdirSync(srcpath)
+                                        .map(file => path.join(srcpath, file))
+                                        .filter(path => fs.statSync(path).isDirectory());
+                                }
+
+                                function getDirectoriesRecursive(srcpath) {
+                                    return [srcpath, ...flatten(getDirectories(srcpath).map(getDirectoriesRecursive))];
+                                }
+
+                                let subDirs = getDirectoriesRecursive(localRoot)
+
+                                // console.log(subDirs)
+                                // console.log(filesToUpload)
+
                                 htmlOutput.innerHTML = ''
 
                                 if (ftpS.ftpPort == '') {
@@ -221,9 +221,9 @@ function runUpload() {
                             } else if (pubMethod == 'github') {
                                 let sourceBranch = 'source'
                                 let siteBranch = 'gh-pages'
-
-                                let remoteURL = `https://github.com/${gitHubS.gitHubUsername}/${gitHubS.gitHubRepoName}.git`
-                                // let remoteURL = `git@github.com:${gitHubS.gitHubUsername}/${gitHubS.gitHubRepoName}.git`
+                            
+                                // let remoteURL = `https://github.com/${gitHubS.gitHubUsername}/${gitHubS.gitHubRepoName}.git`
+                                let remoteURL = `git@github.com:${gitHubS.gitHubUsername}/${gitHubS.gitHubRepoName}.git`
 
                                 if (gitHubS.gitHubRepoName.includes('.github.io')) {
                                     siteBranch == 'master'
@@ -233,11 +233,12 @@ function runUpload() {
                                     alert('is a Git directory')
                                     let child;
                                     if (process.platform !== 'darwin') {
-                                        child = child_process.spawn(`git add -A && git commit -m "create source branch" && git pull && git push origin ${sourceBranch} && git branch -D ${siteBranch} && git checkout -b ${siteBranch} && sed '1d' -i .gitignore && git add -A && git commit -m "add _site" && git filter-branch --subdirectory-filter _site/ -f && git push -f origin ${siteBranch} && git checkout ${sourceBranch}`, {
+                                        child = child_process.spawn(`git checkout ${sourceBranch} && git add -A && git commit -m "push all changes to source" && git push -f origin ${sourceBranch} && git branch -D ${siteBranch} && git checkout -b ${siteBranch} && sed -i '/_site/d' .gitignore && git add -A && git commit -m "add _site" && git filter-branch --subdirectory-filter _site/ -f && git push -f origin ${siteBranch} && git checkout ${sourceBranch}`, {
+                                            shell: 'cmd',
                                             cwd: currentProjectPath
                                         })
                                     } else {
-                                        child = child_process.spawn(`git add -A && git commit -m "create source branch" && git pull && git push origin ${sourceBranch} && git branch -D ${siteBranch} && git checkout -b ${siteBranch} && sed '1d' -i .gitignore && git add -A && git commit -m "add _site" && git filter-branch --subdirectory-filter _site/ -f && git push -f origin ${siteBranch} && git checkout ${sourceBranch}`, {
+                                        child = child_process.spawn(`git checkout ${sourceBranch} && git add -A && git commit -m "push all changes to source" && git push -f origin ${sourceBranch} && git branch -D ${siteBranch} && git checkout -b ${siteBranch} && sed -i '/_site/d' .gitignore && git add -A && git commit -m "add _site" && git filter-branch --subdirectory-filter _site/ -f && git push -f origin ${siteBranch} && git checkout ${sourceBranch}`, {
                                             shell: 'true',
                                             cwd: currentProjectPath
                                         })
@@ -258,21 +259,25 @@ function runUpload() {
                                     child.on('close', function (code) {
                                         // console.log('closing code: ' + code);
                                         htmlOutput.insertAdjacentHTML('beforeend', 'closing code: ' + code); //Here you can get the exit code of the script
+                                        if(code == 0){
+                                            ipcRenderer.send('show-message-box', 'none', 'GitHub UPloaded', 'GitHub Upload Complete')
+                                        }
                                     });
                                 } else {
+                                    htmlOutput.innerHTML = ''
                                     alert('is not a git directory')
                                     let child;
-                                    if (process.platform !== 'darwin') {
-                                        child = child_process.spawn(`git init && git config user.email "${gitHubS.gitHubUserEmail}" && git config user.name "${gitHubS.gitHubUsername}" && git checkout -b ${sourceBranch} && git remote add origin ${remoteURL} && git add -A && git commit -m "create source branch" && git push origin ${sourceBranch} && git checkout -b ${siteBranch} && sed '1d' -i .gitignore && git add -A && git commit -m "add _site" && git filter-branch --subdirectory-filter _site/ -f && git push -f origin ${siteBranch} && git checkout ${sourceBranch}`, {
+                                    if(process.platform !== 'darwin'){
+                                        child = child_process.spawn(`git init && git config user.email "${gitHubS.gitHubUserEmail}" && git config user.name "${gitHubS.gitHubUsername}" && git remote add origin ${remoteURL} && git checkout -b ${sourceBranch} && git add -A && git commit -m "push all changes to source" && git push -f origin ${sourceBranch} && git checkout -b ${siteBranch} && sed -i '/_site/d' .gitignore && git add -A && git commit -m "add _site" && git filter-branch --subdirectory-filter _site/ -f && git push -f origin ${siteBranch} && git checkout source`, {
+                                            shell: 'cmd',
                                             cwd: currentProjectPath
                                         })
-                                    } else {
-                                        child = child_process.spawn(`git init && git config user.email "${gitHubS.gitHubUserEmail}" && git config user.name "${gitHubS.gitHubUsername}" && git checkout -b ${sourceBranch} && git remote add origin ${remoteURL} && git add -A && git commit -m "create source branch" && git push origin ${sourceBranch} && git checkout -b ${siteBranch} && sed '1d' -i .gitignore && git add -A && git commit -m "add _site" && git filter-branch --subdirectory-filter _site/ -f && git push -f origin ${siteBranch} && git checkout ${sourceBranch}`, {
+                                    } else{
+                                        child = child_process.spawn(`git init && git config user.email "${gitHubS.gitHubUserEmail}" && git config user.name "${gitHubS.gitHubUsername}" && git remote add origin ${remoteURL} && git checkout -b ${sourceBranch} && git add -A && git commit -m "push all changes to source" && git push -f origin ${sourceBranch} && git checkout -b ${siteBranch} && sed -i '/_site/d' .gitignore && git add -A && git commit -m "add _site" && git filter-branch --subdirectory-filter _site/ -f && git push -f origin ${siteBranch} && git checkout source`, {
                                             shell: 'true',
                                             cwd: currentProjectPath
                                         })
                                     }
-
                                     child.stdout.pipe(process.stdout);
                                     child.stderr.pipe(process.stderr);
                                     child.stdin.end();
@@ -288,6 +293,9 @@ function runUpload() {
                                     child.on('close', function (code) {
                                         // console.log('closing code: ' + code);
                                         htmlOutput.insertAdjacentHTML('beforeend', 'closing code: ' + code); //Here you can get the exit code of the script
+                                        if (code == 0) {
+                                            ipcRenderer.send('show-message-box', 'none', 'GitHub UPloaded', 'GitHub Upload Complete')
+                                        }
                                     });
                                 }
                             }

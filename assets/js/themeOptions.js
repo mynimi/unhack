@@ -66,7 +66,7 @@ function generateThemeOptions(useDefault) {
 
         output = `<div class="middle">
                     <h1><span>Theme Options</span></h1>
-                    <div class="cardholder columns">`
+                    `
         if(!tO){
             output += `<div class="alert error"><div class="alert-content">
                 <i class="fas fa-times-circle fa-2x fa-pull-left"></i>
@@ -76,7 +76,8 @@ function generateThemeOptions(useDefault) {
         } else {
             for (let section in tO) {
                 if (tO.hasOwnProperty(section)) {
-                    output += `<div class="card">
+                    output += `<div class="cardholder columns">
+                                <div class="card">
                                 <div class="card-content">
                                     <h2>${section.toProperCase()}</h2>`
                     let vars = tO[section].vars

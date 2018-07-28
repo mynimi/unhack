@@ -180,7 +180,11 @@ pre{
     }
 
     &.help{
-        color: $accent-alt
+        color: $accent-alt;
+
+        a{
+            text-decoration: underline;
+        }
     }
 }
 p + {

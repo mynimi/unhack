@@ -11,12 +11,26 @@ else
     git init
 fi
 
+git config user.email "myriam@halfapx.com"
+git config user.name "Myriam"
+
 if [ git remote ]
 then 
     echo "we have remote"
 else
-    git remote add origin https://github.com/mynimi/bla.git
+    git remote add origin git@github.com:mynimi/teststuff.git
 fi
+
+if [ git rev-parse --verify --quiet source ]
+then
+    git checkout source
+else
+    git checkout -b source
+fi
+
+git add -A 
+git commit -m "push all changes to source"
+git push -f origin source
 
 # delete gh-pages if it exists
 if [ git rev-parse --verify --quiet gh-pages ]
