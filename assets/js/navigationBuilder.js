@@ -33,11 +33,11 @@ function navigationBuilder() {
     const c = JSON.parse(config)
     // console.log(c)
 
-    if(c.menuSupport){
-        // yay menu supported by theme
-    } else {
-        functions.displayAlert('error', 'No Navigation Builder Support', "Seems like your Theme doesn't support the Navigation Builder. Contact the Theme Developer or read the Documentation to learn how to add Menu Support to a jekyll theme.")
-    }
+    // if(c.menuSupport){
+    //     // yay menu supported by theme
+    // } else {
+    //     functions.displayAlert('error', 'No Navigation Builder Support', "Seems like your Theme doesn't support the Navigation Builder. Contact the Theme Developer or read the Documentation to learn how to add Menu Support to a jekyll theme.")
+    // }
 
     pageContent.addEventListener('click', function (e) {
         let menuAreas = document.querySelector('.menu-areas')
@@ -163,8 +163,15 @@ function navigationBuilder() {
                     </div>
                 </div>`
     }
-    let output = `<h1><span>Build Your Menu</span></h1>
-                <div class="cardholder">
+    let output = `<h1><span>Build Your Menu</span></h1>`
+        if(!c.menuSupport){
+            output += `<div class="alert error"><div class="alert-content">
+                <i class="fas fa-times-circle fa-2x fa-pull-left"></i>
+                <h1 class="alert-title"><span>No Navigation Support</span></h1>
+                <div class="alert-message">Seems like your Theme doesn 't support the Navigation Builder. Contact the Theme Developer or read the Documentation to learn how to add Menu Support to a jekyll theme.</div>
+            </div></div>`
+        }
+        output += `<div class="cardholder">
                     <div class="card">
                         <div class="card-content">
                             <h2>Available Pages</h2>

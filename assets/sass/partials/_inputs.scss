@@ -18,7 +18,9 @@ input:not([type="submit"]):not([type="button"]):not([type="checkbox"]):not([type
             color: $input-focus-color !important;
         }
     }
-
+    img{
+        margin-top: 5px;
+    }
     > input,
     > textarea{
         background: transparent;

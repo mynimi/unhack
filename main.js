@@ -144,6 +144,12 @@ app.on('ready', () => {
                         mainWindow.webContents.send('create-project');
                     },
                     accelerator: 'CmdOrCtrl+N'
+                },
+                {
+                    label: 'Open current Project in Explorer/Finder',
+                    click(){
+                        shell.openExternal(store.get('currentProjectPath').toString())
+                    }
                 }
             ]
         },

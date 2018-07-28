@@ -56,6 +56,36 @@ module.exports.retrieveMeta = function retrieveMeta(template,parent, child, conf
     return config;
 }
 
+module.exports.retrieveOptions = function retrieveOptions(template, parent, child, config) {
+    let prop = parent[child]
+
+        if (!prop.type) {
+            prop.type = 'text'
+        }
+        let val = ''
+
+        if (prop.type == 'text' || prop.type == 'date' || prop.type == 'number' || prop.type == 'color') {
+            val = document.querySelector(`input[name="${child}"]`).value
+        }
+        if (prop.type == 'list') {
+            val = document.querySelector(`input[name="${child}"]`).value.split(',')
+        }
+        if (prop.type == "radio" || prop.type == 'checkbox') {
+            let options = prop.options
+            val = document.querySelector(`input[name="${child}"]:checked`).value
+        }
+        if (prop.type == 'textarea') {
+            val = document.querySelector(`textarea[name="${child}"]`).value
+        }
+        if (prop.type == 'image') {
+            val = document.querySelector(`img[name="${child}"`).dataset.metapath
+        }
+        if (val != '') {
+            config[child] = val
+        }
+    return config;
+}
+
 module.exports.generateMeta = function generateMeta(template, parent, child, initialVal) {
     let prop = parent[child]
     let output = ''
@@ -137,6 +167,86 @@ module.exports.generateMeta = function generateMeta(template, parent, child, ini
 
 }
 
+module.exports.generateOptions = function generateOptions(template, parent, child, initialVal) {
+    let prop = parent[child]
+    let output = ''
+    let help
+
+    if(prop.help){
+        help = `<p class="small help"><i class="fas fa-info-circle"></i> ${prop.help}</p>`
+    } else {
+        help = ''
+    }
+        if (!initialVal) {
+            if (prop.defaults){
+                initialVal = prop.defaults[template]
+            } else if(prop.type == 'date'){
+                initialVal = new Date().toDateInputValue()
+            } else{
+                initialVal = ''
+            }        
+        }
+
+        if (!prop.type) {
+            prop.type = 'text'
+        }
+
+        if (prop.type == 'text' || prop.type == 'date' || prop.type == 'number' || prop.type == 'color') {
+            output =
+                `<div class="wrap">
+                        <label for="${child}">${child.toProperCase()}</label>
+                        <input type="${prop.type}" name="${child}" id="${child}" value="${initialVal}" ${(prop.maxlength) ? `maxlength="${prop.maxlength}"` : ''}>
+                        ${help}
+                    </div>`
+        }
+
+        if (prop.type == 'list') {
+            prop.help += 'separate with comma'
+            output =
+                `<div class="wrap">
+                        <label for="${child}">${child.toProperCase()}</label>
+                        <input type="${prop.type}" name="${child}" id="${child}" data-isanarray="true"value="${initialVal}" ${(prop.maxlength) ? `maxlength="${prop.maxlength}"` : ''}>
+                        ${help}
+                    </div>`
+        }
+        if (prop.type == "radio" || prop.type == 'checkbox') {
+            output =
+                `<div class="${prop.type} input">
+                    <div class="label">${child.toProperCase()}</div>`
+            let options = prop.options
+            for (let o in options){
+                if(options.hasOwnProperty(o)){
+                    output += `<input id="${options[o]}" name="${child}" value="${options[o]}" type="${prop.type}" ${(options[o] == initialVal) ? 'checked' : ''} ${(prop.maxlength) ? `maxlength="${prop.maxlength}"` : ''}>`
+                    output += `<label for="${options[o]}">${options[o].toString().toProperCase()}</label>`
+                    output += '<br>'
+                }
+            }
+            output += `${help}</div>`
+        }
+        if (prop.type == 'textarea') {
+            output =
+                `<div class="wrap">
+                <label for="${child}">${child.toProperCase()}</label>
+                <textarea name="${child}" id="${child}" ${(prop.maxlength) ? `maxlength="${prop.maxlength}"` : ''}>${initialVal}</textarea>
+                ${help}
+            </div>`
+        }
+        if (prop.type == 'image') {
+            output = 
+                    `<div class="wrap">
+                    <label class="up" for="${child}">${child.toProperCase()}</label>
+                    ${(initialVal != '') ? `<img name="${child}" src="${path.join(store.get('currentProjectPath').toString(), initialVal)}" data-metapath="${initialVal}" name="${child}">` : ''
+                    } 
+                    <button class="btn media-chooser">Choose File</button>
+                    ${help}
+                    </div>`
+        }
+
+    
+        return output
+
+}
+
 String.prototype.toProperCase = function () {
     return this.replace('_', ' ').replace('-', ' ').replace(/\w\S*/g, function (txt) {
         return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
@@ -163,7 +273,7 @@ module.exports.addToConfig = function addToConfig(addConfig){
 
             fs.writeFile(configPath.toString(), JSON.stringify(newConfig, null, 2), (err) => {
                 if (err) throw err
-                ipcRenderer.send('show-message-box', 'none', 'Settings Saved', "Publication Settings were sucessfully saved to Config File.")
+                ipcRenderer.send('show-message-box', 'none', 'Settings Saved', "Settings were sucessfully saved to Config File.")
             })
         })
     } else {

@@ -146,6 +146,7 @@ pre{
     margin: 5px;
     display: inline-block;
     appearance: none;
+    border: 2px solid $link-color;
 
     &.small{
         padding: 3px 9px;
@@ -158,6 +159,16 @@ pre{
     &.disabled{
         opacity: .4;
         cursor: not-allowed;
+    }
+
+    &-scnd{
+        background: $background-color;
+        color: $link-color;
+
+        &:hover{
+            background: $background-color;
+            color: $link-hover-color;
+        }
     }
 }
 
