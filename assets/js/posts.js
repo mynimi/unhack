@@ -363,10 +363,10 @@ function createFileContent(draft, editor, filePath){
     fs.writeFile(newPostPath, output, 'utf8', function (err) {
         if (err) return console.log(err);
 
-        if (filePath != false) {
+        if (filePath != newPostPath) {
             functions.deleteFile(filePath.toString())
-            store.delete('currentPostEditPath')
         }
+        store.delete('currentPostEditPath')
     });
 }
 

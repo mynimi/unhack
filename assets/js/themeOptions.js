@@ -122,7 +122,7 @@ function saveThemeOptions(){
                 functions.retrieveOptions('global', vars, prop, config)
                 vars[prop].value = config[prop]
                 if(vars[prop].type == 'image'){
-                    string.push(`$${prop}: '${config[prop]}';`)
+                    string.push(`$${prop}: '..${config[prop]}';`)
                 } else {
                     string.push(`$${prop}: ${config[prop]};`)
                 }

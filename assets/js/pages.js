@@ -297,7 +297,7 @@ function pageCreator() {
     })
 }
 
-function createFileContent(draft, editor){
+function createFileContent(draft, editor, filePath){
     let config = {}
     let title = document.querySelector('#title').value
     let newpagePath = path.join(pagesPath, `${functions.slugify(title)}.md`)
@@ -332,10 +332,11 @@ function createFileContent(draft, editor){
 
     fs.writeFile(newpagePath, output, 'utf8', function (err) {
         if (err) return console.log(err);
-        if (filePath != false) {
+
+        if (filePath != newpagePath) {
             functions.deleteFile(filePath.toString())
-            store.delete('currentPageEditPath')
         }
+        store.delete('currentPageEditPath')
     });
 }
 
