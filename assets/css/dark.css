@@ -163,7 +163,8 @@ p + p {
   appearance: none;
   border: 2px solid #218C9E; }
   .btn.small {
-    padding: 3px 9px; }
+    padding: 3px 9px;
+    font-size: 1em; }
   .btn:hover {
     background: #156370;
     color: white; }

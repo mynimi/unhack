@@ -24,6 +24,7 @@ if (store.has('currentProjectPath')){
 }
 let config = {}
 let fS = {}
+let currentPath = ''
 
 let pageContent = document.querySelector('.container')
 let popupContent = document.querySelector('.popup .content-loader')
@@ -90,10 +91,14 @@ pageContent.addEventListener('click', function (e) {
 function postEditor(filePath){
     if(store.has('currentPostEditPath')){
         store.get('currentPostEditPath')
+        console.log('edit path exists.')
+        console.log(store.get('currentPostEditPath'))
     } else {
         store.set('currentPostEditPath', filePath)
+        console.log('edit path newly set.')
+        console.log(store.get('currentPostEditPath'))
     }
-    let currentPath = store.get('currentPostEditPath').toString()
+    currentPath = store.get('currentPostEditPath').toString()
     let content = fs.readFileSync(currentPath.toString(), 'utf8')
     let bla = content.split('---')
     let yml = bla[1]
@@ -185,46 +190,43 @@ function postEditor(filePath){
         functions.inputStyle()
     })
 
-    pageContent.addEventListener('click', function (e) {
-        if (e.target && e.target.id == 'cancel-post-edit') {
-            let el = e.target
-            if(confirm('Are you sure you want to cancel? All changes will be lost?')){
-                store.delete('currentPostEditPath')
-                generatePostsList();
-            }
-        }
-        if (e.target && e.target.id == 'save-post-draft-edit') {
-            let el = e.target
-            savePostDraft(currentPath, editor)
-        }
-        if (e.target && e.target.id == 'save-post-edit') {
-            let el = e.target
-            savePost(currentPath, editor)
-        }
-
-        if (e.target && e.target.id == 'delete-post-edit') {
-            let el = e.target
-            if (confirm(`Are you sure you want to delete ${currentPath}?`)) {
-                if (shell.moveItemToTrash(currentPath)) {
-                    ipcRenderer.send('show-message-box', 'none', 'Page Deleted', `${currentPath} was successfully moved to the trash.`)
-                }
-                store.delete('currentPostEditPath')
-            }
-            generatePostsList()
-        }
-
-        // if (e.target && e.target.id == 'add-media') {
-        //     let el = e.target
-        //     functions.loadMediaGallery(mediaLibraryPath, popupContent, mediaFolder, editor)
-        // }
-
-
-    })
 }
+pageContent.addEventListener('click', function (e) {
+    if (e.target && e.target.id == 'cancel-post-edit') {
+        let el = e.target
+        if (confirm('Are you sure you want to cancel? All changes will be lost?')) {
+            store.delete('currentPostEditPath')
+            generatePostsList();
+        }
+    }
+    if (e.target && e.target.id == 'save-post-draft-edit') {
+        let el = e.target
+        savePostDraft(currentPath, editor)
+    }
+    if (e.target && e.target.id == 'save-post-edit') {
+        let el = e.target
+        savePost(currentPath, editor)
+    }
+
+    if (e.target && e.target.id == 'delete-post-edit') {
+        let el = e.target
+        if (confirm(`Are you sure you want to delete ${currentPath}?`)) {
+            if (shell.moveItemToTrash(currentPath)) {
+                ipcRenderer.send('show-message-box', 'none', 'Page Deleted', `${currentPath} was successfully moved to the trash.`)
+                store.delete('currentPostEditPath')
+                generatePostsList()
+            }
+        }
+    }
+})
+
 // for posts and pages
 pageContent.addEventListener('click', function (e) {
     if (e.target && e.target.classList.contains('media-chooser')) {
         functions.loadMediaGallery(mediaLibraryPath, popupContent, mediaFolder, e.target)
+    }
+    if(e.target && e.target.classList.contains('remove-media')){
+        e.target.parentNode.querySelector('img').remove()
     }
 })
 
@@ -367,17 +369,14 @@ function createFileContent(draft, editor, filePath){
             functions.deleteFile(filePath.toString())
         }
         store.delete('currentPostEditPath')
+        alert('Changes Saved')
     });
 }
 
 function savePost(filePath, editor) {
-    // delete old file
     createFileContent(false, editor, filePath)
-    alert('Post Saved')
 }
 
 function savePostDraft(filePath, editor) {
-    // delete old file
     createFileContent(true, editor, filePath)
-    alert('Draft Saved')
 }

@@ -161,7 +161,8 @@ module.exports.generateMeta = function generateMeta(template, parent, child, ini
                     <label class="up" for="${child}">${child.toProperCase()}</label>
                     ${(initialVal != '') ? `<img name="${child}" src="${path.join(store.get('currentProjectPath').toString(), initialVal)}" data-metapath="${initialVal}" name="${child}">` : ''
                     } 
-                    <button class="btn media-chooser">Choose File</button>
+                    <button class="btn small media-chooser">Choose File</button>
+                    <button class="btn small btn-scnd remove-media">Remove File</button>
                     ${help}
                     </div>`
         }
@@ -241,7 +242,8 @@ module.exports.generateOptions = function generateOptions(template, parent, chil
                     <label class="up" for="${child}">${child.toProperCase()}</label>
                     ${(initialVal != '') ? `<img name="${child}" src="${path.join(store.get('currentProjectPath').toString(), initialVal)}" data-metapath="${initialVal}" name="${child}">` : ''
                     } 
-                    <button class="btn media-chooser">Choose File</button>
+                    <button class="btn small media-chooser">Choose File</button>
+                    <button class="btn small btn-scnd remove-media">Remove File</button>
                     ${help}
                     </div>`
         }
@@ -548,9 +550,9 @@ module.exports.generateFilesList = function generateFilesList(fileList, type, pa
                         <td class="date">${date}</td>
                         <td>${status}</td>
                         <td>
-                            <button class="btn edit-${type}" data-${type}Path="${p}">Edit</button>
-                            <button class="btn duplicate-${type}" data-${type}Path="${p}">Duplicate</button>
-                            <button class="btn delete-${type}" data-${type}Path="${p}">Delete</button>
+                            <button class="btn small edit-${type}" data-${type}Path="${p}">Edit</button>
+                            <button class="btn small duplicate-${type}" data-${type}Path="${p}">Duplicate</button>
+                            <button class="btn small delete-${type}" data-${type}Path="${p}">Delete</button>
                         </td>
                     </tr>`
         })

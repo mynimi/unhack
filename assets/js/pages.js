@@ -20,6 +20,7 @@ if (store.has('configFilePath')) {
 }
 let config = {}
 let fS = {}
+let currentPath = ''
 
 let pageContent = document.querySelector('.container')
 let popupContent = document.querySelector('.popup .content-loader')
@@ -84,7 +85,7 @@ function pageEditor(filePath){
     } else {
         store.set('currentPageEditPath', filePath)
     }
-    let currentPath = store.get('currentPageEditPath')
+    currentPath = store.get('currentPageEditPath')
     let content = fs.readFileSync(currentPath.toString(), 'utf8')
     let bla = content.split('---')
     let yml = bla[1]
@@ -175,36 +176,38 @@ function pageEditor(filePath){
         functions.inputStyle()
     })
 
-    pageContent.addEventListener('click', function (e) {
-        if (e.target && e.target.id == 'cancel-page-edit') {
-            let el = e.target
-            if(confirm('Are you sure you want to cancel? All changes will be lost?')){
-                store.delete('currentPageEditPath')
-                generatePagesList();
-            }
-        }
-        if (e.target && e.target.id == 'save-page-draft-edit') {
-            let el = e.target
-            savePageDraft(currentPath, editor)
-        }
-        if (e.target && e.target.id == 'save-page-edit') {
-            let el = e.target
-            savePage(currentPath, editor)
-        }
-
-        if (e.target && e.target.id == 'delete-page-edit') {
-            let el = e.target
-            if (confirm(`Are you sure you want to delete ${currentPath}?`)) {
-                if (shell.moveItemToTrash(currentPath)) {
-                    ipcRenderer.send('show-message-box', 'none', 'Page Deleted', `${currentPath} was successfully moved to the trash.`)
-                }
-                store.delete('currentPageEditPath')
-            }
-            generatePagesList()
-        }
-
-    })
+    
 }
+
+pageContent.addEventListener('click', function (e) {
+    if (e.target && e.target.id == 'cancel-page-edit') {
+        let el = e.target
+        if (confirm('Are you sure you want to cancel? All changes will be lost?')) {
+            store.delete('currentPageEditPath')
+            generatePagesList();
+        }
+    }
+    if (e.target && e.target.id == 'save-page-draft-edit') {
+        let el = e.target
+        savePageDraft(currentPath, editor)
+    }
+    if (e.target && e.target.id == 'save-page-edit') {
+        let el = e.target
+        savePage(currentPath, editor)
+    }
+
+    if (e.target && e.target.id == 'delete-page-edit') {
+        let el = e.target
+        if (confirm(`Are you sure you want to delete ${currentPath}?`)) {
+            if (shell.moveItemToTrash(currentPath)) {
+                ipcRenderer.send('show-message-box', 'none', 'Page Deleted', `${currentPath} was successfully moved to the trash.`)
+                store.delete('currentPageEditPath')
+                generatePagesList()
+            }
+        }
+    }
+
+})
 
 function pageCreator() {
     let html = ''
@@ -337,17 +340,16 @@ function createFileContent(draft, editor, filePath){
             functions.deleteFile(filePath.toString())
         }
         store.delete('currentPageEditPath')
+        alert('Changes Saved')
     });
 }
 
 function savePage(filePath, editor) {
     createFileContent(false, editor, filePath)
-    alert('Page Saved')
 }
 
 function savePageDraft(filePath, editor) {
     createFileContent(true, editor, filePath)
-    alert('Draft Saved')
 }
 
 // pageContent.addEventListener('click', function (e) {
