@@ -1,14 +1,15 @@
-# Unhack for Jekyll
+# unHack for Jekyll
+## jekyll for non-hackers
 
 The Goal is to create a GUI for the static site generator jekyll as an Electron App
 
 This is my Bachelor's Thesis Project, **still in Development**
 
-# Documentation
+## Documentation
 An Overview over the App and [Docs](https://unhacked.halfapx.com/docs/) can be found on the Project's Website.
 
 
-# Config File
+<!-- # Config File
 The `unhack.json` file is key for every unHack project. Within this File Information for Publication will be stored, as well as Configuration for the Theme Front Matter.
 
 ## Name
@@ -54,4 +55,4 @@ How the Navigation Builder works and how to properly integrate it into your them
 ```
 
 # Theme Compatibility
-unHack offers a couple customizing Options within it's Configuration file. To make your Theme compatible with unHack out of the box, make sure to add a `unhack.json` file.
+unHack offers a couple customizing Options within it's Configuration file. To make your Theme compatible with unHack out of the box, make sure to add a `unhack.json` file. -->
