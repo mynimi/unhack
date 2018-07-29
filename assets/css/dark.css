@@ -1129,6 +1129,13 @@ body.navigation .card {
   font-size: 19px;
   font-weight: 300;
   line-height: 1.6; }
+  .te-editor h1:before, .te-editor h1:after,
+  .tui-editor-contents h1:before,
+  .tui-editor-contents h1:after {
+    display: none; }
+  .te-editor .btn,
+  .tui-editor-contents .btn {
+    color: white !important; }
 
 .tui-editor-defaultUI-toolbar button:hover,
 .tui-editor-defaultUI-toolbar button:active,

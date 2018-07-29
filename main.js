@@ -194,7 +194,7 @@ app.on('ready', () => {
             submenu: [
                 { label: 'Documentation',
                   click(){
-                      shell.openExternal('https://github.com/mynimi/unhack/blob/master/README.md')
+                      shell.openExternal('https://unhacked.halfapx.com/docs/')
                   }
                 },
                 {

@@ -95,6 +95,17 @@ body.navigation{
         weight: $main-font-weight;
     }
     line-height: $basic-line-height;
+
+    h1{
+        &:before,
+        &:after{
+            display: none;
+        }
+    }
+
+    .btn{
+        color: white !important;
+    }
 }
 
 .tui-editor-defaultUI-toolbar button:hover,

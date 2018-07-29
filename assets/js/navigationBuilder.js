@@ -90,7 +90,7 @@ function navigationBuilder() {
             output += `<div class="alert error"><div class="alert-content">
                 <i class="fas fa-times-circle fa-2x fa-pull-left"></i>
                 <h1 class="alert-title"><span>No Navigation Support</span></h1>
-                <div class="alert-message">Seems like your Theme doesn 't support the Navigation Builder. Contact the Theme Developer or read the <a href="https://github.com/mynimi/unhack/blob/master/README.md" class="open-in-browser">Documentation</a> to learn how to add Menu Support to a jekyll theme.</div>
+                <div class="alert-message">Seems like your Theme doesn 't support the Navigation Builder. Contact the Theme Developer or read the <a href="https://unhacked.halfapx.com/docs/" class="open-in-browser">Documentation</a> to learn how to add Menu Support to a jekyll theme.</div>
             </div></div>`
         }
         output += `<div class="cardholder">

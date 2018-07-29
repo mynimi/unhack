@@ -4,31 +4,9 @@ The Goal is to create a GUI for the static site generator jekyll as an Electron 
 
 This is my Bachelor's Thesis Project, **still in Development**
 
-# Installation
-## jekyll
-unHack requires you to have jekyll installed.
-Please follow the [jekyll Installation Guide](https://jekyllrb.com/docs/installation/) if you don't know how to achieve that.
+# Documentation
+An Overview over the App and [Docs](https://unhacked.halfapx.com/docs/) can be found on the Project's Website.
 
-### Caution for Windows Users
-if you are using a jekyll installation within the Linux Subsystem of Windows, unHack will not be able to process. Make sure you install jekyll on the regular Windows system.
-
-## Git
-In order for unHack to publish to GitHub, you need to have Git installed.
-
-## unHack
-### Windows
-Use the .exe file.
-
-
-# How to make jekyll site compatible with unHack
-in order for the App to recognize a jekyll site via the Open Command, you need to create a file called `unhack.json` in the root of the directory.
-Minimal Requirements for content are
-
-```json
-{
-  "name": "YOUR SITES NAME HERE"
-}
-```
 
 # Config File
 The `unhack.json` file is key for every unHack project. Within this File Information for Publication will be stored, as well as Configuration for the Theme Front Matter.
