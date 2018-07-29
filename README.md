@@ -1,5 +1,4 @@
-# unHack for Jekyll
-## jekyll for non-hackers
+# unHack - jekyll for non-hackers
 
 The Goal is to create a GUI for the static site generator jekyll as an Electron App
 
