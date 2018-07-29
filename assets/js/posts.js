@@ -325,7 +325,7 @@ function postCreator(){
     })
 }
 
-function createFileContent(draft, editor){
+function createFileContent(draft, editor, filePath){
     let newPostPath
     let config = {}
     let title = document.querySelector('#title').value
@@ -362,25 +362,22 @@ function createFileContent(draft, editor){
 
     fs.writeFile(newPostPath, output, 'utf8', function (err) {
         if (err) return console.log(err);
+
+        if (filePath != false) {
+            functions.deleteFile(filePath.toString())
+            store.delete('currentPostEditPath')
+        }
     });
 }
 
 function savePost(filePath, editor) {
     // delete old file
-    if(filePath != false){
-        functions.deleteFile(filePath.toString())
-        store.delete('currentPostEditPath')
-    }    
-    createFileContent(false, editor)
+    createFileContent(false, editor, filePath)
     alert('Post Saved')
 }
 
 function savePostDraft(filePath, editor) {
     // delete old file
-    if (filePath != false) {
-        functions.deleteFile(filePath.toString())
-        store.delete('currentPostEditPath')
-    }
-    createFileContent(true, editor)
+    createFileContent(true, editor, filePath)
     alert('Draft Saved')
 }

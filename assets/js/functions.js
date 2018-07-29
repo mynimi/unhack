@@ -47,7 +47,11 @@ module.exports.retrieveMeta = function retrieveMeta(template,parent, child, conf
             val = document.querySelector(`textarea[name="${child}"]`).value
         }
         if (prop.type == 'image') {
-            val = document.querySelector(`img[name="${child}"`).dataset.metapath
+            if(document.querySelector(`img[name="${child}"`)){
+                val = document.querySelector(`img[name="${child}"`).dataset.metapath
+            } else {
+                val = ''
+            }
         }
         if(val != ''){
             config[child] = val
@@ -282,10 +286,11 @@ module.exports.addToConfig = function addToConfig(addConfig){
 }
 
 module.exports.deleteFile = function deleteFile(filePath) {
-    fs.unlink(filePath, (err) => {
-        if (err) throw err;
-        // alert(`${filePath} was deleted`)
-    })
+    shell.moveItemToTrash(filePath)
+    // fs.unlink(filePath, (err) => {
+    //     if (err) throw err;
+    //     // alert(`${filePath} was deleted`)
+    // })
 }
 
 module.exports.slugify = function slugify(string) {

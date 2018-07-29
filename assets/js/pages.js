@@ -332,26 +332,20 @@ function createFileContent(draft, editor){
 
     fs.writeFile(newpagePath, output, 'utf8', function (err) {
         if (err) return console.log(err);
+        if (filePath != false) {
+            functions.deleteFile(filePath.toString())
+            store.delete('currentPageEditPath')
+        }
     });
 }
 
 function savePage(filePath, editor) {
-    // delete old file
-    if(filePath != false){
-        functions.deleteFile(filePath.toString())
-        store.delete('currentPageEditPath')
-    }     
-    createFileContent(false, editor)
+    createFileContent(false, editor, filePath)
     alert('Page Saved')
 }
 
 function savePageDraft(filePath, editor) {
-    // delete old file
-    if (filePath != false) {
-        functions.deleteFile(filePath.toString())
-        store.delete('currentPageEditPath')
-    }
-    createFileContent(true, editor)
+    createFileContent(true, editor, filePath)
     alert('Draft Saved')
 }
 
