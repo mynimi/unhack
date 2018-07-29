@@ -25,45 +25,46 @@ pageContent.addEventListener('click', function (e) {
     }
 })
 
+// Save Button Click
+popupContent.addEventListener('click', function (e) {
+    if (e.target && e.target.classList.contains('tab-toggle')) {
+        functions.inputStyle()
+    }
+    if (e.target && e.target.id == 'save-publication-settings') {
+        let method = document.querySelector('input[name="publish-platform"]:checked').value
+        store.set('publicationSettings.method', method)
+        addConfig.publicationSettings = {}
+        const pS = addConfig.publicationSettings
+        pS.ftp = {}
+        pS.gitHub = {}
+        const ftpS = pS.ftp
+        const gitHubS = pS.gitHub
+        pS.method = method
+
+        ftpS.ftpHost = document.querySelector('input[name="ftp-host"]').value
+        ftpS.ftpUsername = document.querySelector('input[name="ftp-username"]').value
+        let ftpPW = document.querySelector('input[name="ftp-password"]')
+        if (ftpPW.value != '') {
+            store.set('ftpPassword', ftpPW.value)
+        }
+        ftpS.ftpPort = document.querySelector('input[name="ftp-port"]').value
+        ftpS.ftpDirectory = document.querySelector('input[name="ftp-directory"]').value
+
+        gitHubS.gitHubUsername = document.querySelector('input[name="github-username"]').value
+        gitHubS.gitHubUserEmail = document.querySelector('input[name="github-useremail"]').value
+
+        // let gitHubPW = document.querySelector('input[name="github-password"]')
+        // if (gitHubPW.value != '') {
+        //     store.set('gitHubPassword', gitHubPW.value)
+        // }
+        gitHubS.gitHubRepoName = document.querySelector('input[name="github-repository-name"]').value
+
+        functions.addToConfig(addConfig)
+        functions.closePopup();
+    }
+})
+
 function openPublicationSettings(){
-    // Save Button Click
-    popupContent.addEventListener('click', function (e) {
-        if (e.target && e.target.classList.contains('tab-toggle')){
-            functions.inputStyle()
-        }
-        if (e.target && e.target.id == 'save-publication-settings') {
-            let method = document.querySelector('input[name="publish-platform"]:checked').value
-            store.set('publicationSettings.method', method)
-            addConfig.publicationSettings = {}
-            const pS = addConfig.publicationSettings
-            pS.ftp = {}
-            pS.gitHub = {}
-            const ftpS = pS.ftp
-            const gitHubS = pS.gitHub
-            pS.method = method
-
-            ftpS.ftpHost = document.querySelector('input[name="ftp-host"]').value
-            ftpS.ftpUsername = document.querySelector('input[name="ftp-username"]').value
-            let ftpPW = document.querySelector('input[name="ftp-password"]')
-            if(ftpPW.value != ''){
-                store.set('ftpPassword', ftpPW.value)
-            }
-            ftpS.ftpPort = document.querySelector('input[name="ftp-port"]').value
-            ftpS.ftpDirectory = document.querySelector('input[name="ftp-directory"]').value
-
-            gitHubS.gitHubUsername = document.querySelector('input[name="github-username"]').value
-            gitHubS.gitHubUserEmail = document.querySelector('input[name="github-useremail"]').value
-
-            // let gitHubPW = document.querySelector('input[name="github-password"]')
-            // if (gitHubPW.value != '') {
-            //     store.set('gitHubPassword', gitHubPW.value)
-            // }
-            gitHubS.gitHubRepoName = document.querySelector('input[name="github-repository-name"]').value
-
-            functions.addToConfig(addConfig)
-            functions.closePopup();
-        }
-    })
     
     fs.readFile(publicationSettingsPath, (err, data) => {
         popupContent.innerHTML = data
@@ -97,4 +98,3 @@ function openPublicationSettings(){
     })
     functions.openPopup()
 }
-

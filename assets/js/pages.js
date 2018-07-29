@@ -281,24 +281,24 @@ function pageCreator() {
         });
         functions.inputStyle()
     })
-
-    pageContent.addEventListener('click', function (e) {
-        if (e.target && e.target.id == 'cancel-page-new') {
-            let el = e.target
-            if (confirm('Are you sure you want to cancel? All changes will be lost?')) {
-                generatePagesList();
-            }
-        }
-        if (e.target && e.target.id == 'save-page-draft-new') {
-            let el = e.target
-            savePageDraft(false, editor)
-        }
-        if (e.target && e.target.id == 'save-page-new') {
-            let el = e.target
-            savePage(false, editor)
-        }
-    })
 }
+
+pageContent.addEventListener('click', function (e) {
+    if (e.target && e.target.id == 'cancel-page-new') {
+        let el = e.target
+        if (confirm('Are you sure you want to cancel? All changes will be lost?')) {
+            generatePagesList();
+        }
+    }
+    if (e.target && e.target.id == 'save-page-draft-new') {
+        let el = e.target
+        savePageDraft(false, editor)
+    }
+    if (e.target && e.target.id == 'save-page-new') {
+        let el = e.target
+        savePage(false, editor)
+    }
+})
 
 function createFileContent(draft, editor, filePath){
     let config = {}

@@ -14,6 +14,8 @@ const {
 let pageContent = document.querySelector('.container')
 let pageLinks = ''
 let menuArea = ''
+let menuDataPath = ''
+
 const pagesPath = store.get('currentProjectPath')
 
 
@@ -26,7 +28,7 @@ document.querySelector('.nav-navigation').addEventListener('click', function (e)
 })
 
 function navigationBuilder() {
-    let menuDataPath = path.join(store.get('currentProjectPath').toString(), '_data', 'menu.yml')
+    menuDataPath = path.join(store.get('currentProjectPath').toString(), '_data', 'menu.yml')
     let configPath = store.get('configFilePath')
 
     const config = fs.readFileSync(configPath)
@@ -38,86 +40,6 @@ function navigationBuilder() {
     // } else {
     //     functions.displayAlert('error', 'No Navigation Builder Support', "Seems like your Theme doesn't support the Navigation Builder. Contact the Theme Developer or read the Documentation to learn how to add Menu Support to a jekyll theme.")
     // }
-
-    pageContent.addEventListener('click', function (e) {
-        let menuAreas = document.querySelector('.menu-areas')
-
-        if (e.target && e.target.id == 'add-drop-area') {
-            let count = menuAreas.childElementCount
-            let el = e.target
-            menuAreas.insertAdjacentHTML('beforeend', `<div class="area area${count+1}"><div class="placeholder">Drag Element inside</div></div>`)
-        }
-
-        if (e.target && e.target.id == 'save-custom-menu') {
-            let navFile = {}
-            let dropdown = []
-            let count = menuAreas.childElementCount
-
-            for (var i = 0; i < count; i++) {
-                let area = document.querySelector(`.area${i+1}`)
-                let el = {}
-                // console.log(area.childElementCount)
-                if (area.childElementCount > 1) {
-                    if (area.childElementCount > 2) {
-                        let items = document.querySelectorAll(`.area${i+1} .menu-element`)
-                        let children = []
-                        items.forEach(function (elem, index) {
-                            let i = index
-                            let child = {}
-                            if (i == 0) {
-                                if(elem.querySelector('span')){
-                                    // console.log('is span')
-                                    el.title = elem.querySelector('span').textContent
-                                    el.children = children
-                                } else{
-                                    // console.log('is not span')
-                                    el.title = elem.querySelector(`input[name="item-name"]`).value
-                                }
-                            } else {
-                                if (elem.querySelector('span')) {
-                                    child.title = elem.querySelector('span').textContent
-                                    child.url = elem.querySelector('span').dataset.navurl
-                                } else {
-                                    child.title = elem.querySelector(`input[name="item-name"]`).value
-                                    child.url = elem.querySelector(`input[name="item-url"]`).value
-                                }
-                                // child.title = elem.textContent
-                                // child.url = elem.dataset.navurl
-                                children.push(child)
-                            }
-                        })
-                    } else {
-                        if (document.querySelector(`.area${i+1} .custom`)){
-                            // console.log('has a custom link')
-                            el.title = document.querySelector(`.area${i+1} .custom input[name="item-name"]`).value
-                            el.url = document.querySelector(`.area${i+1} .custom input[name="item-url"]`).value
-                        } else{
-                            // console.log('has not a custom link')
-                            let item = document.querySelector(`.area${i+1} span`)
-                            el.title = item.textContent
-                            el.url = item.dataset.navurl
-                        }
-                    }
-                    dropdown.push(el)
-                }
-            }
-
-            navFile.dropdown = dropdown
-            // console.log(navFile)
-            let newMenuFile = yaml.safeDump(navFile, {
-                skipInvalid: true
-            })
-            fs.writeFile(menuDataPath, newMenuFile, 'utf8', function (err) {
-                if (err) {
-                    return console.log(err);
-                } else {
-                    navigationBuilder()
-                    ipcRenderer.send('show-message-box', 'none', 'Menu Saved', "Menu Data File was successfully saved.")
-
-                }
-            });
-        }
-    })
 
     if (fs.existsSync(menuDataPath)) {
         let menuData = yaml.safeLoad(fs.readFileSync(menuDataPath, 'utf8'));
@@ -227,5 +149,84 @@ function navigationBuilder() {
             return target !== document.getElementById('available-pages')
         }
     })
-
 }
+
+ pageContent.addEventListener('click', function (e) {
+     let menuAreas = document.querySelector('.menu-areas')
+
+     if (e.target && e.target.id == 'add-drop-area') {
+         let count = menuAreas.childElementCount
+         let el = e.target
+         menuAreas.insertAdjacentHTML('beforeend', `<div class="area area${count+1}"><div class="placeholder">Drag Element inside</div></div>`)
+     }
+
+     if (e.target && e.target.id == 'save-custom-menu') {
+         let navFile = {}
+         let dropdown = []
+         let count = menuAreas.childElementCount
+
+         for (var i = 0; i < count; i++) {
+             let area = document.querySelector(`.area${i+1}`)
+             let el = {}
+             // console.log(area.childElementCount)
+             if (area.childElementCount > 1) {
+                 if (area.childElementCount > 2) {
+                     let items = document.querySelectorAll(`.area${i+1} .menu-element`)
+                     let children = []
+                     items.forEach(function (elem, index) {
+                         let i = index
+                         let child = {}
+                         if (i == 0) {
+                             if (elem.querySelector('span')) {
+                                 // console.log('is span')
+                                 el.title = elem.querySelector('span').textContent
+                                 el.children = children
+                             } else {
+                                 // console.log('is not span')
+                                 el.title = elem.querySelector(`input[name="item-name"]`).value
+                             }
+                         } else {
+                             if (elem.querySelector('span')) {
+                                 child.title = elem.querySelector('span').textContent
+                                 child.url = elem.querySelector('span').dataset.navurl
+                             } else {
+                                 child.title = elem.querySelector(`input[name="item-name"]`).value
+                                 child.url = elem.querySelector(`input[name="item-url"]`).value
+                             }
+                             // child.title = elem.textContent
+                             // child.url = elem.dataset.navurl
+                             children.push(child)
+                         }
+                     })
+                 } else {
+                     if (document.querySelector(`.area${i+1} .custom`)) {
+                         // console.log('has a custom link')
+                         el.title = document.querySelector(`.area${i+1} .custom input[name="item-name"]`).value
+                         el.url = document.querySelector(`.area${i+1} .custom input[name="item-url"]`).value
+                     } else {
+                         // console.log('has not a custom link')
+                         let item = document.querySelector(`.area${i+1} span`)
+                         el.title = item.textContent
+                         el.url = item.dataset.navurl
+                     }
+                 }
+                 dropdown.push(el)
+             }
+         }
+
+         navFile.dropdown = dropdown
+         // console.log(navFile)
+         let newMenuFile = yaml.safeDump(navFile, {
+             skipInvalid: true
+         })
+         fs.writeFile(menuDataPath, newMenuFile, 'utf8', function (err) {
+             if (err) {
+                 return console.log(err);
+             } else {
+                 navigationBuilder()
+                 ipcRenderer.send('show-message-box', 'none', 'Menu Saved', "Menu Data File was successfully saved.")
+
+             }
+         });
+     }
+ })

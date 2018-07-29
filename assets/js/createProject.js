@@ -104,18 +104,18 @@ ipcRenderer.on('show-open-and-create', function(){
             }
             dropArea.ondragleave = (ev) => {
                 dropArea.classList.remove('dragging')
-            }
-
-            pageContent.addEventListener('click', function (e) {
-                if (e.target && e.target.id == 'start-create-new-project') {
-                    fs.readFile(createProjectPath, (err, data) => {
-                        popupContent.innerHTML = data
-                        functions.inputStyle()
-                    })
-                    functions.openPopup()
-                }
-            })
+            }            
         })
+    }
+})
+
+pageContent.addEventListener('click', function (e) {
+    if (e.target && e.target.id == 'start-create-new-project') {
+        fs.readFile(createProjectPath, (err, data) => {
+            popupContent.innerHTML = data
+            functions.inputStyle()
+        })
+        functions.openPopup()
     }
 })
 
@@ -137,27 +137,6 @@ ipcRenderer.on('selectedItem', function (event, path) {
 
     htmlOutput.innerHTML = "" // clear previous Output
 
-    // const child = child_process.spawn('ls && jekyll -v', {
-    //     shell: 'cmd',
-    //     cwd: projectParentPath
-    // })
-
-    // child.stdout.pipe(process.stdout);
-    // child.stderr.pipe(process.stderr);
-    // child.stdin.end();
-
-    // child.stdout.on('data', function (data) {
-    //     console.log('stdout: ' + data);
-    //     htmlOutput.insertAdjacentHTML('beforeend', 'stdout: ' + data); //Here is where the output goes
-    // });
-    // child.stderr.on('data', function (data) {
-    //     console.log('stderr: ' + data);
-    //     htmlOutput.insertAdjacentHTML('beforeend', 'stderr: ' + data); //Here is where the error output goes
-    // });
-    // child.on('close', function (code) {
-    //     console.log('closing code: ' + code);
-    //     htmlOutput.insertAdjacentHTML('beforeend', 'closing code: ' + code); //Here you can get the exit code of the script
-    // });
 })
 
 popupContent.addEventListener('click', function (e) {

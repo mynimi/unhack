@@ -44,19 +44,20 @@ pageContent.addEventListener('click', function(e){
         generateThemeOptions(useDefault = false)
     }
 })
+
+pageContent.addEventListener('click', function (e) {
+    if (e.target && e.target.id == 'save-theme-options') {
+        saveThemeOptions()
+    }
+
+    if (e.target && e.target.id == 'reset-theme-options') {
+        generateThemeOptions(useDefault = true)
+        ipcRenderer.send('show-message-box', 'none', 'Defaults Restored', 'Defaults have been restored, hit Save to keep these changes.')
+    }
+})
+
 function generateThemeOptions(useDefault) {
     let output = ''
-
-    pageContent.addEventListener('click', function (e) {
-        if (e.target && e.target.id == 'save-theme-options') {
-            saveThemeOptions()
-        }
-
-        if (e.target && e.target.id == 'reset-theme-options') {
-            generateThemeOptions(useDefault = true)
-            ipcRenderer.send('show-message-box', 'none', 'Defaults Restored', 'Defaults have been restored, hit Save to keep these changes.')
-        }
-    })
 
     fs.readFile(themeConfigPath.toString(), (err, data) => {
         if(err) throw err
@@ -156,45 +157,4 @@ function saveThemeOptions(){
         if (err) return console.log(err);
         // ipcRenderer.send('show-message-box', 'none', 'File Saved', 'Sass Theme Options File was sucessfully updated.')
     });
-
-    // let config = {}
-    // var children = document.querySelectorAll('.siteConfig div > input')
-
-    // children.forEach(function(item){
-    //     let key = item.id
-    //     let val = item.value
-
-    //     if (item.dataset.isanarray == 'true') {
-    //         val = item.value.split(',')
-    //     }
-    //     if(item.dataset.isanobject == 'true'){
-    //         val = {}
-    //         let items = item.parentNode.childNodes
-    //         // console.log(items)
-    //         items.forEach(function(child){
-    //             ch = child.childNodes
-    //             // console.log(ch)
-    //             ch.forEach(function(c){
-    //                 if (c.classList.contains('objectInput')){
-    //                     k = c.id
-    //                     v = c.value
-    //                     val[k] = v
-    //                 }
-    //             })
-    //         })
-    //         // console.log(val)
-    //     }
-    //     if(!item.classList.contains('objectInput')){
-    //         config[key] = val
-    //     }
-    // })
-
-    // // console.log(config)
-
-    // const newConfig = yaml.safeDump(config)
-    // // console.log(newConfig)
-    // fs.writeFile(siteConfigPath, newConfig, 'utf8', function (err) {
-    //     if (err) return console.log(err);
-    // });
-    // ipcRenderer.send('show-message-box', 'none', 'File Updated', 'Configuration File was sucessfully updated')
 }

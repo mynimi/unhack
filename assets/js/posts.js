@@ -308,24 +308,24 @@ function postCreator(){
         });
         functions.inputStyle()
     })
-
-    pageContent.addEventListener('click', function (e) {
-        if (e.target && e.target.id == 'cancel-post-new') {
-            let el = e.target
-            if (confirm('Are you sure you want to cancel? All changes will be lost?')) {
-                generatePostsList();
-            }
-        }
-        if (e.target && e.target.id == 'save-post-draft-new') {
-            let el = e.target
-            savePostDraft(false, editor)
-        }
-        if (e.target && e.target.id == 'save-post-new') {
-            let el = e.target
-            savePost(false, editor)
-        }
-    })
 }
+
+pageContent.addEventListener('click', function (e) {
+    if (e.target && e.target.id == 'cancel-post-new') {
+        let el = e.target
+        if (confirm('Are you sure you want to cancel? All changes will be lost?')) {
+            generatePostsList();
+        }
+    }
+    if (e.target && e.target.id == 'save-post-draft-new') {
+        let el = e.target
+        savePostDraft(false, editor)
+    }
+    if (e.target && e.target.id == 'save-post-new') {
+        let el = e.target
+        savePost(false, editor)
+    }
+})
 
 function createFileContent(draft, editor, filePath){
     let newPostPath
