@@ -140,6 +140,84 @@ ipcRenderer.on('selectedItem', function (event, path) {
 })
 
 popupContent.addEventListener('click', function (e) {
+    if (e.target && e.target.id == 'clone-unhacked') {
+        store.clear()
+        const parentDirectory = document.getElementById('selectedItem').value
+        const siteName = document.getElementById('project-name').value
+
+        if (parentDirectory == '' || siteName == '') {
+            ipcRenderer.send('show-error-message', 'Error', "Please fill out all fields before hitting create.")
+        } else {
+            let htmlOutput = document.querySelector('#output')
+
+            htmlOutput.innerHTML = "" // clear previous Output
+            let child;
+
+            if (process.platform !== 'darwin') {
+                child = child_process.spawn(`git clone git@github.com:mynimi/unhacked-jekyll-theme.git && mv unhacked-jekyll-theme ${siteName} && cd ${siteName} && bundle install`, {
+                    shell: 'cmd',
+                    cwd: projectParentPath
+                })
+            } else {
+                child = child_process.spawn(`git clone git@github.com:mynimi/unhacked-jekyll-theme.git && mv unhacked-jekyll-theme ${siteName} && cd ${siteName} && bundle install`, {
+                    shell: true,
+                    cwd: projectParentPath
+                })
+            }
+
+            child.stdout.pipe(process.stdout);
+            child.stderr.pipe(process.stderr);
+            child.stdin.end();
+
+            child.stdout.on('data', function (data) {
+                console.log('stdout: ' + data);
+                htmlOutput.insertAdjacentHTML('beforeend', 'stdout: ' + data); //Here is where the output goes
+            });
+            child.stderr.on('data', function (data) {
+                console.log('stderr: ' + data);
+                htmlOutput.insertAdjacentHTML('beforeend', 'stderr: ' + data); //Here is where the error output goes
+            });
+            child.on('close', function (code) {
+                console.log('closing code: ' + code);
+                htmlOutput.insertAdjacentHTML('beforeend', 'closing code: ' + code); //Here you can get the exit code of the script
+            });
+
+            child.on('exit', function () {
+                // write PAth to config
+                const projectPath = path.join(projectParentPath, siteName)
+
+                store.set('currentProjectPath', projectPath);
+                store.set('projectName', siteName);
+
+                const fileName = 'unhack.json';
+                const configPath = path.join(projectPath, fileName)
+
+                store.set('configFilePath', configPath)
+
+                fs.readFile(configPath, (err, data) => {
+                    if (err) throw err
+                    let config = JSON.parse(data)
+                    config.name = siteName
+                    delete config.publicationSettings
+                    
+                    fs.writeFile(configPath, JSON.stringify(config, null, 2), (err) => {
+                        if (err) throw err
+                        // ipcRenderer.send('show-message-box', 'none', 'Settings Saved', "Settings were sucessfully saved to Config File.")
+                    })
+                })
+
+                dashboard.open()
+
+                popupContent.innerHTML = ''
+                functions.closePopup()
+
+                ipcRenderer.send('create-new-done')
+                document.querySelector('body').classList.add('has-sidenav')
+                document.querySelector('.sidenav').classList.remove('hidden')
+            })
+
+        }
+    }
     if (e.target && e.target.id == 'create-site') {
         store.clear()
         const parentDirectory = document.getElementById('selectedItem').value
