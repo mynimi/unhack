@@ -1,6 +1,6 @@
 {
   "name": "unhack-for-jekyll",
-  "version": "0.1.0",
+  "version": "1.2.0",
   "description": "A GUI for the static site generator jekyll",
   "main": "main.js",
   "scripts": {

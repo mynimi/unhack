@@ -154,7 +154,7 @@ popupContent.addEventListener('click', function (e) {
             let child;
 
             if (process.platform !== 'darwin') {
-                child = child_process.spawn(`git clone git@github.com:mynimi/unhacked-jekyll-theme.git && mv unhacked-jekyll-theme ${siteName} && cd ${siteName} && bundle install && rmdir .git`, {
+                child = child_process.spawn(`git clone git@github.com:mynimi/unhacked-jekyll-theme.git && rename unhacked-jekyll-theme ${siteName} && cd ${siteName} && bundle install && rmdir .git /s /q`, {
                     shell: 'cmd',
                     cwd: projectParentPath
                 })
