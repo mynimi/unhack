@@ -245,7 +245,7 @@ popupContent.addEventListener('click', function (e) {
                 // alert('is a Git directory')
                 let child;
                 if (process.platform !== 'darwin') {
-                    child = child_process.spawn(`git checkout ${sourceBranch} && git add -A && git commit -m "push all changes to source" && git push -f origin ${sourceBranch} && git branch -D ${siteBranch} && git checkout -b ${siteBranch} && findstr /V "_site" .gitignore > .gitignore_new && del .gitignore && ren .gitignore_new .gitignore && git add -A && git commit -m "add _site" && git filter-branch --subdirectory-filter _site/ -f && git push -f origin ${siteBranch} && git checkout ${sourceBranch}`, {
+                    child = child_process.spawn(`git checkout ${sourceBranch} && git add -A && git commit -m "push all changes to source" && git push -f origin ${sourceBranch} && git branch -D ${siteBranch} && git checkout -b ${siteBranch} && ren .gitignore gitignore.txt && findstr /V "_site" gitignore.txt > gitignore_new.txt && del gitignore.txt && ren gitignore_new.txt .gitignore. && git add -A && git commit -m "add _site" && git filter-branch --subdirectory-filter _site/ -f && git push -f origin ${siteBranch} && git checkout ${sourceBranch}`, {
                         shell: 'cmd',
                         cwd: currentProjectPath
                     })
@@ -281,7 +281,7 @@ popupContent.addEventListener('click', function (e) {
                 // alert('is not a git directory')
                 let child;
                 if (process.platform !== 'darwin') {
-                    child = child_process.spawn(`git init && git config user.email "${gitHubS.gitHubUserEmail}" && git config user.name "${gitHubS.gitHubUsername}" && git remote add origin ${remoteURL} && git checkout ${sourceBranch} && git add -A && git commit -m "push all changes to source" && git push -f origin ${sourceBranch} && git branch -D ${siteBranch} && git checkout -b ${siteBranch} && findstr /V "_site" .gitignore > .gitignore_new && del .gitignore && ren .gitignore_new .gitignore && git add -A && git commit -m "add _site" && git filter-branch --subdirectory-filter _site/ -f && git push -f origin ${siteBranch} && git checkout ${sourceBranch}`, {
+                    child = child_process.spawn(`git init && git config user.email "${gitHubS.gitHubUserEmail}" && git config user.name "${gitHubS.gitHubUsername}" && git remote add origin ${remoteURL} && git checkout -b ${sourceBranch} && git add -A && git commit -m "push all changes to source" && git push -f origin ${sourceBranch} && git checkout -b ${siteBranch} && ren .gitignore gitignore.txt && findstr /V "_site" gitignore.txt > gitignore_new.txt && del gitignore.txt && ren gitignore_new.txt .gitignore. && git add -A && git commit -m "add _site" && git filter-branch --subdirectory-filter _site/ -f && git push -f origin ${siteBranch} && git checkout source`, {
                         shell: 'cmd',
                         cwd: currentProjectPath
                     })
