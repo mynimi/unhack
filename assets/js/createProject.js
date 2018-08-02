@@ -154,12 +154,12 @@ popupContent.addEventListener('click', function (e) {
             let child;
 
             if (process.platform !== 'darwin') {
-                child = child_process.spawn(`git clone git@github.com:mynimi/unhacked-jekyll-theme.git && mv unhacked-jekyll-theme ${siteName} && cd ${siteName} && bundle install`, {
+                child = child_process.spawn(`git clone git@github.com:mynimi/unhacked-jekyll-theme.git && mv unhacked-jekyll-theme ${siteName} && cd ${siteName} && bundle install && rmdir .git`, {
                     shell: 'cmd',
                     cwd: projectParentPath
                 })
             } else {
-                child = child_process.spawn(`git clone git@github.com:mynimi/unhacked-jekyll-theme.git && mv unhacked-jekyll-theme ${siteName} && cd ${siteName} && bundle install`, {
+                child = child_process.spawn(`git clone git@github.com:mynimi/unhacked-jekyll-theme.git && mv unhacked-jekyll-theme ${siteName} && cd ${siteName} && bundle install && rm -rf .git`, {
                     shell: true,
                     cwd: projectParentPath
                 })
