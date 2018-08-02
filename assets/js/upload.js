@@ -245,7 +245,7 @@ popupContent.addEventListener('click', function (e) {
                 // alert('is a Git directory')
                 let child;
                 if (process.platform !== 'darwin') {
-                    child = child_process.spawn(`git checkout ${sourceBranch} && git add -A && git commit -m "push all changes to source" && git push -f origin ${sourceBranch} && git branch -D ${siteBranch} && git checkout -b ${siteBranch} && sed -i '/_site/d' .gitignore && git add -A && git commit -m "add _site" && git filter-branch --subdirectory-filter _site/ -f && git push -f origin ${siteBranch} && git checkout ${sourceBranch}`, {
+                    child = child_process.spawn(`git checkout ${sourceBranch} && git add -A && git commit -m "push all changes to source" && git push -f origin ${sourceBranch} && git branch -D ${siteBranch} && git checkout -b ${siteBranch} && findstr /V "_site" .gitignore > .gitignore_new && del .gitignore && ren .gitignore_new .gitignore && git add -A && git commit -m "add _site" && git filter-branch --subdirectory-filter _site/ -f && git push -f origin ${siteBranch} && git checkout ${sourceBranch}`, {
                         shell: 'cmd',
                         cwd: currentProjectPath
                     })
